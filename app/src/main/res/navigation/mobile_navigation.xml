@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@id/dashBoardFragment">
+
+    <fragment
+        android:id="@+id/dashBoardFragment"
+        android:name="com.example.notificationdeadline.ui.DashBoard.DashBoardFragment"
+        android:label="DashBoardFragment" />
+    <fragment
+        android:id="@+id/notificationFragment"
+        android:name="com.example.notificationdeadline.ui.notification.NotificationFragment"
+        android:label="NotificationFragment" />
+    <fragment
+        android:id="@+id/settingFragment"
+        android:name="com.example.notificationdeadline.ui.setting.SettingFragment"
+        android:label="SettingFragment" />
+    <fragment
+        android:id="@+id/editUserFragment2"
+        android:name="com.example.notificationdeadline.ui.EditUser.EditUserFragment"
+        android:label="fragment_edit_user"
+        tools:layout="@layout/fragment_edit_user" />
+    <fragment
+        android:id="@+id/addDeadlineFragment2"
+        android:name="com.example.notificationdeadline.ui.AddDeadline.AddDeadlineFragment"
+        android:label="fragment_add_deadline"
+        tools:layout="@layout/fragment_add_deadline" />
+    <fragment
+        android:id="@+id/searchDeadlineFragment"
+        android:name="com.example.notificationdeadline.ui.SearchDeadline.SearchDeadlineFragment"
+        android:label="fragment_search_deadline"
+        tools:layout="@layout/fragment_search_deadline" />
+</navigation>

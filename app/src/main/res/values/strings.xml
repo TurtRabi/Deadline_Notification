@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Deadline Gõ Cửa</string>
+    <string name="home">Trang chủ</string>
+    <string name="notification">Thông báo</string>
+    <string name="setting">Cài đặt</string>
+    <string name="share">Share</string>
+    
+    <string-array name="priority_list">
+        <item>Bình thường</item>
+        <item>Khẩn cấp</item>
+        <item>Rất khẩn cấp</item>
+    </string-array>
+</resources>
