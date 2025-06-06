@@ -80,7 +80,7 @@ public class SettingFragment extends Fragment {
                         user.ImageUrl,user.Description,user.Email,user.phone,user.birdday));
 
                 NavController navController = Navigation.findNavController(requireView());
-                navController.navigate(R.id.editUserFragment2);
+                navController.navigate(R.id.editUserFragment2,bundle);
 //                EditUserFragment fragment = new EditUserFragment();
 //                fragment.setArguments(bundle);
 //
