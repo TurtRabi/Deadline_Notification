@@ -27,7 +27,7 @@ public class NotificationRepository {
         db.notificationDao().delete(notification);
     }
 
-    public LiveData<List<NotificationEntity>> getAllNotifications(){
+    public List<NotificationEntity> getAllNotifications(){
         return  db.notificationDao().getAll();
     }
 

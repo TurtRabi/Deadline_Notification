@@ -6,16 +6,20 @@ import androidx.room.RoomDatabase;
 import com.example.notificationdeadline.data.dao.NotificationDao;
 import com.example.notificationdeadline.data.dao.NotificationHistoryDao;
 import com.example.notificationdeadline.data.dao.SettingDao;
+import com.example.notificationdeadline.data.dao.TaskDao;
 import com.example.notificationdeadline.data.dao.UserDao;
 import com.example.notificationdeadline.data.entity.NotificationEntity;
 import com.example.notificationdeadline.data.entity.NotificationHistoryEntity;
 import com.example.notificationdeadline.data.entity.SettingEntity;
+import com.example.notificationdeadline.data.entity.TaskEntity;
 import com.example.notificationdeadline.data.entity.UserEntity;
 
-@Database(entities = {NotificationEntity.class, SettingEntity.class, UserEntity.class, NotificationHistoryEntity.class},version = 6)
+@Database(entities = {NotificationEntity.class, SettingEntity.class, UserEntity.class, NotificationHistoryEntity.class, TaskEntity.class},version = 8)
 public abstract class AppDatabase  extends RoomDatabase {
     public abstract NotificationDao notificationDao();
     public  abstract SettingDao settingDao();
     public  abstract UserDao userDao();
     public abstract NotificationHistoryDao notificationHistoryDao();
+
+    public abstract TaskDao taskDao();
 }

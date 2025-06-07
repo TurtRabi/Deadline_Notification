@@ -32,10 +32,26 @@ public class DashBoardViewModel extends AndroidViewModel {
         return notificationHistoryService;
     }
 
-    public LiveData<List<NotificationEntity>> getAllList(){
+    public List<NotificationEntity> getAllList(){
         return getNotificationService().fectAllNotifications();
     }
     public int getUnreadCount(){
         return  getNotificationHistoryService().getUnreadCount();
+    }
+
+    public List<NotificationEntity> getListNotificationByDay(){
+        return getNotificationService().featAllNotifiactionsByDay();
+    }
+
+    public List<NotificationEntity> getDeadlinesForTomorrow() {
+        return null;
+    }
+
+    public List<NotificationEntity> getUpcomingDeadlines() {
+        return  null;
+    }
+
+    public List<NotificationEntity> getOverdueDeadlines() {
+        return  null;
     }
 }

@@ -28,7 +28,7 @@ public class NotificationService {
         notificationRepository.deleteNotification(notification);
     }
 
-    public LiveData<List<NotificationEntity>> fectAllNotifications(){
+    public List<NotificationEntity> fectAllNotifications(){
         return notificationRepository.getAllNotifications();
     }
 

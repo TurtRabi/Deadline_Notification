@@ -20,7 +20,7 @@ public interface NotificationDao {
     @Update
     void update(NotificationEntity notification);
     @Query("SELECT * FROM notifications ORDER BY timeMillis DESC ")
-    LiveData<List<NotificationEntity>> getAll();
+    List<NotificationEntity> getAll();
     @Query("SELECT * FROM notifications WHERE timeMillis BETWEEN :startTime AND :endTime AND isSuccess=0")
     List<NotificationEntity> getAllByDay(long startTime, long endTime);
 
@@ -33,5 +33,4 @@ public interface NotificationDao {
     void updateSuccessDeadline(int id);
     @Query("UPDATE notifications SET status = :status WHERE id = :id ")
     void updateStatus(int status,int id);
-
 }
