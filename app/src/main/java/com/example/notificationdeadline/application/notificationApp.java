@@ -24,7 +24,7 @@ public class notificationApp extends Application {
                 .build();
 
         PeriodicWorkRequest workRequest =
-                new PeriodicWorkRequest.Builder(DeadlineWorker.class, 15, TimeUnit.MINUTES)
+                new PeriodicWorkRequest.Builder(DeadlineWorker.class, 60*6, TimeUnit.MINUTES)
                         .setConstraints(constraints)
                         .build();
 

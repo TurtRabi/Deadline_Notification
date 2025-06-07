@@ -18,13 +18,13 @@ public class FixedTimeReceiver extends BroadcastReceiver {
         NotificationEntity entity = new NotificationEntity();
         entity.title = title;
         entity.message = message;
-        entity.id = (int) System.currentTimeMillis();  // tạm tạo ID
+        entity.id = (int) System.currentTimeMillis();
         NotificationHistoryService notificationHistoryService = new NotificationHistoryService(context);
         notificationHistoryService.insertNotificationHistory(new
-                NotificationHistoryEntity(title,message,System.currentTimeMillis(),true,false,"3"));
+                NotificationHistoryEntity(title,message,System.currentTimeMillis(),true,false,String.valueOf(entity.priority)));
 
         DeadlineNotifier notifier = new DeadlineNotifier(context);
-        notifier.show(entity, title, DeadlineNotifier.MEDIUM_IMPORTANCE);
+        notifier.show(entity, entity.title, DeadlineNotifier.HIGH_IMPORTANCE);
 
     }
 }

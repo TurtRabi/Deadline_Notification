@@ -44,9 +44,9 @@ public class DeadlineWorker extends Worker {
         if (highAlerts != null) {
             for (NotificationEntity entity : highAlerts) {
                 notificationService.updateStatus(entity.id, StatusEnum.DEADlINE.getValue());
-                notifier.show(entity, "🚨 KHẨN CẤP", DeadlineNotifier.HIGH_IMPORTANCE);
+                notifier.show(entity, "🚨 KHẨN CẤP: "+entity.title, DeadlineNotifier.HIGH_IMPORTANCE);
                 notificationHistoryService.insertNotificationHistory(new
-                        NotificationHistoryEntity("🚨 KHẨN CẤP",entity.message,System.currentTimeMillis(),true,false,"2"));
+                        NotificationHistoryEntity("🚨 KHẨN CẤP: "+entity.title,entity.message,System.currentTimeMillis(),true,false,"2"));
             }
         }
 
@@ -55,9 +55,9 @@ public class DeadlineWorker extends Worker {
         if (mediumAlerts != null) {
             for (NotificationEntity entity : mediumAlerts) {
                 notificationService.updateStatus(entity.id, StatusEnum.NEAR_DEADLINE.getValue());
-                notifier.show(entity, "📌 Cận kề deadline", DeadlineNotifier.MEDIUM_IMPORTANCE);
+                notifier.show(entity, "📌 Cận kề deadline: "+entity.title, DeadlineNotifier.MEDIUM_IMPORTANCE);
                 notificationHistoryService.insertNotificationHistory(new
-                        NotificationHistoryEntity("📌 Cận kề deadline",entity.message,System.currentTimeMillis(),true,false,"1"));
+                        NotificationHistoryEntity("📌 Cận kề deadline: "+entity.title,entity.message,System.currentTimeMillis(),true,false,"1"));
 
             }
         }
@@ -67,9 +67,9 @@ public class DeadlineWorker extends Worker {
         if (lowAlerts != null) {
             for (NotificationEntity entity : lowAlerts) {
                 notificationService.updateStatus(entity.id, StatusEnum.UPCOMING.getValue());
-                notifier.show(entity, "⏳ Sắp đến hạn rồi nè!", DeadlineNotifier.LOW_IMPORTANCE);
+                notifier.show(entity, "Deadline: "+entity.title+" ⏳ Sắp đến hạn rồi nè!", DeadlineNotifier.LOW_IMPORTANCE);
                 notificationHistoryService.insertNotificationHistory(
-                        new NotificationHistoryEntity("⏳ Sắp đến hạn rồi nè!", entity.message, System.currentTimeMillis(), true, false, "1")
+                        new NotificationHistoryEntity("Deadline: "+entity.title+" ⏳ Sắp đến hạn rồi nè!", entity.message, System.currentTimeMillis(), true, false, "1")
                 );
             }
         }
@@ -78,9 +78,9 @@ public class DeadlineWorker extends Worker {
         if (overAlerts != null) {
             for (NotificationEntity entity : overAlerts) {
                 notificationService.updateStatus(entity.id, StatusEnum.OVERDEALINE.getValue());
-                notifier.show(entity, "⛔ Quá hạn!", DeadlineNotifier.OVER_IMPORTANCE);
+                notifier.show(entity, "⛔ Quá hạn! "+entity.title, DeadlineNotifier.OVER_IMPORTANCE);
                 notificationHistoryService.insertNotificationHistory(
-                        new NotificationHistoryEntity("⛔ Quá hạn!", entity.message, System.currentTimeMillis(), true, false, "1")
+                        new NotificationHistoryEntity("⛔ Quá hạn! "+entity.title, entity.message, System.currentTimeMillis(), true, false, "1")
                 );
             }
         }

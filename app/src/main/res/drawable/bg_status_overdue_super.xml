@@ -3,7 +3,7 @@
     android:shape="rectangle">
 
     <!-- Màu đỏ hồng đậm (có thể đổi tùy tone em muốn) -->
-    <solid android:color="#BBFF8E" />
+    <solid android:color="#EF5350" />
 
     <!-- Bo tròn nhẹ cho mềm mại -->
     <corners android:radius="12dp" />

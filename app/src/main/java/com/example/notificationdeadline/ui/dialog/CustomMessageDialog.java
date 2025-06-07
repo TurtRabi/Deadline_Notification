@@ -58,18 +58,12 @@ public class CustomMessageDialog extends DialogFragment {
         ImageView iconView   = view.findViewById(R.id.dialogIcon);
         TextView  titleView  = view.findViewById(R.id.dialogTitle);
         TextView  msgView    = view.findViewById(R.id.dialogMessage);
-        Button    okButton   = view.findViewById(R.id.dialogButton);
+
 
         iconView.setImageResource(iconResId);
         titleView.setText(title);
         msgView.setText(message);
-        okButton.setBackgroundTintList(
-                ContextCompat.getColorStateList(requireContext(), buttonColorResId));
 
-        okButton.setOnClickListener(v -> {
-            if (onOkCallback != null) onOkCallback.run();
-            dismiss();
-        });
 
         return new AlertDialog.Builder(requireContext())
                 .setView(view)
