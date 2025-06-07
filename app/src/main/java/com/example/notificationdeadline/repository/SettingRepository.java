@@ -24,5 +24,9 @@ public class SettingRepository {
     public SettingEntity getSetting(String key){
         return db.settingDao().getSetting(key);
     }
+    public void  UpdateSetting(String key,String value){
+        db.settingDao().updateValueByKey(key,value);
+    }
+
 }
 

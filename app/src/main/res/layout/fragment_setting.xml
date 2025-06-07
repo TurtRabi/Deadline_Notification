@@ -50,14 +50,26 @@
                 android:textStyle="bold"
                 android:layout_marginBottom="4dp" />
 
-            <TextView
-                android:id="@+id/txt_description"
-                android:layout_width="wrap_content"
+            <ScrollView
+                android:id="@+id/scroll_description"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Tôi là Trần Lê Minh"
-                android:textSize="16sp"
-                android:textStyle="italic"
-                android:textColor="#666666" />
+                android:fillViewport="true"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:id="@+id/txt_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Tôi là Trần Lê Minh, một lập trình viên đam mê công nghệ..."
+                    android:textColor="#666666"
+                    android:textSize="16sp"
+                    android:textStyle="italic"
+                    android:textAlignment="center"
+                    android:padding="8dp" />
+            </ScrollView>
+
         </LinearLayout>
 
         <!-- Account Info -->
@@ -84,23 +96,38 @@
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:padding="16dp">
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:background="@android:color/white"
+                    android:elevation="2dp">
 
+                    <!-- Layout chứa thông tin người dùng -->
                     <LinearLayout
                         android:id="@+id/user_info_layout"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:layout_alignParentStart="true"
-                        android:layout_marginEnd="40dp">
+                        android:layout_toStartOf="@id/btn_edit_info"
+                        android:layout_alignParentTop="true"
+                        android:layout_marginEnd="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Thông tin liên lạc"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            android:textColor="#000000"
+                            android:layout_marginBottom="12dp" />
 
                         <TextView
                             android:id="@+id/txt_email"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Email: leminh@gmail.com"
-                            android:textSize="16sp" />
+                            android:textSize="16sp"
+                            android:textColor="#333333" />
 
                         <TextView
                             android:id="@+id/txt_phone"
@@ -108,30 +135,34 @@
                             android:layout_height="wrap_content"
                             android:text="Số điện thoại: 0123 456 789"
                             android:textSize="16sp"
-                            android:layout_marginTop="8dp"
-                            tools:ignore="InvalidId" />
+                            android:textColor="#333333"
+                            android:layout_marginTop="6dp" />
 
                         <TextView
-                            android:id="@+id/txt_birtday"
+                            android:id="@+id/txt_birthday"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Ngày sinh: 01/01/2000"
                             android:textSize="16sp"
-                            android:layout_marginTop="8dp" />
+                            android:textColor="#333333"
+                            android:layout_marginTop="6dp" />
                     </LinearLayout>
 
+                    <!-- Nút chỉnh sửa -->
                     <ImageView
                         android:id="@+id/btn_edit_info"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
                         android:layout_alignParentEnd="true"
-                        android:layout_marginTop="4dp"
+                        android:layout_alignParentTop="true"
                         android:src="@android:drawable/ic_menu_edit"
                         android:contentDescription="Sửa thông tin"
                         android:clickable="true"
-                        android:focusable="true" />
+                        android:focusable="true"
+                        android:padding="4dp" />
 
                 </RelativeLayout>
+
 
             </androidx.cardview.widget.CardView>
 

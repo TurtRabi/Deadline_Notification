@@ -5,6 +5,28 @@
     android:id="@+id/mobile_navigation"
     app:startDestination="@id/dashBoardFragment">
 
+    <action
+        android:id="@+id/action_to_editUser"
+        app:destination="@id/editUserFragment2"
+        app:enterAnim="@anim/slide_in_right"
+        app:exitAnim="@anim/slide_out_left"
+        app:popEnterAnim="@anim/slide_in_left"
+        app:popExitAnim="@anim/slide_out_right"/>
+    <action
+        android:id="@+id/action_to_add_deadline"
+        app:destination="@id/addDeadlineFragment2"
+        app:enterAnim="@anim/slide_in_right"
+        app:exitAnim="@anim/slide_out_left"
+        app:popEnterAnim="@anim/slide_in_left"
+        app:popExitAnim="@anim/slide_out_right"/>
+    <action
+        android:id="@+id/action_to_find_deadline"
+        app:destination="@id/searchDeadlineFragment"
+        app:enterAnim="@anim/slide_in_right"
+        app:exitAnim="@anim/slide_out_left"
+        app:popEnterAnim="@anim/slide_in_left"
+        app:popExitAnim="@anim/slide_out_right"/>
+
     <fragment
         android:id="@+id/dashBoardFragment"
         android:name="com.example.notificationdeadline.ui.DashBoard.DashBoardFragment"
@@ -21,7 +43,9 @@
         android:id="@+id/editUserFragment2"
         android:name="com.example.notificationdeadline.ui.EditUser.EditUserFragment"
         android:label="fragment_edit_user"
-        tools:layout="@layout/fragment_edit_user" />
+        tools:layout="@layout/fragment_edit_user" >
+
+    </fragment>
     <fragment
         android:id="@+id/addDeadlineFragment2"
         android:name="com.example.notificationdeadline.ui.AddDeadline.AddDeadlineFragment"

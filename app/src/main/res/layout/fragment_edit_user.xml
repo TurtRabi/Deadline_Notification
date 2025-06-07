@@ -1,36 +1,31 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.EditUser.EditUserFragment"
-    android:background="#F8FEEC"
-    android:fitsSystemWindows="true">
+    android:background="#F8FEEC">
 
-    <!-- Toolbar -->
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/update_toolbar"
-        android:layout_width="0dp"
-        android:layout_height="?attr/actionBarSize"
-        app:title="Chỉnh sửa thông tin"
-        android:background="#8DD06C"
-        android:gravity="center_vertical"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Nội dung chính -->
-    <ScrollView
-        android:id="@+id/scrollView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:fillViewport="true"
-        app:layout_constraintTop_toBottomOf="@id/update_toolbar"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
+        <!-- Toolbar -->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/update_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/ThemeOverlay.AppCompat.Light"
+            android:background="#8DD06C"
+            android:gravity="center"
+            android:elevation="4dp"
+            android:paddingTop="25dp"
+            android:paddingBottom="23dp"
+            app:title="Chỉnh sửa thông tin" />
+
+        <!-- Nội dung chính -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -38,7 +33,6 @@
             android:padding="20dp"
             android:gravity="center_horizontal">
 
-            <!-- Avatar -->
             <FrameLayout
                 android:layout_width="100dp"
                 android:layout_height="100dp"
@@ -64,9 +58,7 @@
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
                     android:focusable="true"/>
-
             </FrameLayout>
-
 
             <!-- Họ tên -->
             <com.google.android.material.textfield.TextInputLayout
@@ -74,7 +66,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:hint="Họ và tên">
-
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/editTextName"
                     android:layout_width="match_parent"
@@ -88,7 +79,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:hint="Email">
-
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/editTextEmail"
                     android:layout_width="match_parent"
@@ -103,7 +93,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:hint="Số điện thoại">
-
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/editTextPhone"
                     android:layout_width="match_parent"
@@ -119,7 +108,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:hint="Ngày sinh">
-
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/editTextBirthday"
                     android:layout_width="match_parent"
@@ -130,7 +118,24 @@
                     android:text="01/01/2000" />
             </com.google.android.material.textfield.TextInputLayout>
 
-
+            <!-- Mô tả -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/description_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="Mô tả">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editTextDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textMultiLine"
+                    android:lines="3"
+                    android:minLines="2"
+                    android:maxLines="5"
+                    android:gravity="top"
+                    android:text="Tôi là một lập trình viên đam mê công nghệ." />
+            </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Nút lưu -->
             <com.google.android.material.button.MaterialButton
@@ -142,5 +147,5 @@
                 android:backgroundTint="#8DD06C"
                 android:textColor="@android:color/white" />
         </LinearLayout>
-    </ScrollView>
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+</ScrollView>

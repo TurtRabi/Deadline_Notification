@@ -28,4 +28,14 @@ public class UserEntity {
         this.phone = phone;
         this.birdday = birdday;
     }
+
+    public UserEntity(int userId, String userName, String imageUrl, String description, String email, String phone, String birdday) {
+        this.userId = userId;
+        UserName = userName;
+        ImageUrl = imageUrl;
+        Description = description;
+        Email = email;
+        this.phone = phone;
+        this.birdday = birdday;
+    }
 }

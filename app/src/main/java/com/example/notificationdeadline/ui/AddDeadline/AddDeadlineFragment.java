@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.app.Dialog;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -30,6 +31,7 @@ import com.example.notificationdeadline.databinding.FragmentAddDeadlineBinding;
 import com.example.notificationdeadline.dto.Enum.StatusEnum;
 import com.example.notificationdeadline.dto.request.NotificationRequest;
 import com.example.notificationdeadline.notification.NotificationScheduler;
+import com.example.notificationdeadline.ui.dialog.CustomMessageDialog;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -174,16 +176,20 @@ public class AddDeadlineFragment extends Fragment {
     }
 
     private void showSuccessDialogWithAutoDismiss() {
-        AlertDialog dialog = new AlertDialog.Builder(requireContext())
-                .setTitle("Thành công 🎉")
-                .setMessage("Deadline đã được thêm thành công!")
-                .setCancelable(false)
-                .create();
 
-        dialog.show();
+        CustomMessageDialog dialog = CustomMessageDialog.newInstance(
+                "Thành công 🎉",
+                "Deadline đã được thêm thành công!",
+                R.drawable.ic_launcher_foreground,
+                R.color.successColor
+        );
+        dialog.show(getParentFragmentManager(),"successDialog");
+
+
 
         new Handler().postDelayed(() -> {
-            if (dialog.isShowing()) {
+            Dialog actualDialog = dialog.getDialog();
+            if (actualDialog.isShowing()) {
                 dialog.dismiss();
                 requireActivity().getSupportFragmentManager().popBackStack();
             }

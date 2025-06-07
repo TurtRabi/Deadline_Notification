@@ -89,11 +89,11 @@ public class DashBoardFragment extends Fragment {
         int id = item.getItemId();
         if(id ==R.id.action_search){
             NavController navController = Navigation.findNavController(requireView());
-            navController.navigate(R.id.searchDeadlineFragment);
+            navController.navigate(R.id.action_to_find_deadline);
             return true;
         }else if( id == R.id.action_add){
             NavController navController = Navigation.findNavController(requireView());
-            navController.navigate(R.id.addDeadlineFragment2);
+            navController.navigate(R.id.action_to_add_deadline);
 
             return true;
         }

@@ -11,16 +11,21 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
+import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.notificationdeadline.R;
+import com.example.notificationdeadline.data.entity.SettingEntity;
 import com.example.notificationdeadline.databinding.ActivityMainBinding;
+import com.example.notificationdeadline.dto.request.SettingRequest;
+import com.example.notificationdeadline.service.SettingService;
 import com.example.notificationdeadline.service.UserService;
 import com.google.android.material.badge.BadgeDrawable;
 
@@ -28,15 +33,34 @@ public class activity_main extends AppCompatActivity {
 
     private ActivityMainBinding binding;
     private UserService service;
+    private SettingService settingService;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
+        settingService = new SettingService(this);
+        if (settingService.getSetting("theme") == null) {
+            settingService.saveSetting(new SettingRequest("theme", "1"));
+        }
+        if (settingService.getSetting("notification") == null) {
+            settingService.saveSetting(new SettingRequest("notification", "0"));
+        }
+        String themeValue = settingService.getSetting("theme").value;
+        if ("1".equals(themeValue)) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        }
+
+
         setContentView(binding.getRoot());
         permisstion();
         service = new UserService(this);
         service.initDefaultUser();
+
+
+
 
         // Gắn fragment bằng code
         Fragment existingFragment = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_activity_main);
@@ -56,7 +80,22 @@ public class activity_main extends AppCompatActivity {
                     .findFragmentById(R.id.nav_host_fragment_activity_main);
             if (navHostFragment != null) {
                 NavController navController = navHostFragment.getNavController();
-                NavigationUI.setupWithNavController(binding.navView, navController);
+                binding.navView.setOnItemSelectedListener(item -> {
+                    int desId = item.getItemId();
+
+                    if(navController.getCurrentDestination()!=null &&navController.getCurrentDestination().getId() ==desId){
+                        return true;
+                    }
+                    NavOptions navOptions = new NavOptions.Builder()
+                            .setEnterAnim(R.anim.slide_in_right)    // Tạo file anim trong res/anim/
+                            .setExitAnim(R.anim.slide_out_left)
+                            .setPopEnterAnim(R.anim.slide_in_left)
+                            .setPopExitAnim(R.anim.slide_out_right)
+                            .build();
+                    navController.navigate(desId,null,navOptions);
+                    return true;
+                });
+                //NavigationUI.setupWithNavController(binding.navView, navController);
             }
         });
 
@@ -94,19 +133,23 @@ public class activity_main extends AppCompatActivity {
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.POST_NOTIFICATIONS},
                         1001);
+            }else{
+                settingService.updateSetting(new SettingRequest("notification", "1"));
             }
         }
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults, int deviceId) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults, deviceId);
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 1001) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this,"bạn đã cấp quyên cho ứng dụng",Toast.LENGTH_LONG).show();
+                settingService.updateSetting(new SettingRequest("notification", "1"));
+                Toast.makeText(this, "Bạn đã cấp quyền cho ứng dụng", Toast.LENGTH_LONG).show();
             } else {
-                finish();
+                Toast.makeText(this, "Bạn cần cấp quyền cho ứng dụng", Toast.LENGTH_LONG).show();
             }
         }
     }
+
 }

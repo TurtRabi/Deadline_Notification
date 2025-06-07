@@ -23,4 +23,16 @@ public class SettingService {
         settingRepository.saveSetting(entity.key,entity.value);
     }
 
+    public void updateSetting(SettingRequest request){
+        if(request.getKey()==null||request.getKey().isEmpty()){
+            throw  new IllegalArgumentException("Key cannot bey empty");
+        }
+        SettingEntity entity = SettingMapper.toEntity(request);
+
+        settingRepository.UpdateSetting(entity.key, entity.value);
+    }
+
+    public SettingEntity getSetting(String key){
+        return settingRepository.getSetting(key);
+    }
 }

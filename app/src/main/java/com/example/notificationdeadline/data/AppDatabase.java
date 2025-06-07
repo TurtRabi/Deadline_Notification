@@ -12,7 +12,7 @@ import com.example.notificationdeadline.data.entity.NotificationHistoryEntity;
 import com.example.notificationdeadline.data.entity.SettingEntity;
 import com.example.notificationdeadline.data.entity.UserEntity;
 
-@Database(entities = {NotificationEntity.class, SettingEntity.class, UserEntity.class, NotificationHistoryEntity.class},version = 5)
+@Database(entities = {NotificationEntity.class, SettingEntity.class, UserEntity.class, NotificationHistoryEntity.class},version = 6)
 public abstract class AppDatabase  extends RoomDatabase {
     public abstract NotificationDao notificationDao();
     public  abstract SettingDao settingDao();

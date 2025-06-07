@@ -14,5 +14,8 @@ public interface SettingDao {
 
     @Query("SELECT * FROM settings WHERE `key` = :key")
     SettingEntity getSetting(String key);
+    @Query("UPDATE settings SET value = :value WHERE `key` = :key")
+    void updateValueByKey(String key, String value);
+
 
 }

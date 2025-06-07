@@ -5,4 +5,23 @@
     <color name="bottom_nav_bg">#8DD06C</color>
     <color name="bottom_nav_accent">#FFFFFF</color>
     <color name="bottom_nav_inactive">#808080</color> <!-- xám -->
+    <color name="purple_500">#6200EE</color>
+
+    <color name="gray">#444444</color>
+
+    <!-- ✅ Success -->
+    <color name="successColor">#4CAF50</color> <!-- Green -->
+    <color name="successTextColor">#2E7D32</color>
+
+    <!-- ❌ Error -->
+    <color name="errorColor">#F44336</color> <!-- Red -->
+    <color name="errorTextColor">#B71C1C</color>
+
+    <!-- ⚠️ Warning -->
+    <color name="warningColor">#FF9800</color> <!-- Orange -->
+    <color name="warningTextColor">#E65100</color>
+
+    <!-- ℹ️ Info -->
+    <color name="infoColor">#2196F3</color> <!-- Blue -->
+    <color name="infoTextColor">#0D47A1</color>
 </resources>

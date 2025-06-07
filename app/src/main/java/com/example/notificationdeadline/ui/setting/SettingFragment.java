@@ -1,9 +1,19 @@
 package com.example.notificationdeadline.ui.setting;
 
+
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,6 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,20 +31,29 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.room.Room;
+
+import android.Manifest;
 
 import com.bumptech.glide.Glide;
 import com.example.notificationdeadline.R;
+import com.example.notificationdeadline.data.AppDatabase;
+import com.example.notificationdeadline.data.entity.SettingEntity;
 import com.example.notificationdeadline.data.entity.UserEntity;
 import com.example.notificationdeadline.databinding.FragmentSettingBinding;
+import com.example.notificationdeadline.dto.request.SettingRequest;
 import com.example.notificationdeadline.dto.request.UserRequest;
 import com.example.notificationdeadline.ui.DashBoard.DashBoardFragment;
 import com.example.notificationdeadline.ui.EditUser.EditUserFragment;
+import com.example.notificationdeadline.ui.dialog.CustomMessageDialog;
 
+import java.io.File;
 import java.util.List;
 
 public class SettingFragment extends Fragment {
@@ -52,7 +72,7 @@ public class SettingFragment extends Fragment {
         binding = FragmentSettingBinding.inflate(inflater,container,false);
         Toolbar toolbar = binding.settingToolbar;
         ((AppCompatActivity) requireActivity()).setSupportActionBar(toolbar);
-        ((AppCompatActivity) requireActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //((AppCompatActivity) requireActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         setHasOptionsMenu(true);
         return binding.getRoot();
@@ -73,28 +93,131 @@ public class SettingFragment extends Fragment {
                     .into(binding.imageButton);
             binding.txtEmail.setText(user.Email);
             binding.txtPhone.setText(user.phone);
-            binding.txtBirtday.setText(user.birdday);
-            binding.cardUserInfo.setOnClickListener(v -> {
-                Bundle bundle = new Bundle();
-                bundle.putParcelable("user",new UserRequest(user.userId,user.UserName,
-                        user.ImageUrl,user.Description,user.Email,user.phone,user.birdday));
+            binding.txtBirthday.setText(user.birdday);
 
-                NavController navController = Navigation.findNavController(requireView());
-                navController.navigate(R.id.editUserFragment2,bundle);
-//                EditUserFragment fragment = new EditUserFragment();
-//                fragment.setArguments(bundle);
-//
-//                requireActivity().getSupportFragmentManager()
-//                        .beginTransaction()
-//                        .replace(R.id.nav_host_fragment_activity_main,fragment)
-//                        .addToBackStack(null)
-//                        .commit();
-            });
+            SettingEntity theme =mViewModel.getSeting("theme");
+            if(theme!=null && theme.value.equals("0")){
+                binding.switchDarkMode.setChecked(true);
+            }else{
+                binding.switchDarkMode.setChecked(false);
+            }
+
+            SettingEntity notification =mViewModel.getSeting("notification");
+            if(notification!=null && notification.value.equals("1")){
+                binding.switchNotification.setChecked(true);
+            }else{
+                binding.switchNotification.setChecked(false);
+            }
 
 
+
+
+            View.OnClickListener listener = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(v.getId() == R.id.card_user_info){
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelable("user",new UserRequest(user.userId,user.UserName,
+                                user.ImageUrl,user.Description,user.Email,user.phone,user.birdday));
+
+                        NavController navController = Navigation.findNavController(requireView());
+                        navController.navigate(R.id.action_to_editUser,bundle);
+                    }else if(v.getId() == R.id.switchDarkMode){
+                        boolean isChecked = ((Switch)v).isChecked();
+                        if(isChecked){
+                            mViewModel.UpdateSetting("theme","0");
+
+                        }else {
+                            mViewModel.UpdateSetting("theme","1");
+                        }
+
+                        requireActivity().recreate();
+                    }
+                    else if (v.getId() == R.id.switchNotification) {
+                        boolean isChecked = ((Switch) v).isChecked();
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            if (isChecked) {
+                                if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS)
+                                        != PackageManager.PERMISSION_GRANTED) {
+                                    notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+
+                                } else {
+                                    enableNotifications();
+                                }
+                            } else {
+                                Toast.makeText(requireContext(), "Bạn có thể tắt thông báo trong cài đặt ứng dụng", Toast.LENGTH_LONG).show();
+
+                                Intent intent = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                intent.putExtra(Settings.EXTRA_APP_PACKAGE, requireContext().getPackageName());
+                                mViewModel.UpdateSetting("notification","0");
+
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                    intent.putExtra(Settings.EXTRA_CHANNEL_ID, requireContext().getApplicationInfo().uid);
+                                }
+
+                                startActivity(intent);
+
+                                disableNotifications();
+                            }
+                        } else {
+                            if (isChecked) {
+                                enableNotifications();
+
+                            } else {
+                                disableNotifications();
+                            }
+                        }
+
+                    }
+                    else if (v.getId() ==R.id.btnClearCache) {
+                        AppDatabase db = Room.databaseBuilder(
+                                requireContext(),
+                                AppDatabase.class,
+                                "notification_db"
+                        ).build();
+
+                        new Thread(() -> {
+                            db.clearAllTables();
+
+                            requireActivity().runOnUiThread(() -> {
+                                Toast.makeText(requireContext(), "Đã xoá toàn bộ dữ liệu", Toast.LENGTH_SHORT).show();
+                                CustomMessageDialog dialog = CustomMessageDialog.newInstance(
+                                        "Thành công",
+                                        "Bạn đã xóa thành công!",
+                                        R.drawable.ic_launcher_foreground,
+                                        R.color.successColor
+                                );
+                                dialog.show(getParentFragmentManager(),"successDialog");
+
+
+                                new android.os.Handler().postDelayed(() -> {
+                                    requireActivity().finishAffinity();
+                                }, 2000);
+                            });
+                        }).start();
+                    }
+                }
+            };
+
+            binding.cardUserInfo.setOnClickListener(listener);
+            binding.switchNotification.setOnClickListener(listener);
+            binding.switchDarkMode.setOnClickListener(listener);
+            binding.btnClearCache.setOnClickListener(listener);
         }
+    }
 
 
+
+
+
+    private void enableNotifications() {
+        Toast.makeText(getContext(), "Thông báo đã được bật", Toast.LENGTH_SHORT).show();
+    }
+
+    private void disableNotifications() {
+        Toast.makeText(getContext(), "Thông báo đã được tắt", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -117,23 +240,34 @@ public class SettingFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    public void expand(View view) {
-        view.setVisibility(View.VISIBLE);
-        view.setAlpha(0f);
-        view.setScaleY(0f);
-        view.animate()
-                .alpha(1f)
-                .scaleY(1f)
-                .setDuration(300)
-                .setListener(null);
-    }
 
-    public void collapse(View view) {
-        view.animate()
-                .alpha(0f)
-                .scaleY(0f)
-                .setDuration(300)
-                .withEndAction(() -> view.setVisibility(View.GONE));
+
+
+    private final ActivityResultLauncher<String> notificationPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    mViewModel.UpdateSetting("notification", "1");
+                    enableNotifications();
+                } else {
+                    if (isNotificationPermissionPermanentlyDenied()) {
+                        Toast.makeText(requireContext(), "Bạn đã từ chối vĩnh viễn quyền thông báo.\nHãy bật lại trong phần Cài đặt ứng dụng.", Toast.LENGTH_LONG).show();
+
+                        // Mở màn hình Cài đặt ứng dụng
+                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        Uri uri = Uri.fromParts("package", requireContext().getPackageName(), null);
+                        intent.setData(uri);
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(requireContext(), "Từ chối quyền thông báo", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+
+
+
+    private boolean isNotificationPermissionPermanentlyDenied() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                !shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS);
     }
 
 }
