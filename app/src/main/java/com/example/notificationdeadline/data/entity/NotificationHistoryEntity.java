@@ -1,6 +1,8 @@
 package com.example.notificationdeadline.data.entity;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
@@ -9,17 +11,29 @@ import androidx.room.PrimaryKey;
 public class NotificationHistoryEntity {
     @PrimaryKey(autoGenerate = true)
     @NonNull
-    public int id;
+    private int id;
 
-    public String title;
-    public String message;
-    public long sentTimeMillis;
-    public boolean isSuccess;
-    public boolean isRead;
-    public String urlImage;
+    @NonNull
+    @ColumnInfo(defaultValue = "")
+    private String title = "";
 
+    @NonNull
+    @ColumnInfo(defaultValue = "")
+    private String message = "";
 
-    public NotificationHistoryEntity(String title, String message, long sentTimeMillis, boolean isSuccess, boolean isRead, String urlImage) {
+    @ColumnInfo(name = "sent_time_millis")
+    private long sentTimeMillis;
+
+    @ColumnInfo(defaultValue = "0")
+    private boolean isSuccess;
+
+    @ColumnInfo(defaultValue = "0")
+    private boolean isRead;
+
+    @Nullable
+    private String urlImage;
+
+    public NotificationHistoryEntity(@NonNull String title, @NonNull String message, long sentTimeMillis, boolean isSuccess, boolean isRead, @Nullable String urlImage) {
         this.title = title;
         this.message = message;
         this.sentTimeMillis = sentTimeMillis;
@@ -29,12 +43,35 @@ public class NotificationHistoryEntity {
     }
 
     @Ignore
-    public NotificationHistoryEntity(String title, String message, long sentTimeMillis, boolean isSuccess) {
+    public NotificationHistoryEntity(@NonNull String title, @NonNull String message, long sentTimeMillis, boolean isSuccess) {
         this(title, message, sentTimeMillis, isSuccess, false, null);
     }
 
-
     @Ignore
-    public NotificationHistoryEntity() {
-    }
+    public NotificationHistoryEntity() {}
+
+    // Getter & Setter
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+
+    @NonNull
+    public String getTitle() { return title; }
+    public void setTitle(@NonNull String title) { this.title = title; }
+
+    @NonNull
+    public String getMessage() { return message; }
+    public void setMessage(@NonNull String message) { this.message = message; }
+
+    public long getSentTimeMillis() { return sentTimeMillis; }
+    public void setSentTimeMillis(long sentTimeMillis) { this.sentTimeMillis = sentTimeMillis; }
+
+    public boolean isSuccess() { return isSuccess; }
+    public void setSuccess(boolean success) { isSuccess = success; }
+
+    public boolean isRead() { return isRead; }
+    public void setRead(boolean read) { isRead = read; }
+
+    @Nullable
+    public String getUrlImage() { return urlImage; }
+    public void setUrlImage(@Nullable String urlImage) { this.urlImage = urlImage; }
 }

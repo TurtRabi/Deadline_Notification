@@ -17,9 +17,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.NavOptions;
-import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
-import androidx.navigation.ui.NavigationUI;
 
 import com.example.notificationdeadline.R;
 import com.example.notificationdeadline.data.entity.SettingEntity;
@@ -34,33 +32,40 @@ public class activity_main extends AppCompatActivity {
     private ActivityMainBinding binding;
     private UserService service;
     private SettingService settingService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
-        settingService = new SettingService(this);
-        if (settingService.getSetting("theme") == null) {
-            settingService.saveSetting(new SettingRequest("theme", "1"));
-        }
-        if (settingService.getSetting("notification") == null) {
-            settingService.saveSetting(new SettingRequest("notification", "0"));
-        }
-        String themeValue = settingService.getSetting("theme").value;
-        if ("1".equals(themeValue)) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-        }
-
-
         setContentView(binding.getRoot());
+
+        settingService = new SettingService(this);
+
+
+        settingService.getSetting("theme").observe(this,theme -> {
+            if(theme ==null){
+                settingService.saveSetting(new SettingRequest("theme", "1"));
+            }
+        });
+        settingService.getSetting("notification").observe(this,notification ->{
+            if(notification==null){
+                settingService.saveSetting(new SettingRequest("notification", "0"));
+            }
+        } );
+
+        settingService.getSetting("theme").observe(this,settingEntity ->{
+            String themeValue =(settingEntity !=null)? settingEntity.getValue():"1";
+            if ("1".equals(themeValue)) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            }
+        });
+
         permisstion();
         service = new UserService(this);
         service.initDefaultUser();
-
-
-
 
         // Gắn fragment bằng code
         Fragment existingFragment = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_activity_main);
@@ -70,9 +75,7 @@ public class activity_main extends AppCompatActivity {
                     .replace(R.id.nav_host_fragment_activity_main, navHostFragment)
                     .setPrimaryNavigationFragment(navHostFragment)
                     .commit();
-
         }
-
 
         // Dùng navController sau khi fragment đã gắn
         binding.getRoot().post(() -> {
@@ -83,11 +86,11 @@ public class activity_main extends AppCompatActivity {
                 binding.navView.setOnItemSelectedListener(item -> {
                     int desId = item.getItemId();
 
-                    if(navController.getCurrentDestination()!=null &&navController.getCurrentDestination().getId() ==desId){
+                    if(navController.getCurrentDestination()!=null && navController.getCurrentDestination().getId() ==desId){
                         return true;
                     }
                     NavOptions navOptions = new NavOptions.Builder()
-                            .setEnterAnim(R.anim.slide_in_right)    // Tạo file anim trong res/anim/
+                            .setEnterAnim(R.anim.slide_in_right)
                             .setExitAnim(R.anim.slide_out_left)
                             .setPopEnterAnim(R.anim.slide_in_left)
                             .setPopExitAnim(R.anim.slide_out_right)
@@ -95,7 +98,6 @@ public class activity_main extends AppCompatActivity {
                     navController.navigate(desId,null,navOptions);
                     return true;
                 });
-                //NavigationUI.setupWithNavController(binding.navView, navController);
             }
         });
 
@@ -106,7 +108,6 @@ public class activity_main extends AppCompatActivity {
             rootView.getWindowVisibleDisplayFrame(r);
             int screenHeight = rootView.getRootView().getHeight();
             int keypadHeight = screenHeight - r.bottom;
-
             if (keypadHeight > screenHeight * 0.15) {
                 binding.navView.setVisibility(View.GONE);
             } else {
@@ -151,5 +152,4 @@ public class activity_main extends AppCompatActivity {
             }
         }
     }
-
 }

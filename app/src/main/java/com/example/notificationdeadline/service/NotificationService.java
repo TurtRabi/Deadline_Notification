@@ -19,20 +19,20 @@ public class NotificationService {
         this.notificationRepository = new NotificationRepository(context);
     }
 
-    public void addNotification(NotificationRequest request){
+    public void addNotification(NotificationRequest request) {
         NotificationEntity entity = NotificationMapper.toEntity(request);
         notificationRepository.insertNotification(entity);
     }
 
-    public void removeNotification(NotificationEntity notification){
+    public void removeNotification(NotificationEntity notification) {
         notificationRepository.deleteNotification(notification);
     }
 
-    public List<NotificationEntity> fectAllNotifications(){
+    public LiveData<List<NotificationEntity>> fetchAllNotifications() {
         return notificationRepository.getAllNotifications();
     }
 
-    public List<NotificationEntity> featAllNotifiactionsByDay(){
+    public LiveData<List<NotificationEntity>> fetchAllNotificationsByDay() {
         Calendar calendar = Calendar.getInstance();
 
         // Set to 00:00:00
@@ -48,20 +48,47 @@ public class NotificationService {
         calendar.set(Calendar.SECOND, 59);
         calendar.set(Calendar.MILLISECOND, 999);
         long endTime = calendar.getTimeInMillis();
-        return  notificationRepository.getAllNotification(startTime,endTime);
+
+        return notificationRepository.getAllNotification(startTime, endTime);
+    }
+    public LiveData<List<NotificationEntity>> fetchAllNotificationsByDay(long startTime, long endTime) {
+        return notificationRepository.getAllNotification(startTime, endTime);
     }
 
-    public List<NotificationEntity> featAllNotificationByStatus(int status){
+
+    public LiveData<List<NotificationEntity>> fetchAllNotificationsByStatus(int status) {
         return notificationRepository.getAllByStatus(status);
     }
-    public List<NotificationEntity> featAllNotificationByPriority(int priority){
+
+    public LiveData<List<NotificationEntity>> fetchAllNotificationsByPriority(int priority) {
         return notificationRepository.getAllByPriority(priority);
     }
 
-    public void updateSuccessDeadline(int id){
+    public void updateSuccessDeadline(int id) {
         notificationRepository.updateSuccessDeadline(id);
     }
-    public void updateStatus(int status,int id){
-        notificationRepository.updateStatus(status,id);
+
+    public void updateStatus(int status, int id) {
+        notificationRepository.updateStatus(status, id);
+    }
+
+    public List<NotificationEntity> fetchAllNotificationsByDay1() {
+        Calendar calendar = Calendar.getInstance();
+
+        // Set to 00:00:00
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        long startTime = calendar.getTimeInMillis();
+
+        // Set to 23:59:59
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 59);
+        calendar.set(Calendar.SECOND, 59);
+        calendar.set(Calendar.MILLISECOND, 999);
+        long endTime = calendar.getTimeInMillis();
+
+        return notificationRepository.getAllNotification1(startTime, endTime);
     }
 }

@@ -24,4 +24,15 @@
     <!-- ℹ️ Info -->
     <color name="infoColor">#2196F3</color> <!-- Blue -->
     <color name="infoTextColor">#0D47A1</color>
+    <color name="colorPrimary">#4CAF50</color>
+
+    <color name="colorSurface">#F9FFF4</color>
+    <color name="tab_selected">#66BB6A</color>      <!-- Màu hồng hoặc bạn đổi theo ý -->
+    <color name="tab_unselected">#0E7116</color>
+
+    <color name="color_upcoming">#D2F1FD</color>
+    <color name="color_near_deadline">#FFF3CD</color>
+    <color name="color_deadline">#FFD6D6</color>
+    <color name="color_overdeadline">#F44336</color>
+    r>
 </resources>

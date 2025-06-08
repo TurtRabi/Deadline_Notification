@@ -1,73 +1,69 @@
 package com.example.notificationdeadline.dto.response;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 public class UserResponse {
+    @NonNull
     private String userName;
+    @Nullable
     private String imageUrl;
+    @Nullable
     private String description;
-    public String Email;
-    public String phone;
-    public String birdday;
+    @NonNull
+    private String email;
+    @Nullable
+    private String phone;
+    @Nullable
+    private String birthday;
 
-    public String getEmail() {
-        return Email;
-    }
+    public UserResponse() {}
 
-    public UserResponse(String userName, String imageUrl, String description, String email, String phone, String birdday) {
+    public UserResponse(@NonNull String userName, @Nullable String imageUrl, @Nullable String description,
+                        @NonNull String email, @Nullable String phone, @Nullable String birthday) {
         this.userName = userName;
         this.imageUrl = imageUrl;
         this.description = description;
-        Email = email;
+        this.email = email;
         this.phone = phone;
-        this.birdday = birdday;
+        this.birthday = birthday;
     }
 
-    public void setEmail(String email) {
-        Email = email;
-    }
+    // Getter & Setter
+    @NonNull
+    public String getUserName() { return userName; }
+    public void setUserName(@NonNull String userName) { this.userName = userName; }
 
-    public String getPhone() {
-        return phone;
-    }
+    @Nullable
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(@Nullable String imageUrl) { this.imageUrl = imageUrl; }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
+    @Nullable
+    public String getDescription() { return description; }
+    public void setDescription(@Nullable String description) { this.description = description; }
 
-    public String getBirdday() {
-        return birdday;
-    }
+    @NonNull
+    public String getEmail() { return email; }
+    public void setEmail(@NonNull String email) { this.email = email; }
 
-    public void setBirdday(String birdday) {
-        this.birdday = birdday;
-    }
+    @Nullable
+    public String getPhone() { return phone; }
+    public void setPhone(@Nullable String phone) { this.phone = phone; }
 
-    public String getUserName() {
-        return userName;
-    }
+    @Nullable
+    public String getBirthday() { return birthday; }
+    public void setBirthday(@Nullable String birthday) { this.birthday = birthday; }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
-    public UserResponse(String userName, String imageUrl ,String description) {
-        this.userName = userName;
-        this.imageUrl = imageUrl;
-        this.description= description;
+    // Optional: Debug
+    @Override
+    public String toString() {
+        return "UserResponse{" +
+                "userName='" + userName + '\'' +
+                ", imageUrl='" + imageUrl + '\'' +
+                ", description='" + description + '\'' +
+                ", email='" + email + '\'' +
+                ", phone='" + phone + '\'' +
+                ", birthday='" + birthday + '\'' +
+                '}';
     }
 }

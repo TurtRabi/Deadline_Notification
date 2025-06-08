@@ -1,12 +1,13 @@
 package com.example.notificationdeadline.Adapter;
 
-import android.graphics.Color;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.notificationdeadline.R;
@@ -17,7 +18,7 @@ public class FilterButtonAdapter extends RecyclerView.Adapter<FilterButtonAdapte
 
     private List<String> filterOptions;
     private int selectedPosition = 0;
-    private OnFilterClickListener listener;
+    private final OnFilterClickListener listener;
 
     public interface OnFilterClickListener {
         void onFilterClick(String filter);
@@ -41,6 +42,12 @@ public class FilterButtonAdapter extends RecyclerView.Adapter<FilterButtonAdapte
         }
     }
 
+    public void setFilters(List<String> filters) {
+        this.filterOptions = filters;
+        selectedPosition = 0;
+        notifyDataSetChanged();
+    }
+
     @NonNull
     @Override
     public FilterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -54,25 +61,22 @@ public class FilterButtonAdapter extends RecyclerView.Adapter<FilterButtonAdapte
         String filter = filterOptions.get(position);
         holder.button.setText(filter);
 
-        // Highlight nút được chọn
-        if (position == selectedPosition) {
-            holder.button.setBackgroundColor(Color.GREEN);
-            holder.button.setTextColor(Color.WHITE);
-        } else {
-            holder.button.setBackgroundColor(Color.LTGRAY);
-            holder.button.setTextColor(Color.BLACK);
-        }
+        Context context = holder.itemView.getContext();
+        boolean isSelected = (position == selectedPosition);
+
+        // Đổi màu chữ và hiện line dưới nếu được chọn
+        holder.button.setTextColor(ContextCompat.getColor(context, isSelected ? R.color.tab_selected : R.color.tab_unselected));
+        holder.lineSelected.setVisibility(isSelected ? View.VISIBLE : View.INVISIBLE);
 
         holder.button.setOnClickListener(v -> {
             int adapterPosition = holder.getAdapterPosition();
             if (adapterPosition == RecyclerView.NO_POSITION) return;
-
             if (selectedPosition != adapterPosition) {
                 int oldPosition = selectedPosition;
                 selectedPosition = adapterPosition;
                 notifyItemChanged(oldPosition);
                 notifyItemChanged(selectedPosition);
-                listener.onFilterClick(filterOptions.get(adapterPosition));
+                if (listener != null) listener.onFilterClick(filterOptions.get(adapterPosition));
             }
         });
     }
@@ -84,10 +88,11 @@ public class FilterButtonAdapter extends RecyclerView.Adapter<FilterButtonAdapte
 
     public static class FilterViewHolder extends RecyclerView.ViewHolder {
         Button button;
-
+        View lineSelected;
         public FilterViewHolder(@NonNull View itemView) {
             super(itemView);
             button = itemView.findViewById(R.id.btn_filter);
+            lineSelected = itemView.findViewById(R.id.line_selected);
         }
     }
 }

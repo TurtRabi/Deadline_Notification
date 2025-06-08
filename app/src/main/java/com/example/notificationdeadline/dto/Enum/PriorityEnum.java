@@ -35,6 +35,12 @@ public enum PriorityEnum {
                 return priority;
             }
         }
-        return NORMAL; // mặc định nếu không khớp
+        return NORMAL;
+    }
+
+
+    @Override
+    public String toString() {
+        return label;
     }
 }

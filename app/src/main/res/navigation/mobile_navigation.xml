@@ -27,6 +27,14 @@
         app:popEnterAnim="@anim/slide_in_left"
         app:popExitAnim="@anim/slide_out_right"/>
 
+    <action
+        android:id="@+id/action_to_deadline_notification_detail"
+        app:destination="@id/deadlineNotificationDetail"
+        app:enterAnim="@anim/slide_in_right"
+        app:exitAnim="@anim/slide_out_left"
+        app:popEnterAnim="@anim/slide_in_left"
+        app:popExitAnim="@anim/slide_out_right"/>
+
     <fragment
         android:id="@+id/dashBoardFragment"
         android:name="com.example.notificationdeadline.ui.DashBoard.DashBoardFragment"
@@ -56,4 +64,9 @@
         android:name="com.example.notificationdeadline.ui.SearchDeadline.SearchDeadlineFragment"
         android:label="fragment_search_deadline"
         tools:layout="@layout/fragment_search_deadline" />
+    <fragment
+        android:id="@+id/deadlineNotificationDetail"
+        android:name="com.example.notificationdeadline.ui.NotificationDeadlineInfor.DeadlineNotificationDetail"
+        android:label="fragment_deadline_notification_detail"
+        tools:layout="@layout/fragment_deadline_notification_detail" />
 </navigation>

@@ -10,7 +10,7 @@ import androidx.work.WorkManager;
 import java.util.concurrent.TimeUnit;
 
 public class scheduleDailyGetAllData {
-    public static void schedulerDailyGetDataEveryZeroTime(Context context){
+    public static void scheduleDailyGetDataAtMidnight(Context context){
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);

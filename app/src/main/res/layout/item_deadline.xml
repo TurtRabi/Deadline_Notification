@@ -1,57 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:padding="10dp"
-    android:gravity="center"
+    android:gravity="center_vertical"
     android:layout_margin="10dp">
 
+    <!-- Icon trạng thái hoặc priority -->
     <ImageView
         android:id="@+id/txt_image"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        tools:src="@drawable/share_24px" />
+        android:contentDescription="@string/setting"
+        android:scaleType="centerInside"
+        android:src="@drawable/baseline_filter_list_24" /> <!-- Thay icon phù hợp -->
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp"
         android:layout_weight="1"
         android:orientation="vertical">
 
+        <!-- Tiêu đề -->
         <TextView
             android:id="@+id/txt_l_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Title"
-            android:textAlignment="center"
-            android:textSize="25dp"
-            android:textStyle="bold" />
+            android:text="Tên tiến trình"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black" />
 
+        <!-- Mô tả tiến trình -->
         <TextView
             android:id="@+id/txt_l_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="15dp"
-            android:text="Description"
-            android:textSize="10dp" />
+            android:paddingTop="4dp"
+            android:text="Mô tả tiến trình hoặc trạng thái chi tiết"
+            android:textSize="14sp"
+            android:textColor="#666" />
 
+        <!-- Thanh tiến trình -->
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="8dp"
+            android:layout_marginTop="8dp"
+            android:progress="20"
+            android:max="100"
+            android:progressTint="@color/colorPrimary" />
+
+        <!-- Text hiển thị thời gian hoặc % hoàn thành -->
         <TextView
             android:id="@+id/txt_l_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:text="time"
-            android:textSize="10dp" />
+            android:paddingTop="4dp"
+            android:text="50% hoàn thành"
+            android:textSize="12sp"
+            android:textColor="#999" />
 
     </LinearLayout>
 
-    <CheckBox
-        android:id="@+id/checkBox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-         />
 </LinearLayout>

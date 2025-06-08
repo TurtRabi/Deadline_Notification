@@ -13,7 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.notificationdeadline.R;
-import com.example.notificationdeadline.data.entity.NotificationEntity;
 import com.example.notificationdeadline.data.entity.NotificationHistoryEntity;
 import com.example.notificationdeadline.dto.Enum.NotificationHistoryEnum;
 
@@ -25,24 +24,24 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 public class NotificationHistoryAdapter extends RecyclerView.Adapter<NotificationHistoryAdapter.NotificationHistoryViewHoder> {
-    List<NotificationHistoryEntity> notificationHistoryEntityList = new ArrayList<>();
-    private Context context;
-    private OnNotificationHistoryItemOnclickListerner listerner;
-    public NotificationHistoryAdapter(Context context,List<NotificationHistoryEntity> notificationHistoryEntityList,OnNotificationHistoryItemOnclickListerner listerner) {
-        this.context =context;
-        this.notificationHistoryEntityList = notificationHistoryEntityList;
-        this.listerner = listerner;
+    private final List<NotificationHistoryEntity> notificationHistoryEntityList = new ArrayList<>();
+    private final Context context;
+    private final OnNotificationHistoryItemOnclickListerner listener;
+
+    // Chỉ truyền context và callback, không truyền list!
+    public NotificationHistoryAdapter(Context context, OnNotificationHistoryItemOnclickListerner listener) {
+        this.context = context;
+        this.listener = listener;
     }
 
-    public interface OnNotificationHistoryItemOnclickListerner{
-        void onItemClick(NotificationHistoryEntity notification,int position,View view);
+    public interface OnNotificationHistoryItemOnclickListerner {
+        void onItemClick(NotificationHistoryEntity notification, int position, View view);
     }
 
-    public NotificationHistoryAdapter() {
-    }
-
-    public  void setData(List<NotificationHistoryEntity>list){
-        this.notificationHistoryEntityList = list;
+    // Update list data qua method này!
+    public void setData(List<NotificationHistoryEntity> list) {
+        notificationHistoryEntityList.clear();
+        if (list != null) notificationHistoryEntityList.addAll(list);
         notifyDataSetChanged();
     }
 
@@ -50,49 +49,37 @@ public class NotificationHistoryAdapter extends RecyclerView.Adapter<Notificatio
     @Override
     public NotificationHistoryViewHoder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_notification_history,parent,false);
+                .inflate(R.layout.item_notification_history, parent, false);
         return new NotificationHistoryViewHoder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull NotificationHistoryViewHoder holder, int position) {
         NotificationHistoryEntity entity = notificationHistoryEntityList.get(position);
-        holder.title.setText(entity.title);
-        holder.description.setText(entity.message);
+        holder.title.setText(entity.getTitle());
+        holder.description.setText(entity.getMessage());
+
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
         sdf.setTimeZone(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
-        String timeFormatted = sdf.format(new Date(entity.sentTimeMillis));
+        String timeFormatted = sdf.format(new Date(entity.getSentTimeMillis()));
         holder.time.setText(timeFormatted);
 
-        if(entity.urlImage != null) {
+        // Hiển thị icon enum nếu urlImage là số, ngược lại để default
+        if (entity.getUrlImage() != null) {
             try {
-                int pos = Integer.parseInt(entity.urlImage);
-
-                // Tìm enum theo id
-                NotificationHistoryEnum historyEnum = null;
-                for (NotificationHistoryEnum item : NotificationHistoryEnum.values()) {
-                    if (item.getId() == pos) {
-                        historyEnum = item;
-                        break;
-                    }
-                }
-
-                if(historyEnum != null) {
+                int pos = Integer.parseInt(entity.getUrlImage());
+                NotificationHistoryEnum historyEnum = NotificationHistoryEnum.fromId(pos);
+                if (historyEnum != null) {
                     holder.imageView.setImageResource(historyEnum.getIconResId());
                 } else {
-
                     holder.imageView.setImageResource(R.drawable.ic_launcher_foreground);
                 }
-
             } catch (NumberFormatException e) {
-                e.printStackTrace();
-
                 holder.imageView.setImageResource(R.drawable.ic_launcher_foreground);
             }
         }
 
-
-        if (!entity.isRead) {
+        if (!entity.isRead()) {
             holder.imageView1.setVisibility(View.VISIBLE);
             Animation blinkAnim = AnimationUtils.loadAnimation(context, R.anim.blink);
             holder.imageView1.startAnimation(blinkAnim);
@@ -100,16 +87,13 @@ public class NotificationHistoryAdapter extends RecyclerView.Adapter<Notificatio
             holder.imageView1.clearAnimation();
             holder.imageView1.setVisibility(View.GONE);
             holder.itemView.setBackgroundColor(android.graphics.Color.parseColor("#F0F0F0F0"));
-
         }
 
         holder.itemView.setOnClickListener(v -> {
-            if(listerner!=null){
-                listerner.onItemClick(entity,position,holder.itemView);
+            if (listener != null) {
+                listener.onItemClick(entity, position, holder.itemView);
             }
         });
-
-
     }
 
     @Override
@@ -117,10 +101,10 @@ public class NotificationHistoryAdapter extends RecyclerView.Adapter<Notificatio
         return notificationHistoryEntityList.size();
     }
 
-    public static class NotificationHistoryViewHoder extends RecyclerView.ViewHolder{
+    public static class NotificationHistoryViewHoder extends RecyclerView.ViewHolder {
+        TextView title, description, time;
+        ImageView imageView, imageView1;
 
-        TextView title,description,time;
-        ImageView imageView,imageView1;
         public NotificationHistoryViewHoder(@NonNull View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.txt_notification_history_title);

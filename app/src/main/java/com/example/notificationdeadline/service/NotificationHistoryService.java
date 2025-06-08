@@ -2,6 +2,8 @@ package com.example.notificationdeadline.service;
 
 import android.content.Context;
 
+import androidx.lifecycle.LiveData;
+
 import com.example.notificationdeadline.data.entity.NotificationHistoryEntity;
 import com.example.notificationdeadline.repository.NotificationHistoryRepository;
 
@@ -15,8 +17,8 @@ public class NotificationHistoryService {
         repository = new NotificationHistoryRepository(context);
     }
 
-
-    public long logNotification(String title, String message, boolean isSuccess, String urlImage) {
+    // Lưu lịch sử notification (chạy async)
+    public void logNotification(String title, String message, boolean isSuccess, String urlImage) {
         NotificationHistoryEntity notification = new NotificationHistoryEntity(
                 title,
                 message,
@@ -25,46 +27,47 @@ public class NotificationHistoryService {
                 false,
                 urlImage
         );
-        return repository.insert(notification);
+        repository.insert(notification);
     }
 
-    public List<NotificationHistoryEntity> getAllHistory() {
+    public LiveData<List<NotificationHistoryEntity>> getAllHistory() {
         return repository.getAllNotifications();
     }
-
 
     public void markAsRead(int id) {
         repository.updateIsRead(id, true);
     }
 
-
     public void markAsUnread(int id) {
         repository.updateIsRead(id, false);
     }
 
-
-    public int getUnreadCount() {
+    public LiveData<Integer> getUnreadCount() {
         return repository.countUnread();
     }
-    public List<NotificationHistoryEntity> getTodayNotifications() {
+
+    public LiveData<List<NotificationHistoryEntity>> getTodayNotifications() {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
         long startOfDay = calendar.getTimeInMillis();
 
         calendar.set(Calendar.HOUR_OF_DAY, 23);
         calendar.set(Calendar.MINUTE, 59);
         calendar.set(Calendar.SECOND, 59);
+        calendar.set(Calendar.MILLISECOND, 999);
         long endOfDay = calendar.getTimeInMillis();
 
         return repository.getNotificationsByDay(startOfDay, endOfDay);
     }
 
-    public int updateNotification(NotificationHistoryEntity notification) {
-        return repository.update(notification);
+    public void updateNotification(NotificationHistoryEntity notification) {
+        repository.update(notification);
     }
-    public long insertNotificationHistory(NotificationHistoryEntity notificationHistory){
-        return repository.insert(notificationHistory);
+
+    public void insertNotificationHistory(NotificationHistoryEntity notificationHistory) {
+        repository.insert(notificationHistory);
     }
 }

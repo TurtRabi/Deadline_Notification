@@ -8,7 +8,7 @@ import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
 import com.example.notificationdeadline.notification.DeadlineWorker;
-import com.example.notificationdeadline.notification.sheduleDailyEveryMoring;
+import com.example.notificationdeadline.notification.scheduleDailyEveryMorning;
 
 import java.util.concurrent.TimeUnit;
 
@@ -26,7 +26,7 @@ public class BootReceiver extends BroadcastReceiver {
                     ExistingPeriodicWorkPolicy.KEEP,
                     workRequest
             );
-            sheduleDailyEveryMoring.scheduleDailyMidnight(context);
+            scheduleDailyEveryMorning.scheduleDailyMidnight(context);
         }
     }
 }

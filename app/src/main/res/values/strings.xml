@@ -4,7 +4,9 @@
     <string name="notification">Thông báo</string>
     <string name="setting">Cài đặt</string>
     <string name="share">Share</string>
-    
+    <string name="filter">filter</string>
+    <string name="notificationDetail">Notification Detail</string>
+
     <string-array name="priority_list">
         <item>Bình thường</item>
         <item>Khẩn cấp</item>

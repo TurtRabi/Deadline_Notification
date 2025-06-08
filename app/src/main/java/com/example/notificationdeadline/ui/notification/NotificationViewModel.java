@@ -4,7 +4,7 @@ import android.app.Application;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.LiveData;
 
 import com.example.notificationdeadline.data.entity.NotificationHistoryEntity;
 import com.example.notificationdeadline.service.NotificationHistoryService;
@@ -12,26 +12,18 @@ import com.example.notificationdeadline.service.NotificationHistoryService;
 import java.util.List;
 
 public class NotificationViewModel extends AndroidViewModel {
-    private NotificationHistoryService notificationHistoryService;
+    private final NotificationHistoryService notificationHistoryService;
 
     public NotificationViewModel(@NonNull Application application) {
         super(application);
+        notificationHistoryService = new NotificationHistoryService(application.getApplicationContext());
     }
 
-    private NotificationHistoryService getNotificationHistoryService(){
-        if(notificationHistoryService==null){
-            notificationHistoryService = new NotificationHistoryService(getApplication().getApplicationContext());
-        }
-        return notificationHistoryService;
+    public LiveData<List<NotificationHistoryEntity>> getAllList() {
+        return notificationHistoryService.getAllHistory();
     }
 
-    public List<NotificationHistoryEntity> getAllList(){
-        return getNotificationHistoryService().getAllHistory();
+    public void updateIsReadNotification(int id) {
+        notificationHistoryService.markAsRead(id);
     }
-    public void updateIsReadNotification(int id){
-        getNotificationHistoryService().markAsRead(id);
-    }
-
-
-
 }

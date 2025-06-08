@@ -5,12 +5,17 @@ import com.example.notificationdeadline.dto.request.SettingRequest;
 import com.example.notificationdeadline.dto.response.SettingResponse;
 
 public class SettingMapper {
-    public  static SettingEntity toEntity(SettingRequest request){
-        return new SettingEntity(request.getKey(),request.getValue());
+    public static SettingEntity toEntity(SettingRequest request) {
+        return new SettingEntity(request.getKey(), request.getValue());
     }
 
-    public static SettingResponse toResponse(SettingEntity entity){
-        if(entity==null) return null;
-        return new SettingResponse(entity.key,entity.value);
+    public static SettingResponse toResponse(SettingEntity entity) {
+        if (entity == null) return null;
+        return new SettingResponse(entity.getKey(), entity.getValue());
+    }
+
+    public static SettingRequest toRequest(SettingEntity entity) {
+        if (entity == null) return null;
+        return new SettingRequest(entity.getKey(), entity.getValue());
     }
 }

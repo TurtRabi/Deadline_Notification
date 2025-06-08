@@ -1,9 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.AppCompatButton xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/btn_filter"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
-    android:layout_height="40dp"
-    android:layout_margin="8dp"
-    android:background="@drawable/filter_button_background"
-    android:textColor="@android:color/black"
-    android:textSize="14sp" />
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center">
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_filter"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:background="@android:color/transparent"
+        android:textColor="@color/tab_unselected"
+        android:textSize="14sp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:minWidth="64dp"
+        android:minHeight="40dp"
+        android:stateListAnimator="@null"/>
+
+    <!-- View gạch chân -->
+    <View
+        android:id="@+id/line_selected"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:layout_marginTop="-4dp"
+        android:background="@color/tab_selected"
+        android:visibility="gone"/>
+</LinearLayout>

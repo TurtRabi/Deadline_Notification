@@ -4,7 +4,7 @@ import android.app.Application;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.LiveData;
 
 import com.example.notificationdeadline.data.entity.SettingEntity;
 import com.example.notificationdeadline.data.entity.UserEntity;
@@ -16,36 +16,24 @@ import java.util.List;
 
 public class SettingViewModel extends AndroidViewModel {
 
-    private UserService userService;
-    private SettingService settingService;
+    private final UserService userService;
+    private final SettingService settingService;
+
     public SettingViewModel(@NonNull Application application) {
         super(application);
+        userService = new UserService(application.getApplicationContext());
+        settingService = new SettingService(application.getApplicationContext());
     }
 
-    private UserService userService(){
-        if(userService==null){
-            userService=new UserService(getApplication().getApplicationContext());
-
-        }
-        return userService;
+    public LiveData<List<UserEntity>> getAllListUser() {
+        return userService.getAllUsers();
     }
 
-    private SettingService getSettingService(){
-        if(settingService==null){
-            settingService = new SettingService(getApplication().getApplicationContext());
-        }
-        return  settingService;
+    public LiveData<SettingEntity> getSetting(String key) {
+        return settingService.getSetting(key);
     }
 
-    public List<UserEntity> getAllListUser(){
-        return userService().getAllUsers();
+    public void updateSetting(String key, String value) {
+        settingService.updateSetting(new SettingRequest(key, value));
     }
-
-    public SettingEntity getSeting(String key){
-        return getSettingService().getSetting(key);
-    }
-    public void UpdateSetting(String key ,String value){
-        getSettingService().updateSetting(new SettingRequest(key,value));
-    }
-
 }

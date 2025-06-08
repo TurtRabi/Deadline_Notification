@@ -1,8 +1,12 @@
 package com.example.notificationdeadline.data.entity;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Ignore;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
 @Entity(
@@ -12,22 +16,44 @@ import androidx.room.PrimaryKey;
                 parentColumns = "id",
                 childColumns = "notificationId",
                 onDelete = ForeignKey.CASCADE
-        )
+        ),
+        indices = @Index(value = "notificationId")
 )
 public class TaskEntity {
     @PrimaryKey(autoGenerate = true)
     @NonNull
-    public int taskId;
+    private int taskId;
 
     @NonNull
-    public int notificationId;
+    private int notificationId;
 
-    public String content;
-    public boolean isDone;
+    @ColumnInfo(defaultValue = "")
+    @Nullable
+    private String content = "";
 
-    public TaskEntity(int notificationId, String content, boolean isDone) {
+    @ColumnInfo(defaultValue = "0")
+    private boolean isDone;
+
+    public TaskEntity(int notificationId, @Nullable String content, boolean isDone) {
         this.notificationId = notificationId;
         this.content = content;
         this.isDone = isDone;
     }
+
+    @Ignore
+    public TaskEntity() {}
+
+    // Getter & Setter
+    public int getTaskId() { return taskId; }
+    public void setTaskId(int taskId) { this.taskId = taskId; }
+
+    public int getNotificationId() { return notificationId; }
+    public void setNotificationId(int notificationId) { this.notificationId = notificationId; }
+
+    @Nullable
+    public String getContent() { return content; }
+    public void setContent(@Nullable String content) { this.content = content; }
+
+    public boolean isDone() { return isDone; }
+    public void setDone(boolean done) { isDone = done; }
 }

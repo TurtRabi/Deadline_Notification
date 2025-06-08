@@ -6,13 +6,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.provider.Settings;
+import android.widget.Toast;
 
 import com.example.notificationdeadline.receiver.FixedTimeReceiver;
 
 public class NotificationScheduler {
+
     public static void scheduleFixedTimeNotification(Context context, long timeMillis, int requestCode, String title, String message) {
         Intent intent = new Intent(context, FixedTimeReceiver.class);
-        intent.putExtra("title","⏰ Đến hạn rồi deadline"+ title);
+        intent.putExtra("title", "⏰ Đến hạn rồi: " + title);
         intent.putExtra("message", message);
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
@@ -29,12 +31,14 @@ public class NotificationScheduler {
                 if (alarmManager.canScheduleExactAlarms()) {
                     alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, timeMillis, pendingIntent);
                 } else {
+                    Toast.makeText(context, "Bạn cần cấp quyền Lịch chính xác (Exact Alarm) để nhận thông báo đúng giờ.", Toast.LENGTH_LONG).show();
                     Intent settingsIntent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
                     settingsIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(settingsIntent);
                 }
+            } else {
+                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, timeMillis, pendingIntent);
             }
         }
     }
-
 }

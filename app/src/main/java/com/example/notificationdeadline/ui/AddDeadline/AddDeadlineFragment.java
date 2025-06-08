@@ -116,6 +116,18 @@ public class AddDeadlineFragment extends Fragment {
             int priority = binding.spinnerPriority.getSelectedItemPosition();
             boolean isDone = false;
 
+            // Validate dữ liệu đầu vào
+            if (title.isEmpty()) {
+                edtTitle.setError("Tiêu đề không được để trống");
+                edtTitle.requestFocus();
+                return;
+            }
+            if (description.isEmpty()) {
+                edtDescription.setError("Mô tả không được để trống");
+                edtDescription.requestFocus();
+                return;
+            }
+
             long now = System.currentTimeMillis();
             long diff = selectedDateMillis - now;
 
@@ -128,9 +140,9 @@ public class AddDeadlineFragment extends Fragment {
             } else if (diff > sixHours) {
                 notificationType = StatusEnum.NEAR_DEADLINE.getValue();
             } else if (diff > 0) {
-                notificationType = StatusEnum.DEADlINE.getValue();
+                notificationType = StatusEnum.DEADLINE.getValue(); // Sửa typo enum
             } else {
-                notificationType = StatusEnum.OVERDEALINE.getValue();
+                notificationType = StatusEnum.OVERDEADLINE.getValue(); // Sửa typo enum nếu cần
             }
 
             if (isToday()) {
@@ -176,20 +188,17 @@ public class AddDeadlineFragment extends Fragment {
     }
 
     private void showSuccessDialogWithAutoDismiss() {
-
         CustomMessageDialog dialog = CustomMessageDialog.newInstance(
                 "Thành công 🎉",
                 "Deadline đã được thêm thành công!",
                 R.drawable.ic_launcher_foreground,
                 R.color.successColor
         );
-        dialog.show(getParentFragmentManager(),"successDialog");
-
-
+        dialog.show(getParentFragmentManager(), "successDialog");
 
         new Handler().postDelayed(() -> {
             Dialog actualDialog = dialog.getDialog();
-            if (actualDialog.isShowing()) {
+            if (actualDialog != null && actualDialog.isShowing()) {
                 dialog.dismiss();
                 requireActivity().getSupportFragmentManager().popBackStack();
             }
@@ -197,8 +206,8 @@ public class AddDeadlineFragment extends Fragment {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onDestroyView() {
+        super.onDestroyView();
         binding = null;
     }
 

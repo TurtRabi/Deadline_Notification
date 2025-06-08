@@ -1,81 +1,65 @@
 package com.example.notificationdeadline.dto.response;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 public class NotificationResponse {
     private int id;
+    @NonNull
     private String title;
+    @NonNull
     private String content;
     private long time;
     private int priority;
     private int status;
     private boolean isSuccess;
 
-    public boolean isSuccess() {
-        return isSuccess;
-    }
+    public NotificationResponse() {}
 
-    public void setSuccess(boolean success) {
-        isSuccess = success;
-    }
-
-    public NotificationResponse() {
-    }
-
-    public int getPriority() {
-        return priority;
-    }
-
-    public void setPriority(int priority) {
-        this.priority = priority;
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
-    }
-
-    public NotificationResponse(int id, String title, String content, long time, int priority, int status,boolean isSuccess) {
+    public NotificationResponse(int id, @NonNull String title, @NonNull String content, long time, int priority, int status, boolean isSuccess) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.time = time;
         this.priority = priority;
         this.status = status;
-        this.isSuccess=isSuccess;
+        this.isSuccess = isSuccess;
     }
 
-    public int getId() {
-        return id;
-    }
+    public boolean isSuccess() { return isSuccess; }
+    public void setSuccess(boolean success) { isSuccess = success; }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+    public int getPriority() { return priority; }
+    public void setPriority(int priority) { this.priority = priority; }
 
-    public String getTitle() {
-        return title;
-    }
+    public int getStatus() { return status; }
+    public void setStatus(int status) { this.status = status; }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
 
-    public String getContent() {
-        return content;
-    }
+    @NonNull
+    public String getTitle() { return title; }
+    public void setTitle(@NonNull String title) { this.title = title; }
 
-    public void setContent(String content) {
-        this.content = content;
-    }
+    @NonNull
+    public String getContent() { return content; }
+    public void setContent(@NonNull String content) { this.content = content; }
 
-    public long getTime() {
-        return time;
-    }
+    public long getTime() { return time; }
+    public void setTime(long time) { this.time = time; }
 
-    public void setTime(long time) {
-        this.time = time;
+    // Optional: dễ debug log
+    @Override
+    public String toString() {
+        return "NotificationResponse{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", content='" + content + '\'' +
+                ", time=" + time +
+                ", priority=" + priority +
+                ", status=" + status +
+                ", isSuccess=" + isSuccess +
+                '}';
     }
-
 }

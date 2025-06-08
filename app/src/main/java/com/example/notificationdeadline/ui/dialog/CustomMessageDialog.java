@@ -12,7 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.DialogFragment;   // dùng AndroidX
+import androidx.fragment.app.DialogFragment;
 
 import com.example.notificationdeadline.R;
 
@@ -67,6 +67,7 @@ public class CustomMessageDialog extends DialogFragment {
 
         return new AlertDialog.Builder(requireContext())
                 .setView(view)
+                .setCancelable(false)
                 .create();
     }
 }

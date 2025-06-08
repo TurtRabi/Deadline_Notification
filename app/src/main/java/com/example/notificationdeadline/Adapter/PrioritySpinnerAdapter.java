@@ -16,12 +16,12 @@ public class PrioritySpinnerAdapter extends ArrayAdapter<String> {
     private final String[] priorities;
     private final int[] icons = {
             R.drawable.low_priority_24px,      // Bình thường
-            R.drawable.priority_high_24px,      // Khẩn cấp
-            R.drawable.priority_high_very  // Rất khẩn cấp
+            R.drawable.priority_high_24px,     // Khẩn cấp
+            R.drawable.priority_high_very      // Rất khẩn cấp
     };
 
     public PrioritySpinnerAdapter(Context context, String[] priorities) {
-        super(context, 0, priorities);
+        super(context, R.layout.item_priority_spinner, priorities);
         this.context = context;
         this.priorities = priorities;
     }
@@ -44,9 +44,12 @@ public class PrioritySpinnerAdapter extends ArrayAdapter<String> {
         ImageView icon = convertView.findViewById(R.id.priority_icon);
 
         text.setText(priorities[position]);
-        icon.setImageResource(icons[position]);
+        if (position < icons.length) {
+            icon.setImageResource(icons[position]);
+        } else {
+            icon.setImageResource(R.drawable.low_priority_24px); // fallback default
+        }
 
         return convertView;
     }
 }
-

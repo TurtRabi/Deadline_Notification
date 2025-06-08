@@ -1,67 +1,109 @@
 package com.example.notificationdeadline.dto.request;
 
-public class NotificationRequest {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+public class NotificationRequest implements Parcelable {
+    private int id;
+    @NonNull
     private String title;
+    @NonNull
     private String content;
     private long time;
     private int priority;
     private int status;
     private boolean isSuccess;
 
+    public NotificationRequest() {}
+
+
+    public NotificationRequest(@NonNull String title, @NonNull String content, long time, int priority, int status, boolean isSuccess) {
+        this.title = title;
+        this.content = content;
+        this.time = time;
+        this.priority = priority;
+        this.status = status;
+        this.isSuccess = isSuccess;
+    }
+
+    protected NotificationRequest(Parcel in) {
+        id = in.readInt();
+        title = in.readString();
+        content = in.readString();
+        time = in.readLong();
+        priority = in.readInt();
+        status = in.readInt();
+        isSuccess = in.readByte() != 0;
+    }
+
+    public static final Creator<NotificationRequest> CREATOR = new Creator<NotificationRequest>() {
+        @Override
+        public NotificationRequest createFromParcel(Parcel in) {
+            return new NotificationRequest(in);
+        }
+
+        @Override
+        public NotificationRequest[] newArray(int size) {
+            return new NotificationRequest[size];
+        }
+    };
+
+    // Getter & Setter
     public boolean isSuccess() {
         return isSuccess;
     }
-
     public void setSuccess(boolean success) {
         isSuccess = success;
     }
-
     public int getPriority() {
         return priority;
     }
-
     public void setPriority(int priority) {
         this.priority = priority;
     }
-
-    public NotificationRequest(String title, String content, long time, int priority, int status,boolean isSuccess) {
-        this.title = title;
-        this.content = content;
-        this.time = time;
-        this.priority = priority;
-        this.status = status;
-        this.isSuccess=isSuccess;
-    }
-
     public int getStatus() {
         return status;
     }
-
     public void setStatus(int status) {
         this.status = status;
     }
-
+    @NonNull
     public String getTitle() {
         return title;
     }
-
-    public void setTitle(String title) {
+    public void setTitle(@NonNull String title) {
         this.title = title;
     }
-
+    @NonNull
     public String getContent() {
         return content;
     }
-
-    public void setContent(String content) {
+    public void setContent(@NonNull String content) {
         this.content = content;
     }
-
     public long getTime() {
         return time;
     }
-
     public void setTime(long time) {
         this.time = time;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeString(title);
+        dest.writeString(content);
+        dest.writeLong(time);
+        dest.writeInt(priority);
+        dest.writeInt(status);
+        dest.writeByte((byte) (isSuccess ? 1 : 0));
     }
 }

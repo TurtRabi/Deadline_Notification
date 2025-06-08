@@ -2,31 +2,31 @@ package com.example.notificationdeadline.repository;
 
 import android.content.Context;
 
-import androidx.room.Room;
+import androidx.lifecycle.LiveData;
 
 import com.example.notificationdeadline.data.AppDatabase;
 import com.example.notificationdeadline.data.entity.SettingEntity;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
 public class SettingRepository {
     private final AppDatabase db;
+    private final Executor executor = Executors.newSingleThreadExecutor();
 
     public SettingRepository(Context context) {
-        db = Room.databaseBuilder(context, AppDatabase.class,"notification_db")
-                .fallbackToDestructiveMigration()
-                .allowMainThreadQueries()
-                .build();
+        db = AppDatabase.getInstance(context);
     }
 
-    public void saveSetting(String key,String value){
-        db.settingDao().upsert(new SettingEntity(key,value));
+    public void saveSetting(String key, String value) {
+        executor.execute(() -> db.settingDao().upsert(new SettingEntity(key, value)));
     }
 
-    public SettingEntity getSetting(String key){
+    public LiveData<SettingEntity> getSetting(String key) {
         return db.settingDao().getSetting(key);
     }
-    public void  UpdateSetting(String key,String value){
-        db.settingDao().updateValueByKey(key,value);
+
+    public void updateSetting(String key, String value) {
+        executor.execute(() -> db.settingDao().updateValueByKey(key, value));
     }
-
 }
-

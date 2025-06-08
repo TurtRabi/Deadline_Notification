@@ -6,7 +6,7 @@ public enum NotificationHistoryEnum {
     NORMAL(0, "Bình thường", R.drawable.low_priority_24px),
     URGENT(1, "Khẩn cấp", R.drawable.priority_high_24px),
     CRITICAL(2, "Cực kỳ quan trọng", R.drawable.priority_high_very),
-    HELLODAY(3, "xin chào buổi sáng", R.drawable.sentiment_excited_24px);
+    HELLODAY(3, "Xin chào buổi sáng", R.drawable.sentiment_excited_24px);
 
     private final int id;
     private final String description;
@@ -28,5 +28,18 @@ public enum NotificationHistoryEnum {
 
     public int getIconResId() {
         return iconResId;
+    }
+
+    public static NotificationHistoryEnum fromId(int id) {
+        for (NotificationHistoryEnum e : values()) {
+            if (e.id == id) return e;
+        }
+        return NORMAL;
+    }
+
+
+    @Override
+    public String toString() {
+        return description;
     }
 }

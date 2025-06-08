@@ -6,11 +6,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.icu.util.Calendar;
 
-import com.example.notificationdeadline.data.entity.NotificationHistoryEntity;
 import com.example.notificationdeadline.receiver.FixedTimeReceiver;
-import com.example.notificationdeadline.service.NotificationHistoryService;
 
-public class sheduleDailyEveryMoring {
+public class scheduleDailyEveryMorning {
 
 
     public static void scheduleDailyMidnight(Context context) {

@@ -1,41 +1,90 @@
 package com.example.notificationdeadline.data.entity;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "users")
 public class UserEntity {
-    public UserEntity() {
-    }
-
     @PrimaryKey(autoGenerate = true)
     @NonNull
-    public int userId;
-    public String UserName;
-    public String ImageUrl;
-    public String Description;
-    public String Email;
-    public String phone;
-    public String birdday;
+    private int userId;
 
+    @NonNull
+    @ColumnInfo(defaultValue = "")
+    private String userName = "";
 
-    public UserEntity(String userName, String imageUrl, String description, String email, String phone, String birdday) {
-        UserName = userName;
-        ImageUrl = imageUrl;
-        Description = description;
-        Email = email;
+    @Nullable
+    @ColumnInfo(defaultValue = "")
+    private String imageUrl = "";
+
+    @Nullable
+    @ColumnInfo(defaultValue = "")
+    private String description = "";
+
+    @NonNull
+    @ColumnInfo(defaultValue = "")
+    private String email = "";
+
+    @Nullable
+    @ColumnInfo(defaultValue = "")
+    private String phone = "";
+
+    @Nullable
+    @ColumnInfo(defaultValue = "")
+    private String birthday = "";
+
+    public UserEntity() {}
+
+    @Ignore
+    public UserEntity(@NonNull String userName, @Nullable String imageUrl, @Nullable String description, @NonNull String email, @Nullable String phone, @Nullable String birthday) {
+        this.userName = userName;
+        this.imageUrl = imageUrl;
+        this.description = description;
+        this.email = email;
         this.phone = phone;
-        this.birdday = birdday;
+        this.birthday = birthday;
     }
 
-    public UserEntity(int userId, String userName, String imageUrl, String description, String email, String phone, String birdday) {
+    @Ignore
+    public UserEntity(int userId, @NonNull String userName, @Nullable String imageUrl, @Nullable String description, @NonNull String email, @Nullable String phone, @Nullable String birthday) {
         this.userId = userId;
-        UserName = userName;
-        ImageUrl = imageUrl;
-        Description = description;
-        Email = email;
+        this.userName = userName;
+        this.imageUrl = imageUrl;
+        this.description = description;
+        this.email = email;
         this.phone = phone;
-        this.birdday = birdday;
+        this.birthday = birthday;
     }
+
+    // Getter & Setter
+    public int getUserId() { return userId; }
+    public void setUserId(int userId) { this.userId = userId; }
+
+    @NonNull
+    public String getUserName() { return userName; }
+    public void setUserName(@NonNull String userName) { this.userName = userName; }
+
+    @Nullable
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(@Nullable String imageUrl) { this.imageUrl = imageUrl; }
+
+    @Nullable
+    public String getDescription() { return description; }
+    public void setDescription(@Nullable String description) { this.description = description; }
+
+    @NonNull
+    public String getEmail() { return email; }
+    public void setEmail(@NonNull String email) { this.email = email; }
+
+    @Nullable
+    public String getPhone() { return phone; }
+    public void setPhone(@Nullable String phone) { this.phone = phone; }
+
+    @Nullable
+    public String getBirthday() { return birthday; }
+    public void setBirthday(@Nullable String birthday) { this.birthday = birthday; }
 }

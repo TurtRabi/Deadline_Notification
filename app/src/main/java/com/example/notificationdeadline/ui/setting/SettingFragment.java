@@ -83,59 +83,54 @@ public class SettingFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mViewModel = new ViewModelProvider(this).get(SettingViewModel.class);
-        List<UserEntity> userEntityList = mViewModel.getAllListUser();
-        if (!userEntityList.isEmpty()) {
-            UserEntity user = userEntityList.get(0);
-            binding.txtUsername.setText(user.UserName);
-            binding.txtDescription.setText(user.Description);
-            Glide.with(getContext())
-                    .load(Uri.parse(user.ImageUrl))
-                    .into(binding.imageButton);
-            binding.txtEmail.setText(user.Email);
-            binding.txtPhone.setText(user.phone);
-            binding.txtBirthday.setText(user.birdday);
 
-            SettingEntity theme =mViewModel.getSeting("theme");
-            if(theme!=null && theme.value.equals("0")){
-                binding.switchDarkMode.setChecked(true);
-            }else{
-                binding.switchDarkMode.setChecked(false);
-            }
+        // Observe user list
+        mViewModel.getAllListUser().observe(getViewLifecycleOwner(), userEntityList -> {
+            if (userEntityList != null && !userEntityList.isEmpty()) {
+                UserEntity user = userEntityList.get(0);
+                binding.txtUsername.setText(user.getUserName());
+                binding.txtDescription.setText(user.getDescription());
+                Glide.with(getContext())
+                        .load(user.getImageUrl())
+                        .placeholder(R.drawable.logo)
+                        .error(R.drawable.priority_high_24px)
+                        .into(binding.imageButton);
+                binding.txtEmail.setText(user.getEmail());
+                binding.txtPhone.setText(user.getPhone());
+                binding.txtBirthday.setText(user.getBirthday());
 
-            SettingEntity notification =mViewModel.getSeting("notification");
-            if(notification!=null && notification.value.equals("1")){
-                binding.switchNotification.setChecked(true);
-            }else{
-                binding.switchNotification.setChecked(false);
-            }
+                // Observe theme setting
+                mViewModel.getSetting("theme").observe(getViewLifecycleOwner(), theme -> {
+                    binding.switchDarkMode.setChecked(theme != null && "0".equals(theme.getValue()));
+                });
 
+                // Observe notification setting
+                mViewModel.getSetting("notification").observe(getViewLifecycleOwner(), notification -> {
+                    binding.switchNotification.setChecked(notification != null && "1".equals(notification.getValue()));
+                });
 
-
-
-            View.OnClickListener listener = new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(v.getId() == R.id.card_user_info){
+                // Listeners
+                View.OnClickListener listener = v -> {
+                    if (v.getId() == R.id.card_user_info) {
                         Bundle bundle = new Bundle();
-                        bundle.putParcelable("user",new UserRequest(user.userId,user.UserName,
-                                user.ImageUrl,user.Description,user.Email,user.phone,user.birdday));
+                        bundle.putParcelable("user", new UserRequest(user.getUserId(), user.getUserName(),
+                                user.getImageUrl(), user.getDescription(), user.getEmail(), user.getPhone(), user.getBirthday()));
 
                         NavController navController = Navigation.findNavController(requireView());
-                        navController.navigate(R.id.action_to_editUser,bundle);
-                    }else if(v.getId() == R.id.switchDarkMode){
-                        boolean isChecked = ((Switch)v).isChecked();
+                        navController.navigate(R.id.action_to_editUser, bundle);
+                    } else if (v.getId() == R.id.switchDarkMode) {
+                        boolean isChecked = ((Switch) v).isChecked();
+
                         if(isChecked){
-                            mViewModel.UpdateSetting("theme","0");
+                            mViewModel.updateSetting("theme","0");
 
                         }else {
-                            mViewModel.UpdateSetting("theme","1");
+                            mViewModel.updateSetting("theme","1");
                         }
 
                         requireActivity().recreate();
-                    }
-                    else if (v.getId() == R.id.switchNotification) {
+                    } else if (v.getId() == R.id.switchNotification) {
                         boolean isChecked = ((Switch) v).isChecked();
-
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                             if (isChecked) {
                                 if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS)
@@ -151,7 +146,7 @@ public class SettingFragment extends Fragment {
                                 Intent intent = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 intent.putExtra(Settings.EXTRA_APP_PACKAGE, requireContext().getPackageName());
-                                mViewModel.UpdateSetting("notification","0");
+                                mViewModel.updateSetting("notification","0");
 
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                     intent.putExtra(Settings.EXTRA_CHANNEL_ID, requireContext().getApplicationInfo().uid);
@@ -169,9 +164,7 @@ public class SettingFragment extends Fragment {
                                 disableNotifications();
                             }
                         }
-
-                    }
-                    else if (v.getId() ==R.id.btnClearCache) {
+                    } else if (v.getId() == R.id.btnClearCache) {
                         AppDatabase db = Room.databaseBuilder(
                                 requireContext(),
                                 AppDatabase.class,
@@ -180,7 +173,6 @@ public class SettingFragment extends Fragment {
 
                         new Thread(() -> {
                             db.clearAllTables();
-
                             requireActivity().runOnUiThread(() -> {
                                 Toast.makeText(requireContext(), "Đã xoá toàn bộ dữ liệu", Toast.LENGTH_SHORT).show();
                                 CustomMessageDialog dialog = CustomMessageDialog.newInstance(
@@ -189,8 +181,7 @@ public class SettingFragment extends Fragment {
                                         R.drawable.ic_launcher_foreground,
                                         R.color.successColor
                                 );
-                                dialog.show(getParentFragmentManager(),"successDialog");
-
+                                dialog.show(getParentFragmentManager(), "successDialog");
 
                                 new android.os.Handler().postDelayed(() -> {
                                     requireActivity().finishAffinity();
@@ -198,15 +189,16 @@ public class SettingFragment extends Fragment {
                             });
                         }).start();
                     }
-                }
-            };
+                };
 
-            binding.cardUserInfo.setOnClickListener(listener);
-            binding.switchNotification.setOnClickListener(listener);
-            binding.switchDarkMode.setOnClickListener(listener);
-            binding.btnClearCache.setOnClickListener(listener);
-        }
+                binding.cardUserInfo.setOnClickListener(listener);
+                binding.switchNotification.setOnClickListener(listener);
+                binding.switchDarkMode.setOnClickListener(listener);
+                binding.btnClearCache.setOnClickListener(listener);
+            }
+        });
     }
+
 
 
 
@@ -246,7 +238,7 @@ public class SettingFragment extends Fragment {
     private final ActivityResultLauncher<String> notificationPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 if (isGranted) {
-                    mViewModel.UpdateSetting("notification", "1");
+                    mViewModel.updateSetting("notification", "1");
                     enableNotifications();
                 } else {
                     if (isNotificationPermissionPermanentlyDenied()) {

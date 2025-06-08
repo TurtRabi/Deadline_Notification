@@ -1,8 +1,10 @@
 package com.example.notificationdeadline.data.dao;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
@@ -12,15 +14,22 @@ import java.util.List;
 
 @Dao
 public interface TaskDao {
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insertTask(TaskEntity task);
 
-    @Update
+    @Update(onConflict = OnConflictStrategy.REPLACE)
     void updateTask(TaskEntity task);
 
     @Delete
     void deleteTask(TaskEntity task);
 
     @Query("SELECT * FROM tasks WHERE notificationId = :notificationId")
-    List<TaskEntity> getTasksForNotification(int notificationId);
+    LiveData<List<TaskEntity>> getTasksForNotification(int notificationId);
+
+
+    @Query("SELECT * FROM tasks")
+    LiveData<List<TaskEntity>> getAllTasks();
+
+    @Query("SELECT * FROM tasks WHERE isDone = :isDone")
+    LiveData<List<TaskEntity>> getTasksByStatus(boolean isDone);
 }

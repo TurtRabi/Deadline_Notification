@@ -40,25 +40,32 @@ public class NotificationFragment extends Fragment {
 
         ((AppCompatActivity) requireActivity()).setSupportActionBar(toolbar);
         setHasOptionsMenu(true);
-
         return binding.getRoot();
     }
+
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mViewModel = new ViewModelProvider(this).get(NotificationViewModel.class);
+
         recyclerView = binding.notificationRecyclerView;
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new NotificationHistoryAdapter(getContext(),mViewModel.getAllList(),(notification, position,view) -> {
-            mViewModel.updateIsReadNotification(notification.id);
+        adapter = new NotificationHistoryAdapter(getContext(), (notification, position, view) -> {
+            mViewModel.updateIsReadNotification(notification.getId());
             view.setBackgroundColor(android.graphics.Color.parseColor("#F0F0F0F0"));
-            adapter.notifyDataSetChanged();
+            adapter.notifyItemChanged(position);
         });
 
         recyclerView.setAdapter(adapter);
 
-
+        // Observe LiveData
+        mViewModel.getAllList().observe(getViewLifecycleOwner(), list -> {
+            adapter.setData(list);
+            // Optional: hiện empty view nếu rỗng
+            binding.emptyNotificationView.setVisibility(list == null || list.isEmpty() ? View.VISIBLE : View.GONE);
+        });
     }
+
 
 }

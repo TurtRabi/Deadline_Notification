@@ -2,6 +2,8 @@ package com.example.notificationdeadline.service;
 
 import android.content.Context;
 
+import androidx.lifecycle.LiveData;
+
 import com.example.notificationdeadline.data.entity.SettingEntity;
 import com.example.notificationdeadline.dto.request.SettingRequest;
 import com.example.notificationdeadline.mapper.SettingMapper;
@@ -14,25 +16,23 @@ public class SettingService {
         this.settingRepository = new SettingRepository(context);
     }
 
-    public  void saveSetting(SettingRequest request){
-        if(request.getKey()==null||request.getKey().isEmpty()){
-            throw  new IllegalArgumentException("Key cannot bey empty");
-        }
-
-        SettingEntity entity = SettingMapper.toEntity(request);
-        settingRepository.saveSetting(entity.key,entity.value);
-    }
-
-    public void updateSetting(SettingRequest request){
-        if(request.getKey()==null||request.getKey().isEmpty()){
-            throw  new IllegalArgumentException("Key cannot bey empty");
+    public void saveSetting(SettingRequest request) {
+        if (request.getKey() == null || request.getKey().isEmpty()) {
+            throw new IllegalArgumentException("Key cannot be empty");
         }
         SettingEntity entity = SettingMapper.toEntity(request);
-
-        settingRepository.UpdateSetting(entity.key, entity.value);
+        settingRepository.saveSetting(entity.getKey(), entity.getValue());
     }
 
-    public SettingEntity getSetting(String key){
+    public void updateSetting(SettingRequest request) {
+        if (request.getKey() == null || request.getKey().isEmpty()) {
+            throw new IllegalArgumentException("Key cannot be empty");
+        }
+        SettingEntity entity = SettingMapper.toEntity(request);
+        settingRepository.updateSetting(entity.getKey(), entity.getValue());
+    }
+
+    public LiveData<SettingEntity> getSetting(String key) {
         return settingRepository.getSetting(key);
     }
 }
