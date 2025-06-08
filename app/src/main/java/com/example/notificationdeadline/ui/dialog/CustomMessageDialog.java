@@ -38,10 +38,6 @@ public class CustomMessageDialog extends DialogFragment {
         return dialog;
     }
 
-    public void setOnOkCallback(Runnable callback) {
-        this.onOkCallback = callback;
-    }
-
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -59,15 +55,21 @@ public class CustomMessageDialog extends DialogFragment {
         TextView  titleView  = view.findViewById(R.id.dialogTitle);
         TextView  msgView    = view.findViewById(R.id.dialogMessage);
 
-
         iconView.setImageResource(iconResId);
         titleView.setText(title);
         msgView.setText(message);
 
-
-        return new AlertDialog.Builder(requireContext())
+        AlertDialog dialog = new AlertDialog.Builder(requireContext())
                 .setView(view)
                 .setCancelable(false)
                 .create();
+
+        // Thiết lập background trong suốt cho dialog
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
+
+        return dialog;
     }
+
 }

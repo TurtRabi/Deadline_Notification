@@ -27,7 +27,7 @@ import com.example.notificationdeadline.data.entity.UserEntity;
                 NotificationHistoryEntity.class,
                 TaskEntity.class
         },
-        version = 10,
+        version = 13,
         exportSchema = false
 )
 public abstract class AppDatabase extends RoomDatabase {

@@ -16,7 +16,7 @@ import java.util.List;
 @Dao
 public interface NotificationDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insert(NotificationEntity notification);
+    long  insert(NotificationEntity notification);
 
     @Delete
     void delete(NotificationEntity notification);
@@ -25,7 +25,7 @@ public interface NotificationDao {
     void update(NotificationEntity notification);
 
     // Trả về LiveData để UI tự động update, hoặc để List nếu dùng trong background
-    @Query("SELECT * FROM notifications ORDER BY time_millis DESC")
+    @Query("SELECT * FROM notifications")
     LiveData<List<NotificationEntity>> getAll();
 
     @Query("SELECT * FROM notifications WHERE time_millis BETWEEN :startTime AND :endTime AND isSuccess=0")
@@ -41,9 +41,11 @@ public interface NotificationDao {
     LiveData<List<NotificationEntity>> getAllByPriority(int priority);
 
     @Transaction
-    @Query("UPDATE notifications SET status = 1 WHERE id = :id")
+    @Query("UPDATE notifications SET isSuccess = 1 WHERE id = :id")
     void updateSuccessDeadline(int id);
-
+    @Transaction
+    @Query("UPDATE notifications SET isSuccess = 0 WHERE id = :id")
+    void updateNotSuccessDeadline(int id);
     @Transaction
     @Query("UPDATE notifications SET status = :status WHERE id = :id ")
     void updateStatus(int status, int id);

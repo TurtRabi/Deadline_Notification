@@ -8,6 +8,7 @@ public class NotificationMapper {
 
     public static NotificationEntity toEntity(NotificationRequest request) {
         return new NotificationEntity(
+                request.getId(),
                 request.getTitle(),
                 request.getContent(),
                 request.getTime(),
@@ -32,6 +33,7 @@ public class NotificationMapper {
 
     public static NotificationRequest toRequest(NotificationEntity entity) {
         return new NotificationRequest(
+                entity.getId(),
                 entity.getTitle(),
                 entity.getMessage(),
                 entity.getTimeMillis(),

@@ -19,9 +19,20 @@ public class NotificationRepository {
         db = AppDatabase.getInstance(context);
     }
 
-    public void insertNotification(final NotificationEntity notification) {
-        executor.execute(() -> db.notificationDao().insert(notification));
+    public void insertNotification(NotificationEntity notification, OnInsertCallback callback) {
+        executor.execute(() -> {
+            long id = db.notificationDao().insert(notification); // giờ lấy được id
+            if (callback != null) {
+                callback.onInsert(id);
+            }
+        });
     }
+
+
+    public interface OnInsertCallback {
+        void onInsert(long id);
+    }
+
 
     public void deleteNotification(final NotificationEntity notification) {
         executor.execute(() -> db.notificationDao().delete(notification));
@@ -33,6 +44,9 @@ public class NotificationRepository {
 
     public void updateSuccessDeadline(final int id) {
         executor.execute(() -> db.notificationDao().updateSuccessDeadline(id));
+    }
+    public void updateNotSuccessDeadline(final int id) {
+        executor.execute(() -> db.notificationDao().updateNotSuccessDeadline(id));
     }
 
     public void updateStatus(final int status, final int id) {

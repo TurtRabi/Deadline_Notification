@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,13 +6,15 @@
     android:orientation="vertical"
     android:padding="24dp"
     android:background="@drawable/bg_dialog_rounded"
-    android:gravity="center_horizontal">
+    android:gravity="center_horizontal"
+    android:elevation="8dp"
+    android:clipToPadding="false">
 
     <ImageView
         android:id="@+id/dialogIcon"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:layout_marginBottom="16dp"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_marginBottom="20dp"
         android:src="@drawable/info_24px"
         android:tint="@color/purple_500"
         tools:ignore="UseAppTint" />
@@ -23,19 +24,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Thành công"
-        android:textColor="@color/black"
-        android:textSize="20sp"
+        android:textColor="#212121"
+        android:textSize="22sp"
         android:textStyle="bold"
-        android:gravity="center" />
+        android:gravity="center"
+        android:fontFamily="sans-serif-medium"/>
 
     <TextView
         android:id="@+id/dialogMessage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Bạn đã đăng ký thành công!"
-        android:layout_marginTop="12dp"
-        android:textColor="@color/gray"
+        android:layout_marginTop="14dp"
+        android:textColor="#757575"
         android:textSize="16sp"
-        android:gravity="center" />
+        android:gravity="center"
+        android:lineSpacingExtra="4dp"
+        android:fontFamily="sans-serif" />
 
 </LinearLayout>

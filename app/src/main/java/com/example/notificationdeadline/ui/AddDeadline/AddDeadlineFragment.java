@@ -154,7 +154,14 @@ public class AddDeadlineFragment extends Fragment {
 
             mViewModel.addNotification(new NotificationRequest(
                     title, description, selectedDateMillis, priority, notificationType, isDone
-            ));
+            ),id -> {
+                if (isToday()) {
+                    int requestCode = (int) (id);
+                    NotificationScheduler.scheduleFixedTimeNotification(
+                            requireContext(), selectedDateMillis, requestCode, title, description
+                    );
+                }
+            });
             showSuccessDialogWithAutoDismiss();
         });
     }

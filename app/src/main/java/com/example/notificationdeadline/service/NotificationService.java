@@ -19,10 +19,11 @@ public class NotificationService {
         this.notificationRepository = new NotificationRepository(context);
     }
 
-    public void addNotification(NotificationRequest request) {
+    public void addNotification(NotificationRequest request, NotificationRepository.OnInsertCallback callback) {
         NotificationEntity entity = NotificationMapper.toEntity(request);
-        notificationRepository.insertNotification(entity);
+        notificationRepository.insertNotification(entity, callback);
     }
+
 
     public void removeNotification(NotificationEntity notification) {
         notificationRepository.deleteNotification(notification);
@@ -66,6 +67,9 @@ public class NotificationService {
 
     public void updateSuccessDeadline(int id) {
         notificationRepository.updateSuccessDeadline(id);
+    }
+    public void updateNotSuccessDeadline(int id) {
+        notificationRepository.updateNotSuccessDeadline(id);
     }
 
     public void updateStatus(int status, int id) {

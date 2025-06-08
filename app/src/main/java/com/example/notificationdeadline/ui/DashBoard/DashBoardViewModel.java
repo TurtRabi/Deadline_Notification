@@ -76,5 +76,8 @@ public class DashBoardViewModel extends AndroidViewModel {
         return taskService.getTasksForNotification(notificationId);
     }
 
+    public LiveData<List<NotificationEntity>> geFinishDeadlines(){
+        return notificationService.fetchAllNotificationsByStatus(4);
+    }
 
 }

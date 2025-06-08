@@ -153,6 +153,20 @@ public class DashBoardFragment extends Fragment {
 
         mViewModel.getListNotificationByDay().observe(getViewLifecycleOwner(), todayList -> {
             adapter1.setData(todayList);
+            for (NotificationEntity notification : todayList) {
+                mViewModel.getTasksForNotification(notification.getId()).observe(getViewLifecycleOwner(), tasks -> {
+                    int doneCount = 0;
+                    if (tasks != null && !tasks.isEmpty()) {
+                        for (TaskEntity task : tasks) {
+                            if (task.isDone()) doneCount++;
+                        }
+                        int progress = (int) (100.0 * doneCount / tasks.size());
+                        adapter1.updateProgress(notification.getId(), progress);
+                    } else {
+                        adapter1.updateProgress(notification.getId(), 0);
+                    }
+                });
+            }
             binding.emptyTodayView.setVisibility(todayList == null || todayList.isEmpty() ? View.VISIBLE : View.GONE);
         });
 
@@ -160,26 +174,50 @@ public class DashBoardFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         recyclerFilterButtons.setLayoutManager(layoutManager);
 
-        List<String> filters = Arrays.asList("Tất cả", "Ngày mai", "Sắp đến hạn", "Quá hạn");
+        List<String> filters = Arrays.asList("Tất cả", "Ngày mai", "Sắp đến hạn", "Quá hạn","Hoàn thành");
         final String defaultFilter = "Tất cả";
 
         adapterFilter = new FilterButtonAdapter(filters, filter -> {
             // Sử dụng LiveData cho filter (hoặc bạn có thể truyền filter vào ViewModel để expose LiveData)
             switch (filter) {
                 case "Tất cả":
-                    mViewModel.getAllList().observe(getViewLifecycleOwner(), adapter::setData);
+                    mViewModel.getAllList().observe(getViewLifecycleOwner(), notificationEntityList -> {
+                        binding.emptyView.setVisibility(notificationEntityList == null || notificationEntityList.isEmpty() ? View.VISIBLE : View.GONE);
+                        adapter.setData(notificationEntityList);
+                    });
+
                     break;
                 case "Ngày mai":
-                    mViewModel.getDeadlinesForTomorrow().observe(getViewLifecycleOwner(), adapter::setData);
+                    mViewModel.getDeadlinesForTomorrow().observe(getViewLifecycleOwner(), notificationEntityList -> {
+                        binding.emptyView.setVisibility(notificationEntityList == null || notificationEntityList.isEmpty() ? View.VISIBLE : View.GONE);
+                        adapter.setData(notificationEntityList);
+                    });
                     break;
                 case "Sắp đến hạn":
-                    mViewModel.getUpcomingDeadlines().observe(getViewLifecycleOwner(), adapter::setData);
+                    mViewModel.getUpcomingDeadlines().observe(getViewLifecycleOwner(), notificationEntityList -> {
+                        binding.emptyView.setVisibility(notificationEntityList == null || notificationEntityList.isEmpty() ? View.VISIBLE : View.GONE);
+                        adapter.setData(notificationEntityList);
+                    });
                     break;
                 case "Quá hạn":
-                    mViewModel.getOverdueDeadlines().observe(getViewLifecycleOwner(), adapter::setData);
+
+                    mViewModel.getOverdueDeadlines().observe(getViewLifecycleOwner(), notificationEntityList -> {
+                        binding.emptyView.setVisibility(notificationEntityList == null || notificationEntityList.isEmpty() ? View.VISIBLE : View.GONE);
+                        adapter.setData(notificationEntityList);
+                    });
+                    break;
+                case "Hoàn thành":
+                    mViewModel.geFinishDeadlines().observe(getViewLifecycleOwner(), notificationEntityList -> {
+                        binding.emptyView.setVisibility(notificationEntityList == null || notificationEntityList.isEmpty() ? View.VISIBLE : View.GONE);
+                        adapter.setData(notificationEntityList);
+                    });
                     break;
                 default:
-                    mViewModel.getAllList().observe(getViewLifecycleOwner(), adapter::setData);
+                    mViewModel.getAllList().observe(getViewLifecycleOwner(), notificationEntityList -> {
+                        binding.emptyView.setVisibility(notificationEntityList == null || notificationEntityList.isEmpty() ? View.VISIBLE : View.GONE);
+                        adapter.setData(notificationEntityList);
+                    });
+
                     break;
             }
         });

@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 
 import com.example.notificationdeadline.dto.request.NotificationRequest;
+import com.example.notificationdeadline.repository.NotificationRepository;
 import com.example.notificationdeadline.service.NotificationService;
 
 public class AddDeadlineViewModel extends AndroidViewModel {
@@ -16,7 +17,7 @@ public class AddDeadlineViewModel extends AndroidViewModel {
         this.notificationService = new NotificationService(application.getApplicationContext());
     }
 
-    public void addNotification(NotificationRequest request){
-        notificationService.addNotification(request);
+    public void addNotification(NotificationRequest request, NotificationRepository.OnInsertCallback callback){
+        notificationService.addNotification(request,callback);
     }
 }

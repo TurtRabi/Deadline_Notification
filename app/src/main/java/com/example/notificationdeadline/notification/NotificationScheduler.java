@@ -41,4 +41,21 @@ public class NotificationScheduler {
             }
         }
     }
+
+    public static void cancelScheduledNotification(Context context, int requestCode) {
+        Intent intent = new Intent(context, FixedTimeReceiver.class);
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                context,
+                requestCode,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        if (alarmManager != null) {
+            alarmManager.cancel(pendingIntent);
+        }
+    }
+
 }

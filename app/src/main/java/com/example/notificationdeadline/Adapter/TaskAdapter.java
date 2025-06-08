@@ -1,5 +1,6 @@
 package com.example.notificationdeadline.Adapter;
 
+import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +9,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.notificationdeadline.R;
@@ -56,6 +58,16 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
         TaskEntity taskEntity = listTask.get(position);
         holder.taskName.setText(taskEntity.getContent());
+
+        if(taskEntity.isDone()){
+            holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.gray));
+            // Lấy TextView trong view và set gạch ngang
+            TextView textView = holder.itemView.findViewById(R.id.text_task_name);
+            textView.setPaintFlags(textView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            holder.checkBox.setChecked(true);
+            holder.checkBox.setClickable(false);
+            holder.checkBox.setFocusable(false);
+        }
 
         holder.checkBox.setOnClickListener(v -> {
             if(onCheckBoxClickListerner!=null){

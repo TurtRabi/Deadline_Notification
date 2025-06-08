@@ -8,6 +8,15 @@ import androidx.annotation.Nullable;
 
 public class NotificationRequest implements Parcelable {
     private int id;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     @NonNull
     private String title;
     @NonNull
@@ -19,8 +28,17 @@ public class NotificationRequest implements Parcelable {
 
     public NotificationRequest() {}
 
-
     public NotificationRequest(@NonNull String title, @NonNull String content, long time, int priority, int status, boolean isSuccess) {
+        this.title = title;
+        this.content = content;
+        this.time = time;
+        this.priority = priority;
+        this.status = status;
+        this.isSuccess = isSuccess;
+    }
+
+    public NotificationRequest(@NonNull int id, @NonNull String title, @NonNull String content, long time, int priority, int status, boolean isSuccess) {
+        this.id=id;
         this.title = title;
         this.content = content;
         this.time = time;

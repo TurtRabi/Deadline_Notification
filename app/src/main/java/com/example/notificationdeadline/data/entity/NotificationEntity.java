@@ -57,6 +57,16 @@ public class NotificationEntity {
         this.isSuccess = isSuccess;
     }
 
+    public NotificationEntity(int id, @NonNull String title, @NonNull String message, long timeMillis, int status, int priority, boolean isSuccess) {
+        this.id = id;
+        this.title = title;
+        this.message = message;
+        this.timeMillis = timeMillis;
+        this.status = status;
+        this.priority = priority;
+        this.isSuccess = isSuccess;
+    }
+
     // Getter & Setter
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
