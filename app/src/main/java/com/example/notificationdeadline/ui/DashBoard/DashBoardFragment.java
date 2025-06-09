@@ -48,6 +48,8 @@ public class DashBoardFragment extends Fragment {
     private RecyclerView recyclerView,recyclerView1,recyclerFilterButtons;
     private FragmentDashBoardBinding binding;
     private DeadlineAdapter adapter,adapter1;
+    private long lastClickTime = 0;
+    private static final long DOUBLE_CLICK_TIME_DELTA = 300;
     FilterButtonAdapter adapterFilter;
 
     public static DashBoardFragment newInstance() {
@@ -66,8 +68,8 @@ public class DashBoardFragment extends Fragment {
         AppBarLayout appBarLayout = binding.appBarLayout;
 
         // Đặt toolbar ẩn lúc đầu và alpha bằng 0
-        appBarLayout.setVisibility(View.GONE);
-        appBarLayout.setAlpha(0f);
+        appBarLayout.setVisibility(View.VISIBLE);
+        appBarLayout.setAlpha(1f);
 
         // Biến trạng thái toolbar hiện hay ẩn
         final boolean[] isAppBarVisible = {false};
@@ -99,6 +101,22 @@ public class DashBoardFragment extends Fragment {
                     }
                 }
             }
+        });
+
+        binding.getRoot().setOnClickListener(v -> {
+            long clickTime = System.currentTimeMillis();
+            if (clickTime - lastClickTime < DOUBLE_CLICK_TIME_DELTA) {
+                // Double tap detected, hiện app bar
+                if (!isAppBarVisible[0]) {
+                    appBarLayout.setVisibility(View.VISIBLE);
+                    appBarLayout.animate()
+                            .alpha(1f)
+                            .setDuration(300)
+                            .start();
+                    isAppBarVisible[0] = true;
+                }
+            }
+            lastClickTime = clickTime;
         });
 
         setHasOptionsMenu(true);

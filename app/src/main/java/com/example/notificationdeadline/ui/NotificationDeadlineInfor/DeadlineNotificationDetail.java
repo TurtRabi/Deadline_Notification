@@ -123,7 +123,8 @@ public class DeadlineNotificationDetail extends Fragment {
                 if (doneCount == tasks.size() && doneCount!=0) {
 
                     mViewModel.updateSuccessDeadline(notification.getId());
-                }else{
+                }
+                else if(!notification.isSuccess()){
                     long now = System.currentTimeMillis();
                     long diff = notification.getTimeMillis() - now;
 

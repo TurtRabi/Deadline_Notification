@@ -1,9 +1,16 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.NotificationDeadline" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:windowBackground">#F8FEEC</item>
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 
     <style name="Theme.NotificationDeadline" parent="Base.Theme.NotificationDeadline" />
+
+    <style name="Theme.NotificationDeadline.Splash" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:statusBarColor">@color/white</item>
+    </style>
+
 </resources>

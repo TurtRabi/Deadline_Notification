@@ -145,13 +145,6 @@ public class AddDeadlineFragment extends Fragment {
                 notificationType = StatusEnum.OVERDEADLINE.getValue(); // Sửa typo enum nếu cần
             }
 
-            if (isToday()) {
-                int requestCode = (int) (selectedDateMillis / 1000);
-                NotificationScheduler.scheduleFixedTimeNotification(
-                        requireContext(), selectedDateMillis, requestCode, title, description
-                );
-            }
-
             mViewModel.addNotification(new NotificationRequest(
                     title, description, selectedDateMillis, priority, notificationType, isDone
             ),id -> {

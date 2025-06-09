@@ -4,4 +4,15 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
     </style>
+
+    <style name="BottomNavActive" parent="TextAppearance.AppCompat.Caption">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">#000000</item> <!-- màu chữ đậm khi active -->
+    </style>
+
+    <style name="BottomNavInactive" parent="TextAppearance.AppCompat.Caption">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">#888888</item> <!-- màu chữ nhạt khi inactive -->
+    </style>
+
 </resources>

@@ -46,7 +46,7 @@ public class DeadlineNotificationDetailViewModel extends AndroidViewModel {
     }
     public  void updateNotSuccessDeadline(int id,int status){
         notificationService.updateStatus(status,id);
-        notificationService.updateSuccessDeadline(id);
+        notificationService.updateNotSuccessDeadline(id);
     }
 
     public void removeNotification(NotificationEntity notification, Context context) {

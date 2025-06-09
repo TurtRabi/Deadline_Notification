@@ -40,6 +40,8 @@ public class activity_main extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        binding.navView.setItemIconTintList(null);
+
         settingService = new SettingService(this);
 
 
