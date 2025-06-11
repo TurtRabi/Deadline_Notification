@@ -1,5 +1,6 @@
 package com.example.notificationdeadline.Adapter;
 
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,13 +61,21 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         holder.taskName.setText(taskEntity.getContent());
 
         if(taskEntity.isDone()){
-            holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.gray));
+            holder.itemView.setBackgroundColor(
+                    ContextCompat.getColor(holder.itemView.getContext(), R.color.gray));
             // Lấy TextView trong view và set gạch ngang
             TextView textView = holder.itemView.findViewById(R.id.text_task_name);
             textView.setPaintFlags(textView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             holder.checkBox.setChecked(true);
             holder.checkBox.setClickable(false);
             holder.checkBox.setFocusable(false);
+        }else{
+            holder.itemView.setBackgroundColor(Color.TRANSPARENT);
+            TextView textView = holder.itemView.findViewById(R.id.text_task_name);
+            textView.setPaintFlags(textView.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
+            holder.checkBox.setChecked(false);
+            holder.checkBox.setClickable(true);
+            holder.checkBox.setFocusable(true);
         }
 
         holder.checkBox.setOnClickListener(v -> {

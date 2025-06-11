@@ -12,10 +12,12 @@ import com.example.notificationdeadline.receiver.FixedTimeReceiver;
 
 public class NotificationScheduler {
 
-    public static void scheduleFixedTimeNotification(Context context, long timeMillis, int requestCode, String title, String message) {
+    public static void scheduleFixedTimeNotification(Context context, long timeMillis, int requestCode, String title, String message,int priority) {
         Intent intent = new Intent(context, FixedTimeReceiver.class);
         intent.putExtra("title", "⏰ Đến hạn rồi: " + title);
         intent.putExtra("message", message);
+        intent.putExtra("id", requestCode);
+        intent.putExtra("priority", priority);
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
                 context,

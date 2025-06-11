@@ -8,7 +8,7 @@
     android:background="#F8FEEC">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/search_toolbar"
+        android:id="@+id/search_toolbar1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
@@ -36,5 +36,28 @@
             android:inputType="text"
             android:singleLine="true" />
     </androidx.appcompat.widget.Toolbar>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/search_result_recycler_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/search_toolbar1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:padding="16dp"/>
+
+    <TextView
+        android:id="@+id/empty_search_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Không có kết quả"
+        android:textColor="@color/colorPrimary"
+        android:textStyle="italic"
+        app:layout_constraintTop_toBottomOf="@id/search_toolbar1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

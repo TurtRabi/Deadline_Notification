@@ -151,7 +151,12 @@ public class AddDeadlineFragment extends Fragment {
                 if (isToday()) {
                     int requestCode = (int) (id);
                     NotificationScheduler.scheduleFixedTimeNotification(
-                            requireContext(), selectedDateMillis, requestCode, title, description
+                            requireContext(),
+                            selectedDateMillis,
+                            requestCode,
+                            title,
+                            description,
+                            priority
                     );
                 }
             });

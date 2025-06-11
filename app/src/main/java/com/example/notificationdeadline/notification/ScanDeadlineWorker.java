@@ -29,7 +29,8 @@ public class ScanDeadlineWorker extends Worker {
                             notification.getTimeMillis(),
                             notification.getId(),
                             notification.getTitle(),
-                            notification.getMessage()
+                            notification.getMessage(),
+                            notification.getPriority()
                     );
                 }
             }

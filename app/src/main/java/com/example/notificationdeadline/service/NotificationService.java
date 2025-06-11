@@ -95,4 +95,8 @@ public class NotificationService {
 
         return notificationRepository.getAllNotification1(startTime, endTime);
     }
+
+    public LiveData<List<NotificationEntity>> searchNotifications(String keyword) {
+        return notificationRepository.searchNotifications(keyword);
+    }
 }

@@ -1,7 +1,27 @@
 package com.example.notificationdeadline.ui.SearchDeadline;
 
+import android.app.Application;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
-public class SearchDeadlineViewModel extends ViewModel {
-    // TODO: Implement the ViewModel
+import com.example.notificationdeadline.data.entity.NotificationEntity;
+import com.example.notificationdeadline.service.NotificationService;
+
+import java.util.List;
+
+public class SearchDeadlineViewModel extends AndroidViewModel {
+
+    private final NotificationService notificationService;
+
+    public SearchDeadlineViewModel(@NonNull Application application) {
+        super(application);
+        notificationService = new NotificationService(application.getApplicationContext());
+    }
+
+    public LiveData<List<NotificationEntity>> searchDeadlines(String keyword) {
+        return notificationService.searchNotifications(keyword);
+    }
 }

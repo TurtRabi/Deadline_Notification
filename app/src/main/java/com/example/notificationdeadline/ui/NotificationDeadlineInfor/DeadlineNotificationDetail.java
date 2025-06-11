@@ -107,17 +107,15 @@ public class DeadlineNotificationDetail extends Fragment {
                         view.setBackgroundColor(ContextCompat.getColor(view.getContext(), R.color.gray));
                         TextView textView = view.findViewById(R.id.text_task_name);
                         textView.setPaintFlags(textView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-
                         mViewModel.IsdoneTask(taskEntity);
                     }
             );
 
             mViewModel.getAllTaskByIdDeadline(notification.getId()).observe(getViewLifecycleOwner(), tasks -> {
+                if(tasks==null) return;
                 int doneCount = 0;
-                if (tasks != null && !tasks.isEmpty()) {
-                    for (TaskEntity task : tasks) {
-                        if (task.isDone()) doneCount++;
-                    }
+                for (TaskEntity task : tasks) {
+                    if (task.isDone()) doneCount++;
                 }
 
                 if (doneCount == tasks.size() && doneCount!=0) {
@@ -195,6 +193,7 @@ public class DeadlineNotificationDetail extends Fragment {
                     if(v.getId()==R.id.btn_add_task){
                         showAddTaskDialog(notification);
                     }else if(v.getId()==R.id.btn_complete_deadline){
+
                         showSuccessConfirmDialog(notification);
 
                     }else if(v.getId()==R.id.btn_delete_deadline){
@@ -337,6 +336,25 @@ public class DeadlineNotificationDetail extends Fragment {
                 task.setNotificationId(notificationId);
                 task.setContent(taskName);
                 task.setDone(false);
+
+
+                long now = System.currentTimeMillis();
+                long diff = notification.getTimeMillis() - now;
+
+                long sixHours = 6 * 60 * 60 * 1000;
+                long tenHours = 10 * 60 * 60 * 1000;
+
+                int notificationType;
+                if (diff > tenHours) {
+                    notificationType = StatusEnum.UPCOMING.getValue();
+                } else if (diff > sixHours) {
+                    notificationType = StatusEnum.NEAR_DEADLINE.getValue();
+                } else if (diff > 0) {
+                    notificationType = StatusEnum.DEADLINE.getValue();
+                } else {
+                    notificationType = StatusEnum.OVERDEADLINE.getValue();
+                }
+                mViewModel.updateNotSuccessDeadline(notification.getId(),notificationType);
 
                 mViewModel.saveTask(task, id -> {
                     requireActivity().runOnUiThread(() -> {

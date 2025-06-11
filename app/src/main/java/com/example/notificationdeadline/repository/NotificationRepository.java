@@ -72,4 +72,7 @@ public class NotificationRepository {
     public LiveData<List<NotificationEntity>> getAllByPriority(int priority) {
         return db.notificationDao().getAllByPriority(priority);
     }
+    public LiveData<List<NotificationEntity>> searchNotifications(String keyword) {
+        return db.notificationDao().searchNotifications(keyword);
+    }
 }

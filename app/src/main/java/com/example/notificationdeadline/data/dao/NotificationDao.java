@@ -49,4 +49,8 @@ public interface NotificationDao {
     @Transaction
     @Query("UPDATE notifications SET status = :status WHERE id = :id ")
     void updateStatus(int status, int id);
+
+    @Transaction
+    @Query("SELECT * FROM notifications WHERE title LIKE '%' || :keyword || '%' OR message LIKE '%' || :keyword || '%' ORDER BY time_millis DESC")
+    LiveData<List<NotificationEntity>> searchNotifications(String keyword);
 }
