@@ -149,15 +149,58 @@ public class AddDeadlineFragment extends Fragment {
                     title, description, selectedDateMillis, priority, notificationType, isDone
             ),id -> {
                 if (isToday()) {
-                    int requestCode = (int) (id);
-                    NotificationScheduler.scheduleFixedTimeNotification(
-                            requireContext(),
-                            selectedDateMillis,
-                            requestCode,
-                            title,
-                            description,
-                            priority
-                    );
+                    int requestCodeDeadline = (int) id;
+                    int requestCode15Min = (int) (id * 1000 + 15);
+                    int requestCode5Min = (int) (id * 1000 + 5);
+                    int requestCodeOverdue = (int) (id * 1000 + 999);
+
+                    long time15MinBefore = selectedDateMillis - 15 * 60 * 1000;
+                    if (time15MinBefore > System.currentTimeMillis()) {
+                        NotificationScheduler.scheduleFixedTimeNotification(
+                                requireContext(),
+                                time15MinBefore,
+                                requestCode15Min,
+                                title,
+                                "Chỉ còn 15 phút nữa là đến hạn!",
+                                priority
+                        );
+                    }
+
+                    long time5MinBefore = selectedDateMillis - 5 * 60 * 1000;
+                    if (time5MinBefore > System.currentTimeMillis()) {
+                        NotificationScheduler.scheduleFixedTimeNotification(
+                                requireContext(),
+                                time5MinBefore,
+                                requestCode5Min,
+                                title,
+                                "Chỉ còn 5 phút nữa là đến hạn!",
+                                priority
+                        );
+                    }
+
+                    if (selectedDateMillis > System.currentTimeMillis()) {
+                        NotificationScheduler.scheduleFixedTimeNotification(
+                                requireContext(),
+                                selectedDateMillis,
+                                requestCodeDeadline,
+                                title,
+                                description,
+                                priority
+                        );
+                    }
+
+                    long timeOverdue = selectedDateMillis + 60 * 1000;
+                    if (timeOverdue > System.currentTimeMillis()) {
+                        NotificationScheduler.scheduleFixedTimeNotification(
+                                requireContext(),
+                                timeOverdue,
+                                requestCodeOverdue,
+                                title,
+                                "Bạn đã quá hạn deadline này!",
+                                priority
+                        );
+                    }
+
                 }
             });
             showSuccessDialogWithAutoDismiss();
