@@ -8,6 +8,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -51,6 +52,13 @@ public class EditUserFragment extends Fragment {
         ((AppCompatActivity) requireActivity()).setSupportActionBar(toolbar);
         ((AppCompatActivity) requireActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setHasOptionsMenu(true);
+        View rootView = binding.getRoot();
+        rootView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+            View currentFocus = requireActivity().getCurrentFocus();
+            if (currentFocus != null) {
+                currentFocus.requestRectangleOnScreen(new Rect(), true);
+            }
+        });
 
         // Nhận dữ liệu User
         Bundle args = getArguments();
@@ -69,7 +77,7 @@ public class EditUserFragment extends Fragment {
                         .error(R.drawable.priority_high_24px)
                         .into(binding.imageButton);
 
-                selectImage = user.getImageUrl(); // gán mặc định ảnh hiện tại
+                selectImage = user.getImageUrl();
             }
         }
 

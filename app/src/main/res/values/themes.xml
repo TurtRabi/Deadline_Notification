@@ -9,8 +9,8 @@
     <style name="Theme.NotificationDeadline" parent="Base.Theme.NotificationDeadline" />
 
     <style name="Theme.NotificationDeadline.Splash" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="android:windowBackground">@color/white</item>
-        <item name="android:statusBarColor">@color/white</item>
+        <item name="android:windowBackground">#F8FEEC</item>
+        <item name="android:statusBarColor">#F8FEEC</item>
     </style>
 
 </resources>

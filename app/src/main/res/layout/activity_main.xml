@@ -17,18 +17,20 @@
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_view"
         android:layout_width="263dp"
-        android:layout_height="68dp"
+
         android:layout_marginTop="8dp"
         android:background="@drawable/bottom_nav_shadow"
-        android:layout_gravity="center_horizontal"
-        android:paddingTop="6dp"
-        android:paddingBottom="6dp"
-        app:itemIconSize="28dp"
+        android:layout_gravity="center"
+        app:itemIconSize="18dp"
+        android:layout_height="55dp"
         app:itemIconTint="@null"
         app:itemTextAppearanceActive="@style/BottomNavActive"
         app:itemTextAppearanceInactive="@style/BottomNavInactive"
         app:menu="@menu/bottom_nav_menu"
-        android:layout_marginBottom="20dp"/>
+        android:layout_marginBottom="20dp"
+        android:paddingTop="0dp"
+        android:paddingBottom="0dp"
+        />
 
 
 </LinearLayout>

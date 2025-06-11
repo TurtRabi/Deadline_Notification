@@ -65,6 +65,12 @@ public class NotificationFragment extends Fragment {
             // Optional: hiện empty view nếu rỗng
             binding.emptyNotificationView.setVisibility(list == null || list.isEmpty() ? View.VISIBLE : View.GONE);
         });
+
+        if (getActivity() instanceof activity_main) {
+            mViewModel.getUnreadCount().observe(getViewLifecycleOwner(), count -> {
+                ((activity_main) getActivity()).updateNotificationBadge(count);
+            });
+        }
     }
 
 

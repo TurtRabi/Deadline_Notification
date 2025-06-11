@@ -26,7 +26,7 @@
         >
 
         <Button
-            android:id="@+id/btn_cancel1"
+            android:id="@+id/btn_cancel2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Hủy"
@@ -36,11 +36,11 @@
             android:textAllCaps="false" />
 
         <Button
-            android:id="@+id/btn_delete"
+            android:id="@+id/btn_successDeadline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="xóa"
-            android:backgroundTint="#F44336"
+            android:text="Hoàn thành"
+            android:backgroundTint="#4CAF50"
             android:textColor="@android:color/white"
             android:textAllCaps="false" />
     </LinearLayout>

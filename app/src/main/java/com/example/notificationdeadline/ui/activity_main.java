@@ -20,9 +20,12 @@ import androidx.navigation.NavOptions;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.notificationdeadline.R;
+import com.example.notificationdeadline.data.entity.NotificationEntity;
 import com.example.notificationdeadline.data.entity.SettingEntity;
 import com.example.notificationdeadline.databinding.ActivityMainBinding;
+import com.example.notificationdeadline.dto.Enum.StatusEnum;
 import com.example.notificationdeadline.dto.request.SettingRequest;
+import com.example.notificationdeadline.service.NotificationService;
 import com.example.notificationdeadline.service.SettingService;
 import com.example.notificationdeadline.service.UserService;
 import com.google.android.material.badge.BadgeDrawable;
@@ -32,13 +35,15 @@ public class activity_main extends AppCompatActivity {
     private ActivityMainBinding binding;
     private UserService service;
     private SettingService settingService;
-
+    private NotificationService notificationService;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        notificationService = new NotificationService(this);
+
 
         binding.navView.setItemIconTintList(null);
 
@@ -50,11 +55,7 @@ public class activity_main extends AppCompatActivity {
                 settingService.saveSetting(new SettingRequest("theme", "1"));
             }
         });
-        settingService.getSetting("notification").observe(this,notification ->{
-            if(notification==null){
-                settingService.saveSetting(new SettingRequest("notification", "0"));
-            }
-        } );
+
 
         settingService.getSetting("theme").observe(this,settingEntity ->{
             String themeValue =(settingEntity !=null)? settingEntity.getValue():"1";
@@ -65,11 +66,11 @@ public class activity_main extends AppCompatActivity {
             }
         });
 
-        permisstion();
+
         service = new UserService(this);
         service.initDefaultUser();
 
-        // Gắn fragment bằng code
+
         Fragment existingFragment = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_activity_main);
         if (existingFragment == null) {
             NavHostFragment navHostFragment = NavHostFragment.create(R.navigation.mobile_navigation);
@@ -79,7 +80,7 @@ public class activity_main extends AppCompatActivity {
                     .commit();
         }
 
-        // Dùng navController sau khi fragment đã gắn
+
         binding.getRoot().post(() -> {
             NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.nav_host_fragment_activity_main);
@@ -87,6 +88,17 @@ public class activity_main extends AppCompatActivity {
                 NavController navController = navHostFragment.getNavController();
                 binding.navView.setOnItemSelectedListener(item -> {
                     int desId = item.getItemId();
+
+                    for (int i = 0; i < binding.navView.getMenu().size(); i++) {
+                        binding.navView.findViewById(binding.navView.getMenu().getItem(i).getItemId()).setScaleX(1f);
+                        binding.navView.findViewById(binding.navView.getMenu().getItem(i).getItemId()).setScaleY(1f);
+                    }
+
+
+                    View iconView = binding.navView.findViewById(item.getItemId());
+                    if (iconView != null) {
+                        iconView.animate().scaleX(1.2f).scaleY(1.2f).setDuration(200).start();
+                    }
 
                     if(navController.getCurrentDestination()!=null && navController.getCurrentDestination().getId() ==desId){
                         return true;
@@ -103,7 +115,7 @@ public class activity_main extends AppCompatActivity {
             }
         });
 
-        // Ẩn/hiện BottomNavView khi mở bàn phím
+
         View rootView = findViewById(android.R.id.content);
         rootView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
             Rect r = new Rect();
@@ -116,10 +128,12 @@ public class activity_main extends AppCompatActivity {
                 binding.navView.setVisibility(View.VISIBLE);
             }
         });
+
+        checkUpdateStatus();
     }
 
     public void updateNotificationBadge(int unreadCount) {
-        BadgeDrawable badge = binding.navView.getOrCreateBadge(R.id.notificationFragment); // ID item chuông
+        BadgeDrawable badge = binding.navView.getOrCreateBadge(R.id.notificationFragment);
         if (unreadCount > 0) {
             badge.setVisible(true);
             badge.setNumber(unreadCount);
@@ -129,18 +143,7 @@ public class activity_main extends AppCompatActivity {
         }
     }
 
-    public void permisstion(){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
-                    != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.POST_NOTIFICATIONS},
-                        1001);
-            }else{
-                settingService.updateSetting(new SettingRequest("notification", "1"));
-            }
-        }
-    }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -153,5 +156,34 @@ public class activity_main extends AppCompatActivity {
                 Toast.makeText(this, "Bạn cần cấp quyền cho ứng dụng", Toast.LENGTH_LONG).show();
             }
         }
+    }
+
+    public void checkUpdateStatus(){
+
+        notificationService.fetchAllNotificationsByDay().observe(this,listNotification ->{
+            if(!listNotification.isEmpty()&&listNotification.size()!=0){
+                for(NotificationEntity entity: listNotification){
+                    long now = System.currentTimeMillis();
+                    long diff = entity.getTimeMillis() - now;
+
+                    long sixHours = 6 * 60 * 60 * 1000;
+                    long tenHours = 10 * 60 * 60 * 1000;
+
+                    int notificationType;
+                    if (diff > tenHours) {
+                        notificationType = StatusEnum.UPCOMING.getValue();
+                    } else if (diff > sixHours) {
+                        notificationType = StatusEnum.NEAR_DEADLINE.getValue();
+                    } else if (diff > 0) {
+                        notificationType = StatusEnum.DEADLINE.getValue();
+                    } else {
+                        notificationType = StatusEnum.OVERDEADLINE.getValue();
+                    }
+                    notificationService.updateStatus(entity.getId(),notificationType);
+
+                }
+            }
+        });
+
     }
 }

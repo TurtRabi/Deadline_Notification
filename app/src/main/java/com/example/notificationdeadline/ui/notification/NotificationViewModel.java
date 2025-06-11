@@ -23,6 +23,9 @@ public class NotificationViewModel extends AndroidViewModel {
         return notificationHistoryService.getAllHistory();
     }
 
+    public LiveData<Integer> getUnreadCount() {
+        return notificationHistoryService.getUnreadCount();
+    }
     public void updateIsReadNotification(int id) {
         notificationHistoryService.markAsRead(id);
     }

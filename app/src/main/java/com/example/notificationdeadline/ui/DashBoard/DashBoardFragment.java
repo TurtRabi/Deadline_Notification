@@ -143,12 +143,7 @@ public class DashBoardFragment extends Fragment {
         });
         recyclerView1.setAdapter(adapter1);
 
-//        // Quan sát LiveData từ ViewModel thay vì lấy List trực tiếp
-//        mViewModel.getAllList().observe(getViewLifecycleOwner(), allDeadlines -> {
-//            adapter.setData(allDeadlines);
-//            // Hiện empty view nếu cần
-//            binding.emptyView.setVisibility(allDeadlines == null || allDeadlines.isEmpty() ? View.VISIBLE : View.GONE);
-//        });
+
 
         mViewModel.getAllList().observe(getViewLifecycleOwner(), notifications -> {
             adapter.setData(notifications);

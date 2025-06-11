@@ -248,13 +248,13 @@ public class DeadlineNotificationDetail extends Fragment {
     }
 
     private void showSuccessConfirmDialog(NotificationEntity notification) {
-        View view = LayoutInflater.from(requireContext()).inflate(R.layout.bg_dialog_delete_task, null);
+        View view = LayoutInflater.from(requireContext()).inflate(R.layout.bg_dialog_success, null);
 
         TextView dialogTitle = view.findViewById(R.id.dialogTitle);
         dialogTitle.setText("Bạn có chắc muốn hoàn thành?");
 
-        Button btnCancel = view.findViewById(R.id.btn_cancel1);
-        Button btnDelete = view.findViewById(R.id.btn_delete);
+        Button btnCancel = view.findViewById(R.id.btn_cancel2);
+        Button btnSuccess = view.findViewById(R.id.btn_successDeadline);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext())
                 .setView(view)
@@ -265,7 +265,7 @@ public class DeadlineNotificationDetail extends Fragment {
 
         btnCancel.setOnClickListener(v -> dialog.dismiss());
 
-        btnDelete.setOnClickListener(v -> {
+        btnSuccess.setOnClickListener(v -> {
             mViewModel.updateSuccessDeadline(notification.getId());
             dialog.dismiss();
             NavController navController = Navigation.findNavController(requireView());
