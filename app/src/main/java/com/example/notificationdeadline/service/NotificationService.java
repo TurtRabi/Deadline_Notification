@@ -33,7 +33,7 @@ public class NotificationService {
         return notificationRepository.getAllNotifications();
     }
 
-    public LiveData<List<NotificationEntity>> fetchAllNotificationsByDay() {
+    public LiveData<List<NotificationEntity>> fetchAllNotificationsByDay(int isSuccess) {
         Calendar calendar = Calendar.getInstance();
 
         // Set to 00:00:00
@@ -50,10 +50,10 @@ public class NotificationService {
         calendar.set(Calendar.MILLISECOND, 999);
         long endTime = calendar.getTimeInMillis();
 
-        return notificationRepository.getAllNotification(startTime, endTime);
+        return notificationRepository.getAllNotification(startTime, endTime,isSuccess);
     }
-    public LiveData<List<NotificationEntity>> fetchAllNotificationsByDay(long startTime, long endTime) {
-        return notificationRepository.getAllNotification(startTime, endTime);
+    public LiveData<List<NotificationEntity>> fetchAllNotificationsByDay(long startTime, long endTime,int isSuccess) {
+        return notificationRepository.getAllNotification(startTime, endTime,isSuccess);
     }
 
 
@@ -93,7 +93,7 @@ public class NotificationService {
         calendar.set(Calendar.MILLISECOND, 999);
         long endTime = calendar.getTimeInMillis();
 
-        return notificationRepository.getAllNotification1(startTime, endTime);
+        return notificationRepository.getAllNotification1(startTime, endTime,0);
     }
 
     public LiveData<List<NotificationEntity>> searchNotifications(String keyword) {

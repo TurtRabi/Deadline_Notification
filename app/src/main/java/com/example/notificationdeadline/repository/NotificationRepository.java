@@ -57,12 +57,12 @@ public class NotificationRepository {
         return db.notificationDao().getAll();
     }
 
-    public LiveData<List<NotificationEntity>> getAllNotification(long startTime, long endTime) {
-        return db.notificationDao().getAllByDay(startTime, endTime);
+    public LiveData<List<NotificationEntity>> getAllNotification(long startTime, long endTime,int isSuccess) {
+        return db.notificationDao().getAllByDay2(startTime, endTime,isSuccess);
     }
 
-    public List<NotificationEntity> getAllNotification1(long startTime, long endTime) {
-        return db.notificationDao().getAllByDay1(startTime, endTime);
+    public List<NotificationEntity> getAllNotification1(long startTime, long endTime,int isSuccess) {
+        return db.notificationDao().getAllByDay1(startTime, endTime,isSuccess);
     }
 
     public LiveData<List<NotificationEntity>> getAllByStatus(int status) {

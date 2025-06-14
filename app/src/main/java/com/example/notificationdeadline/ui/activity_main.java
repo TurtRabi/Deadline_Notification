@@ -160,7 +160,7 @@ public class activity_main extends AppCompatActivity {
 
     public void checkUpdateStatus(){
 
-        notificationService.fetchAllNotificationsByDay().observe(this,listNotification ->{
+        notificationService.fetchAllNotificationsByDay(0).observe(this,listNotification ->{
             if(!listNotification.isEmpty()&&listNotification.size()!=0){
                 for(NotificationEntity entity: listNotification){
                     long now = System.currentTimeMillis();

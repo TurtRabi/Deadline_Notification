@@ -71,7 +71,7 @@ public class DashBoardViewModel extends AndroidViewModel {
     }
 
     public LiveData<List<NotificationEntity>> getListNotificationByDay() {
-        return notificationService.fetchAllNotificationsByDay();
+        return notificationService.fetchAllNotificationsByDay(0);
     }
 
     public LiveData<List<NotificationEntity>> getDeadlinesForTomorrow() {
@@ -91,7 +91,7 @@ public class DashBoardViewModel extends AndroidViewModel {
         calendar.set(Calendar.MILLISECOND, 999);
         long endOfTomorrow = calendar.getTimeInMillis();
 
-        return notificationService.fetchAllNotificationsByDay(startOfTomorrow, endOfTomorrow);
+        return notificationService.fetchAllNotificationsByDay(startOfTomorrow, endOfTomorrow,0);
     }
 
     public LiveData<List<NotificationEntity>> getUpcomingDeadlines() {
@@ -99,12 +99,12 @@ public class DashBoardViewModel extends AndroidViewModel {
         long now = calendar.getTimeInMillis();
         calendar.add(Calendar.DAY_OF_YEAR, 3);
         long threeDaysLater = calendar.getTimeInMillis();
-        return notificationService.fetchAllNotificationsByDay(now, threeDaysLater);
+        return notificationService.fetchAllNotificationsByDay(now, threeDaysLater,0);
     }
 
     public LiveData<List<NotificationEntity>> getOverdueDeadlines() {
         long now = System.currentTimeMillis();
-        return notificationService.fetchAllNotificationsByDay(0, now - 1);
+        return notificationService.fetchAllNotificationsByDay(0, now - 1,1);
     }
 
     public LiveData<List<TaskEntity>> getTasksForNotification(int notificationId){
@@ -114,5 +114,8 @@ public class DashBoardViewModel extends AndroidViewModel {
     public LiveData<List<NotificationEntity>> geFinishDeadlines(){
         return notificationService.fetchAllNotificationsByStatus(4);
     }
-
+    public  void updateNotSuccessDeadline(int id,int status){
+        notificationService.updateStatus(status,id);
+        notificationService.updateNotSuccessDeadline(id);
+    }
 }

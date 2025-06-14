@@ -28,11 +28,13 @@ public interface NotificationDao {
     @Query("SELECT * FROM notifications")
     LiveData<List<NotificationEntity>> getAll();
 
-    @Query("SELECT * FROM notifications WHERE time_millis BETWEEN :startTime AND :endTime")
+    @Query("SELECT * FROM notifications WHERE time_millis BETWEEN :startTime AND :endTime" )
     LiveData<List<NotificationEntity>> getAllByDay(long startTime, long endTime);
 
-    @Query("SELECT * FROM notifications WHERE time_millis BETWEEN :startTime AND :endTime AND isSuccess=0")
-    List<NotificationEntity> getAllByDay1(long startTime, long endTime);
+    @Query("SELECT * FROM notifications WHERE time_millis BETWEEN :startTime AND :endTime AND isSuccess =:isSuccess")
+    List<NotificationEntity> getAllByDay1(long startTime, long endTime,int isSuccess);
+    @Query("SELECT * FROM notifications WHERE time_millis BETWEEN :startTime AND :endTime AND isSuccess =:isSuccess")
+    LiveData<List<NotificationEntity>> getAllByDay2(long startTime, long endTime,int isSuccess);
 
     @Query("SELECT * FROM notifications WHERE status = :status")
     LiveData<List<NotificationEntity>> getAllByStatus(int status);
