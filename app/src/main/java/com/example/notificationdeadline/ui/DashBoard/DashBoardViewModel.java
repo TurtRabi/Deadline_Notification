@@ -5,6 +5,7 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 
 import com.example.notificationdeadline.data.entity.NotificationEntity;
 import com.example.notificationdeadline.data.entity.TaskEntity;
@@ -19,6 +20,10 @@ public class DashBoardViewModel extends AndroidViewModel {
     private final NotificationHistoryService notificationHistoryService;
     private final NotificationService notificationService;
     private final TaskService taskService;
+    private final MediatorLiveData<List<NotificationEntity>> filteredList = new MediatorLiveData<>();
+    private LiveData<List<NotificationEntity>> currentSource = null;
+
+
 
     public DashBoardViewModel(@NonNull Application application) {
         super(application);
@@ -27,6 +32,36 @@ public class DashBoardViewModel extends AndroidViewModel {
         taskService = new TaskService(application.getApplicationContext());
     }
 
+    public LiveData<List<NotificationEntity>> getFilteredList() {
+        return filteredList;
+    }
+
+    public void setFilter(String filter) {
+        if (currentSource != null) {
+            filteredList.removeSource(currentSource);
+        }
+        switch (filter) {
+            case "Tất cả":
+                currentSource = getAllList();
+                break;
+            case "Ngày mai":
+                currentSource = getDeadlinesForTomorrow();
+                break;
+            case "Sắp đến hạn":
+                currentSource = getUpcomingDeadlines();
+                break;
+            case "Quá hạn":
+                currentSource = getOverdueDeadlines();
+                break;
+            case "Hoàn thành":
+                currentSource = geFinishDeadlines();
+                break;
+            default:
+                currentSource = getAllList();
+                break;
+        }
+        filteredList.addSource(currentSource, filteredList::setValue);
+    }
     public LiveData<List<NotificationEntity>> getAllList() {
         return notificationService.fetchAllNotifications();
     }

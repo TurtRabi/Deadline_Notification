@@ -136,6 +136,7 @@ public class DashBoardFragment extends Fragment {
             IntentDescriptionDeadlineTask(entity);
         });
         recyclerView.setAdapter(adapter);
+
         recyclerView1 = binding.recyclerTodayDeadlines;
         recyclerView1.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         adapter1 = new DeadlineAdapter((position, entity) -> {
@@ -143,99 +144,64 @@ public class DashBoardFragment extends Fragment {
         });
         recyclerView1.setAdapter(adapter1);
 
-
-
-        mViewModel.getAllList().observe(getViewLifecycleOwner(), notifications -> {
-            adapter.setData(notifications);
-            for (NotificationEntity notification : notifications) {
-                mViewModel.getTasksForNotification(notification.getId()).observe(getViewLifecycleOwner(), tasks -> {
-                    int doneCount = 0;
-                    if (tasks != null && !tasks.isEmpty()) {
-                        for (TaskEntity task : tasks) {
-                            if (task.isDone()) doneCount++;
+        mViewModel.getFilteredList().observe(getViewLifecycleOwner(), notificationEntityList -> {
+            boolean empty = (notificationEntityList == null || notificationEntityList.isEmpty());
+            binding.emptyView.setVisibility(empty ? View.VISIBLE : View.GONE);
+            for(NotificationEntity entity: notificationEntityList){
+                mViewModel.getTasksForNotification(entity.getId()).observe(getViewLifecycleOwner(), tasks -> {
+                    if(tasks.size()!=0||!tasks.isEmpty()){
+                        int doneCount = 0;
+                        if (tasks != null && !tasks.isEmpty()) {
+                            for (TaskEntity task : tasks) {
+                                if (task.isDone()) doneCount++;
+                            }
+                            int progress = (int) (100.0 * doneCount / tasks.size());
+                            adapter.updateProgress(entity.getId(), progress);
+                        } else {
+                            adapter.updateProgress(entity.getId(), 0);
                         }
-                        int progress = (int) (100.0 * doneCount / tasks.size());
-                        adapter.updateProgress(notification.getId(), progress);
-                    } else {
-                        adapter.updateProgress(notification.getId(), 0);
                     }
                 });
             }
-            binding.emptyView.setVisibility(notifications == null || notifications.isEmpty() ? View.VISIBLE : View.GONE);
+            adapter.setData(notificationEntityList);
         });
 
         mViewModel.getListNotificationByDay().observe(getViewLifecycleOwner(), todayList -> {
-            adapter1.setData(todayList);
-            for (NotificationEntity notification : todayList) {
-                mViewModel.getTasksForNotification(notification.getId()).observe(getViewLifecycleOwner(), tasks -> {
-                    int doneCount = 0;
-                    if (tasks != null && !tasks.isEmpty()) {
-                        for (TaskEntity task : tasks) {
-                            if (task.isDone()) doneCount++;
+            boolean emptyToday = (todayList == null || todayList.isEmpty());
+            binding.emptyTodayView.setVisibility(emptyToday ? View.VISIBLE : View.GONE);
+            for(NotificationEntity entity: todayList){
+                mViewModel.getTasksForNotification(entity.getId()).observe(getViewLifecycleOwner(), tasks -> {
+                    if(tasks.size()!=0||!tasks.isEmpty()){
+                        int doneCount = 0;
+                        if (tasks != null && !tasks.isEmpty()) {
+                            for (TaskEntity task : tasks) {
+                                if (task.isDone()) doneCount++;
+                            }
+                            int progress = (int) (100.0 * doneCount / tasks.size());
+                            adapter1.updateProgress(entity.getId(), progress);
+                        } else {
+                            adapter1.updateProgress(entity.getId(), 0);
                         }
-                        int progress = (int) (100.0 * doneCount / tasks.size());
-                        adapter1.updateProgress(notification.getId(), progress);
-                    } else {
-                        adapter1.updateProgress(notification.getId(), 0);
                     }
                 });
             }
-            binding.emptyTodayView.setVisibility(todayList == null || todayList.isEmpty() ? View.VISIBLE : View.GONE);
+            adapter1.setData(todayList);
         });
 
         recyclerFilterButtons = binding.recyclerFilterButtons;
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         recyclerFilterButtons.setLayoutManager(layoutManager);
 
-        List<String> filters = Arrays.asList("Tất cả", "Ngày mai", "Sắp đến hạn", "Quá hạn","Hoàn thành");
+        List<String> filters = Arrays.asList("Tất cả", "Ngày mai", "Sắp đến hạn", "Quá hạn", "Hoàn thành");
         final String defaultFilter = "Tất cả";
 
         adapterFilter = new FilterButtonAdapter(filters, filter -> {
-            // Sử dụng LiveData cho filter (hoặc bạn có thể truyền filter vào ViewModel để expose LiveData)
-            switch (filter) {
-                case "Tất cả":
-                    mViewModel.getAllList().observe(getViewLifecycleOwner(), notificationEntityList -> {
-                        binding.emptyView.setVisibility(notificationEntityList == null || notificationEntityList.isEmpty() ? View.VISIBLE : View.GONE);
-                        adapter.setData(notificationEntityList);
-                    });
-
-                    break;
-                case "Ngày mai":
-                    mViewModel.getDeadlinesForTomorrow().observe(getViewLifecycleOwner(), notificationEntityList -> {
-                        binding.emptyView.setVisibility(notificationEntityList == null || notificationEntityList.isEmpty() ? View.VISIBLE : View.GONE);
-                        adapter.setData(notificationEntityList);
-                    });
-                    break;
-                case "Sắp đến hạn":
-                    mViewModel.getUpcomingDeadlines().observe(getViewLifecycleOwner(), notificationEntityList -> {
-                        binding.emptyView.setVisibility(notificationEntityList == null || notificationEntityList.isEmpty() ? View.VISIBLE : View.GONE);
-                        adapter.setData(notificationEntityList);
-                    });
-                    break;
-                case "Quá hạn":
-
-                    mViewModel.getOverdueDeadlines().observe(getViewLifecycleOwner(), notificationEntityList -> {
-                        binding.emptyView.setVisibility(notificationEntityList == null || notificationEntityList.isEmpty() ? View.VISIBLE : View.GONE);
-                        adapter.setData(notificationEntityList);
-                    });
-                    break;
-                case "Hoàn thành":
-                    mViewModel.geFinishDeadlines().observe(getViewLifecycleOwner(), notificationEntityList -> {
-                        binding.emptyView.setVisibility(notificationEntityList == null || notificationEntityList.isEmpty() ? View.VISIBLE : View.GONE);
-                        adapter.setData(notificationEntityList);
-                    });
-                    break;
-                default:
-                    mViewModel.getAllList().observe(getViewLifecycleOwner(), notificationEntityList -> {
-                        binding.emptyView.setVisibility(notificationEntityList == null || notificationEntityList.isEmpty() ? View.VISIBLE : View.GONE);
-                        adapter.setData(notificationEntityList);
-                    });
-
-                    break;
-            }
+            // KHÔNG clearData nữa!
+            mViewModel.setFilter(filter);
         });
         recyclerFilterButtons.setAdapter(adapterFilter);
         adapterFilter.setSelectedFilter(defaultFilter);
+        mViewModel.setFilter(defaultFilter);
 
         if (getActivity() instanceof activity_main) {
             mViewModel.getUnreadCount().observe(getViewLifecycleOwner(), count -> {
@@ -243,6 +209,7 @@ public class DashBoardFragment extends Fragment {
             });
         }
     }
+
 
     private void IntentDescriptionDeadlineTask(NotificationEntity entity) {
         NavController navController = Navigation.findNavController(requireView());

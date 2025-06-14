@@ -9,6 +9,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.notificationdeadline.R;
@@ -53,11 +54,33 @@ public class DeadlineAdapter extends RecyclerView.Adapter<DeadlineAdapter.Deadli
 
 
 
-    // Luôn update data qua setData, không truyền vào constructor
-    public void setData(List<NotificationEntity> list) {
+    public void setData(List<NotificationEntity> newList) {
+
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DiffUtil.Callback() {
+            @Override
+            public int getOldListSize() {
+                return notificationEntityList.size();
+            }
+
+            @Override
+            public int getNewListSize() {
+                return newList == null ? 0 : newList.size();
+            }
+
+            @Override
+            public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+                return notificationEntityList.get(oldItemPosition).getId() == newList.get(newItemPosition).getId();
+            }
+
+            @Override
+            public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+                return notificationEntityList.get(oldItemPosition).equals(newList.get(newItemPosition));
+            }
+        });
+
         notificationEntityList.clear();
-        if (list != null) notificationEntityList.addAll(list);
-        notifyDataSetChanged();
+        if (newList != null) notificationEntityList.addAll(newList);
+        diffResult.dispatchUpdatesTo(this);
     }
 
     @NonNull
@@ -98,6 +121,13 @@ public class DeadlineAdapter extends RecyclerView.Adapter<DeadlineAdapter.Deadli
             }
         });
 
+    }
+
+    public void clearData() {
+        if (notificationEntityList != null) {
+            notificationEntityList.clear();
+            notifyDataSetChanged();
+        }
     }
 
     @Override

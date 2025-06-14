@@ -38,7 +38,7 @@ public class DeadlineNotifier {
                 NotificationChannel channel = new NotificationChannel(
                         CHANNEL_ID,
                         "Thông báo Deadline",
-                        HIGH_IMPORTANCE // Nên chọn mức cao nhất khi tạo lần đầu
+                        HIGH_IMPORTANCE
                 );
                 channel.setDescription("Thông báo các deadline khẩn cấp hoặc gần tới");
                 manager.createNotificationChannel(channel);
@@ -57,7 +57,7 @@ public class DeadlineNotifier {
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
 
-        // Lấy icon từ độ ưu tiên
+
         PriorityEnum priority = PriorityEnum.fromValue(entity.getPriority());
         int iconResId = priority != null ? priority.getDrawableResId() : R.drawable.ic_launcher_foreground;
 
