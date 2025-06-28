@@ -63,6 +63,9 @@ public class SearchDeadlineFragment extends Fragment {
         adapter = new DeadlineAdapter((position, entity) -> openDetail(entity));
         recyclerView.setAdapter(adapter);
 
+        // Initially show the empty state
+        performSearch("");
+
         binding.etSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -78,6 +81,13 @@ public class SearchDeadlineFragment extends Fragment {
     }
 
     private void performSearch(String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            // If keyword is empty, show the empty view and clear the adapter
+            adapter.setData(null); // Clear previous results
+            binding.emptySearchView.setVisibility(View.VISIBLE);
+            return;
+        }
+
         mViewModel.searchDeadlines(keyword).observe(getViewLifecycleOwner(), list -> {
             adapter.setData(list);
             boolean empty = list == null || list.isEmpty();

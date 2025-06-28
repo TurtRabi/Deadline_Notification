@@ -45,19 +45,35 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:padding="16dp"/>
+        android:padding="16dp"
+        android:layoutAnimation="@anim/layout_animation_slide_in_left"/>
 
-    <TextView
+    <LinearLayout
         android:id="@+id/empty_search_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Không có kết quả"
-        android:textColor="@color/colorPrimary"
-        android:textStyle="italic"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/search_toolbar1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:visibility="gone"/>
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:src="@drawable/search_24px"
+            app:tint="#B0B0B0" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Bắt đầu tìm kiếm deadline của bạn"
+            android:textSize="18sp"
+            android:textColor="#888888"
+            android:layout_marginTop="16dp"/>
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

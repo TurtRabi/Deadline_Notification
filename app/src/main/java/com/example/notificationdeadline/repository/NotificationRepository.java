@@ -10,6 +10,7 @@ import com.example.notificationdeadline.data.entity.NotificationEntity;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class NotificationRepository {
     private final AppDatabase db;
@@ -27,6 +28,13 @@ public class NotificationRepository {
             }
         });
     }
+
+    // NotificationRepository
+    public NotificationEntity getNotificationById(int id) {
+        return db.notificationDao().getNotificationById(id);
+    }
+
+
 
 
     public interface OnInsertCallback {

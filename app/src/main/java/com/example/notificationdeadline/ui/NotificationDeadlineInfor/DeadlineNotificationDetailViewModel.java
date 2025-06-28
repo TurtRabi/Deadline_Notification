@@ -50,7 +50,7 @@ public class DeadlineNotificationDetailViewModel extends AndroidViewModel {
     }
 
     public void removeNotification(NotificationEntity notification, Context context) {
-        NotificationScheduler.cancelScheduledNotification(context, notification.getId());
+        NotificationScheduler.cancelAllScheduledNotifications(context, notification.getId());
         notificationService.removeNotification(notification);
     }
 }

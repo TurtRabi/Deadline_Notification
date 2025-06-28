@@ -9,6 +9,7 @@ import androidx.lifecycle.MediatorLiveData;
 
 import com.example.notificationdeadline.data.entity.NotificationEntity;
 import com.example.notificationdeadline.data.entity.TaskEntity;
+import com.example.notificationdeadline.dto.Enum.StatusEnum;
 import com.example.notificationdeadline.service.NotificationHistoryService;
 import com.example.notificationdeadline.service.NotificationService;
 import com.example.notificationdeadline.service.TaskService;
@@ -22,6 +23,7 @@ public class DashBoardViewModel extends AndroidViewModel {
     private final TaskService taskService;
     private final MediatorLiveData<List<NotificationEntity>> filteredList = new MediatorLiveData<>();
     private LiveData<List<NotificationEntity>> currentSource = null;
+
 
 
 
@@ -71,6 +73,7 @@ public class DashBoardViewModel extends AndroidViewModel {
     }
 
     public LiveData<List<NotificationEntity>> getListNotificationByDay() {
+
         return notificationService.fetchAllNotificationsByDay(0);
     }
 
@@ -104,7 +107,7 @@ public class DashBoardViewModel extends AndroidViewModel {
 
     public LiveData<List<NotificationEntity>> getOverdueDeadlines() {
         long now = System.currentTimeMillis();
-        return notificationService.fetchAllNotificationsByDay(0, now - 1,1);
+        return notificationService.fetchAllNotificationsByDay(0, now - 1,0);
     }
 
     public LiveData<List<TaskEntity>> getTasksForNotification(int notificationId){
@@ -118,4 +121,40 @@ public class DashBoardViewModel extends AndroidViewModel {
         notificationService.updateStatus(status,id);
         notificationService.updateNotSuccessDeadline(id);
     }
+
+    public void checkUpdateStatus() {
+        notificationService.fetchAllNotificationsByDay(0).observeForever(listNotification -> {
+            if (listNotification != null && !listNotification.isEmpty()) {
+                long now = System.currentTimeMillis();
+                long sixHours = 6 * 60 * 60 * 1000;
+                long tenHours = 10 * 60 * 60 * 1000;
+
+                for (NotificationEntity entity : listNotification) {
+                    long diff = entity.getTimeMillis() - now;
+                    int notificationType;
+
+                    if (diff > tenHours) {
+                        notificationType = StatusEnum.UPCOMING.getValue();
+                    } else if (diff > sixHours) {
+                        notificationType = StatusEnum.NEAR_DEADLINE.getValue();
+                    } else if (diff > 0) {
+                        notificationType = StatusEnum.DEADLINE.getValue();
+                    } else {
+                        notificationType = StatusEnum.OVERDEADLINE.getValue();
+                    }
+
+                    if (entity.getStatus() != notificationType) {
+                        notificationService.updateStatus(entity.getId(), notificationType);
+                    }
+
+                    if (notificationType == StatusEnum.OVERDEADLINE.getValue()) {
+                        notificationService.updateSuccessDeadline(entity.getId());
+                    } else {
+                        notificationService.updateNotSuccessDeadline(entity.getId());
+                    }
+                }
+            }
+        });
+    }
+
 }

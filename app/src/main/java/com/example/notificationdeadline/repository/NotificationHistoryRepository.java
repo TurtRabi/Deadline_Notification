@@ -42,4 +42,8 @@ public class NotificationHistoryRepository {
     public LiveData<Integer> countUnread() {
         return db.notificationHistoryDao().countUnreadNotifications();
     }
+
+    public void deleteAll() {
+        executor.execute(() -> db.notificationHistoryDao().deleteAll());
+    }
 }

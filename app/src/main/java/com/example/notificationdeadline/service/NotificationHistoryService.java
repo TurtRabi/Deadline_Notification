@@ -70,4 +70,8 @@ public class NotificationHistoryService {
     public void insertNotificationHistory(NotificationHistoryEntity notificationHistory) {
         repository.insert(notificationHistory);
     }
+
+    public void clearAllHistory() {
+        repository.deleteAll();
+    }
 }

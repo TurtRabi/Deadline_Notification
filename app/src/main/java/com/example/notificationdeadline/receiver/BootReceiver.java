@@ -17,15 +17,15 @@ public class BootReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
             // Re-enqueue WorkManager khi máy khởi động lại
-            PeriodicWorkRequest workRequest =
-                    new PeriodicWorkRequest.Builder(DeadlineWorker.class, 15, TimeUnit.MINUTES)
-                            .build();
-
-            WorkManager.getInstance(context).enqueueUniquePeriodicWork(
-                    "DeadlineCheck",
-                    ExistingPeriodicWorkPolicy.KEEP,
-                    workRequest
-            );
+//            PeriodicWorkRequest workRequest =
+//                    new PeriodicWorkRequest.Builder(DeadlineWorker.class, 15, TimeUnit.MINUTES)
+//                            .build();
+//
+//            WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+//                    "DeadlineCheck",
+//                    ExistingPeriodicWorkPolicy.KEEP,
+//                    workRequest
+//            );
             scheduleDailyEveryMorning.scheduleDailyMidnight(context);
         }
     }

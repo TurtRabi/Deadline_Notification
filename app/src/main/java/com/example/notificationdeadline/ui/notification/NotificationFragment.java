@@ -21,6 +21,11 @@ import com.example.notificationdeadline.R;
 import com.example.notificationdeadline.databinding.FragmentNotificationBinding;
 import com.example.notificationdeadline.ui.activity_main;
 
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import androidx.appcompat.app.AlertDialog;
+
 public class NotificationFragment extends Fragment {
 
     private NotificationViewModel mViewModel;
@@ -33,16 +38,48 @@ public class NotificationFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true); // Báo cho Fragment biết nó có menu riêng
+    }
+
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentNotificationBinding.inflate(inflater,container,false);
         Toolbar toolbar = binding.notificationToolbar;
 
         ((AppCompatActivity) requireActivity()).setSupportActionBar(toolbar);
-        setHasOptionsMenu(true);
+        // Không cần gọi setHasOptionsMenu ở đây nữa
         return binding.getRoot();
     }
 
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.notification_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.action_delete_all) {
+            showDeleteConfirmationDialog();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void showDeleteConfirmationDialog() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Xác nhận xóa")
+                .setMessage("Bạn có chắc chắn muốn xóa tất cả lịch sử thông báo không? Hành động này không thể hoàn tác.")
+                .setPositiveButton("Xóa", (dialog, which) -> {
+                    mViewModel.clearAllHistory();
+                })
+                .setNegativeButton("Hủy", null)
+                .setIcon(R.drawable.delete_24px)
+                .show();
+    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -72,6 +109,4 @@ public class NotificationFragment extends Fragment {
             });
         }
     }
-
-
 }

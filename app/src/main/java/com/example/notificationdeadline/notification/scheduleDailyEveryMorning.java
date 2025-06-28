@@ -22,8 +22,8 @@ public class scheduleDailyEveryMorning {
         }
 
         Intent intent = new Intent(context, FixedTimeReceiver.class);
-        String title ="⏰ Đã sang ngày mới";
-        String message="Chúc em một ngày rực rỡ nắng mai~";
+        String title ="☀️ Chào ngày mới!";
+        String message="Chúc bạn một ngày tràn đầy năng lượng và thành công!";
 
         intent.putExtra("title", title);
         intent.putExtra("message", message);

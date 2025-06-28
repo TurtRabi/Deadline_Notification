@@ -35,18 +35,18 @@ public class activity_main extends AppCompatActivity {
     private ActivityMainBinding binding;
     private UserService service;
     private SettingService settingService;
-    private NotificationService notificationService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        notificationService = new NotificationService(this);
 
 
         binding.navView.setItemIconTintList(null);
-
+        binding.navView.setItemBackgroundResource(android.R.color.transparent); // ✅ tắt nền chọn
+        binding.navView.setItemRippleColor(null);
         settingService = new SettingService(this);
 
 
@@ -129,7 +129,7 @@ public class activity_main extends AppCompatActivity {
             }
         });
 
-        checkUpdateStatus();
+
     }
 
     public void updateNotificationBadge(int unreadCount) {
@@ -158,32 +158,5 @@ public class activity_main extends AppCompatActivity {
         }
     }
 
-    public void checkUpdateStatus(){
 
-        notificationService.fetchAllNotificationsByDay(0).observe(this,listNotification ->{
-            if(!listNotification.isEmpty()&&listNotification.size()!=0){
-                for(NotificationEntity entity: listNotification){
-                    long now = System.currentTimeMillis();
-                    long diff = entity.getTimeMillis() - now;
-
-                    long sixHours = 6 * 60 * 60 * 1000;
-                    long tenHours = 10 * 60 * 60 * 1000;
-
-                    int notificationType;
-                    if (diff > tenHours) {
-                        notificationType = StatusEnum.UPCOMING.getValue();
-                    } else if (diff > sixHours) {
-                        notificationType = StatusEnum.NEAR_DEADLINE.getValue();
-                    } else if (diff > 0) {
-                        notificationType = StatusEnum.DEADLINE.getValue();
-                    } else {
-                        notificationType = StatusEnum.OVERDEADLINE.getValue();
-                    }
-                    notificationService.updateStatus(entity.getId(),notificationType);
-
-                }
-            }
-        });
-
-    }
 }

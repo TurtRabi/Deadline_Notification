@@ -31,4 +31,7 @@ public interface NotificationHistoryDao {
 
     @Query("SELECT COUNT(*) FROM notification_history WHERE isRead = 0")
     LiveData<Integer> countUnreadNotifications();
+
+    @Query("DELETE FROM notification_history")
+    void deleteAll();
 }

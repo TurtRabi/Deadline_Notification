@@ -29,4 +29,8 @@ public class NotificationViewModel extends AndroidViewModel {
     public void updateIsReadNotification(int id) {
         notificationHistoryService.markAsRead(id);
     }
+
+    public void clearAllHistory() {
+        notificationHistoryService.clearAllHistory();
+    }
 }

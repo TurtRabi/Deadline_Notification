@@ -99,4 +99,8 @@ public class NotificationService {
     public LiveData<List<NotificationEntity>> searchNotifications(String keyword) {
         return notificationRepository.searchNotifications(keyword);
     }
+
+    public  NotificationEntity getNotificationById(int id) {
+        return notificationRepository.getNotificationById(id);
+    }
 }
