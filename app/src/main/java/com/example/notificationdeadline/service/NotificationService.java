@@ -8,20 +8,34 @@ import com.example.notificationdeadline.data.entity.NotificationEntity;
 import com.example.notificationdeadline.dto.request.NotificationRequest;
 import com.example.notificationdeadline.mapper.NotificationMapper;
 import com.example.notificationdeadline.repository.NotificationRepository;
+import com.example.notificationdeadline.notification.NotificationScheduler;
 
 import java.util.Calendar;
 import java.util.List;
 
 public class NotificationService {
     private final NotificationRepository notificationRepository;
+    private final Context context;
 
     public NotificationService(Context context) {
+        this.context = context;
         this.notificationRepository = new NotificationRepository(context);
     }
 
     public void addNotification(NotificationRequest request, NotificationRepository.OnInsertCallback callback) {
         NotificationEntity entity = NotificationMapper.toEntity(request);
-        notificationRepository.insertNotification(entity, callback);
+        notificationRepository.insertNotification(entity, new NotificationRepository.OnInsertCallback() {
+            @Override
+            public void onInsert(long id) {
+                if (callback != null) {
+                    callback.onInsert(id);
+                }
+                entity.setId((int) id);
+                if (entity.isRecurring()) {
+                    NotificationScheduler.scheduleRecurringNotification(context, entity);
+                }
+            }
+        });
     }
 
 
@@ -74,6 +88,13 @@ public class NotificationService {
 
     public void updateStatus(int status, int id) {
         notificationRepository.updateStatus(status, id);
+    }
+
+    public void updateNotification(NotificationEntity entity) {
+        notificationRepository.updateNotification(entity);
+        if (entity.isRecurring()) {
+            NotificationScheduler.scheduleRecurringNotification(context, entity);
+        }
     }
 
     public List<NotificationEntity> fetchAllNotificationsByDay1() {

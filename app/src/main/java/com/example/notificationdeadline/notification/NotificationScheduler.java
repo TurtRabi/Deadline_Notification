@@ -8,7 +8,10 @@ import android.os.Build;
 import android.provider.Settings;
 import android.widget.Toast;
 
+import com.example.notificationdeadline.data.entity.NotificationEntity;
 import com.example.notificationdeadline.receiver.FixedTimeReceiver;
+
+import java.util.Calendar;
 
 public class NotificationScheduler {
 
@@ -18,7 +21,7 @@ public class NotificationScheduler {
         // Các mốc thời gian
         long time15MinBefore = timeMillis - 15 * 60 * 1000;
         long time5MinBefore = timeMillis - 5 * 60 * 1000;
-        long timeOverdue = timeMillis + 5*60 * 1000;
+        long timeOverdue = timeMillis + 5 * 60 * 1000;
 
         // Các request code riêng cho mỗi mốc
         int requestCodeDeadline = requestCode;                 // Đúng giờ
@@ -86,6 +89,57 @@ public class NotificationScheduler {
         }
     }
 
+    public static void scheduleRecurringNotification(Context context, NotificationEntity notification) {
+        if (!notification.isRecurring()) {
+            return;
+        }
+
+        long now = System.currentTimeMillis();
+        long nextNotificationTime = notification.getTimeMillis();
+
+        // Calculate next notification time based on recurrence type
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(nextNotificationTime);
+
+        switch (notification.getRecurrenceType()) {
+            case 1: // Daily
+                while (nextNotificationTime <= now) {
+                    calendar.add(Calendar.DAY_OF_YEAR, 1);
+                    nextNotificationTime = calendar.getTimeInMillis();
+                }
+                break;
+            case 2: // Weekly
+                // Set to the specific day of the week (recurrenceValue)
+                calendar.set(Calendar.DAY_OF_WEEK, notification.getRecurrenceValue());
+                while (nextNotificationTime <= now) {
+                    calendar.add(Calendar.WEEK_OF_YEAR, 1);
+                    nextNotificationTime = calendar.getTimeInMillis();
+                }
+                break;
+            case 3: // Monthly
+                // Set to the specific day of the month (recurrenceValue)
+                calendar.set(Calendar.DAY_OF_MONTH, notification.getRecurrenceValue());
+                while (nextNotificationTime <= now) {
+                    calendar.add(Calendar.MONTH, 1);
+                    nextNotificationTime = calendar.getTimeInMillis();
+                }
+                break;
+            case 4: // Yearly
+                // Assuming recurrenceValue stores month and day (e.g., MMdd)
+                // This would require more complex parsing of recurrenceValue
+                // For simplicity, let's assume recurrenceValue is the month (1-12) and day is fixed to 1 for now.
+                // A better approach would be to store month and day separately or use a specific format.
+                // For now, let's just add a year.
+                while (nextNotificationTime <= now) {
+                    calendar.add(Calendar.YEAR, 1);
+                    nextNotificationTime = calendar.getTimeInMillis();
+                }
+                break;
+        }
+
+        // Schedule the next occurrence
+        scheduleFixedTimeNotification(context, nextNotificationTime, notification.getId(), notification.getTitle(), notification.getMessage(), notification.getPriority());
+    }
 
     public static void cancelAllScheduledNotifications(Context context, int requestCode) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -103,6 +157,5 @@ public class NotificationScheduler {
             if (alarmManager != null) alarmManager.cancel(pi);
         }
     }
-
-
 }
+

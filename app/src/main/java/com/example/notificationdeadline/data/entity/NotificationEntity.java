@@ -38,6 +38,15 @@ public class NotificationEntity {
     @ColumnInfo(defaultValue = "0")
     private boolean isSuccess;
 
+    @ColumnInfo(name = "is_recurring", defaultValue = "0")
+    private boolean isRecurring;
+
+    @ColumnInfo(name = "recurrence_type", defaultValue = "0")
+    private int recurrenceType; // 0: None, 1: Daily, 2: Weekly, 3: Monthly, 4: Yearly
+
+    @ColumnInfo(name = "recurrence_value", defaultValue = "0")
+    private int recurrenceValue; // Day of week for weekly, day of month for monthly, etc.
+
     public NotificationEntity() {}
 
     @Ignore
@@ -47,17 +56,19 @@ public class NotificationEntity {
         this.timeMillis = timeMillis;
     }
 
-    @Ignore
-    public NotificationEntity(@NonNull String title, @NonNull String message, long timeMillis, int status, int priority, boolean isSuccess) {
+    public NotificationEntity(@NonNull String title, @NonNull String message, long timeMillis, int status, int priority, boolean isSuccess, boolean isRecurring, int recurrenceType, int recurrenceValue) {
         this.title = title;
         this.message = message;
         this.timeMillis = timeMillis;
         this.status = status;
         this.priority = priority;
         this.isSuccess = isSuccess;
+        this.isRecurring = isRecurring;
+        this.recurrenceType = recurrenceType;
+        this.recurrenceValue = recurrenceValue;
     }
 
-    public NotificationEntity(int id, @NonNull String title, @NonNull String message, long timeMillis, int status, int priority, boolean isSuccess) {
+    public NotificationEntity(int id, @NonNull String title, @NonNull String message, long timeMillis, int status, int priority, boolean isSuccess, boolean isRecurring, int recurrenceType, int recurrenceValue) {
         this.id = id;
         this.title = title;
         this.message = message;
@@ -65,6 +76,9 @@ public class NotificationEntity {
         this.status = status;
         this.priority = priority;
         this.isSuccess = isSuccess;
+        this.isRecurring = isRecurring;
+        this.recurrenceType = recurrenceType;
+        this.recurrenceValue = recurrenceValue;
     }
 
     // Getter & Setter
@@ -90,4 +104,13 @@ public class NotificationEntity {
 
     public boolean isSuccess() { return isSuccess; }
     public void setSuccess(boolean success) { isSuccess = success; }
+
+    public boolean isRecurring() { return isRecurring; }
+    public void setRecurring(boolean recurring) { isRecurring = recurring; }
+
+    public int getRecurrenceType() { return recurrenceType; }
+    public void setRecurrenceType(int recurrenceType) { this.recurrenceType = recurrenceType; }
+
+    public int getRecurrenceValue() { return recurrenceValue; }
+    public void setRecurrenceValue(int recurrenceValue) { this.recurrenceValue = recurrenceValue; }
 }

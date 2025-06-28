@@ -14,7 +14,10 @@ public class NotificationMapper {
                 request.getTime(),
                 request.getStatus(),
                 request.getPriority(),
-                request.isSuccess()
+                request.isSuccess(),
+                request.isRecurring(),
+                request.getRecurrenceType(),
+                request.getRecurrenceValue()
         );
     }
 
@@ -26,7 +29,10 @@ public class NotificationMapper {
                 entity.getTimeMillis(),
                 entity.getPriority(),
                 entity.getStatus(),
-                entity.isSuccess()
+                entity.isSuccess(),
+                entity.isRecurring(),
+                entity.getRecurrenceType(),
+                entity.getRecurrenceValue()
         );
     }
 
@@ -39,7 +45,10 @@ public class NotificationMapper {
                 entity.getTimeMillis(),
                 entity.getPriority(),
                 entity.getStatus(),
-                entity.isSuccess()
+                entity.isSuccess(),
+                entity.isRecurring(),
+                entity.getRecurrenceType(),
+                entity.getRecurrenceValue()
         );
     }
 }

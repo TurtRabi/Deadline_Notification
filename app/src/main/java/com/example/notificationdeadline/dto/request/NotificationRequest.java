@@ -25,19 +25,25 @@ public class NotificationRequest implements Parcelable {
     private int priority;
     private int status;
     private boolean isSuccess;
+    private boolean isRecurring;
+    private int recurrenceType;
+    private int recurrenceValue;
 
     public NotificationRequest() {}
 
-    public NotificationRequest(@NonNull String title, @NonNull String content, long time, int priority, int status, boolean isSuccess) {
+    public NotificationRequest(@NonNull String title, @NonNull String content, long time, int priority, int status, boolean isSuccess, boolean isRecurring, int recurrenceType, int recurrenceValue) {
         this.title = title;
         this.content = content;
         this.time = time;
         this.priority = priority;
         this.status = status;
         this.isSuccess = isSuccess;
+        this.isRecurring = isRecurring;
+        this.recurrenceType = recurrenceType;
+        this.recurrenceValue = recurrenceValue;
     }
 
-    public NotificationRequest(@NonNull int id, @NonNull String title, @NonNull String content, long time, int priority, int status, boolean isSuccess) {
+    public NotificationRequest(@NonNull int id, @NonNull String title, @NonNull String content, long time, int priority, int status, boolean isSuccess, boolean isRecurring, int recurrenceType, int recurrenceValue) {
         this.id=id;
         this.title = title;
         this.content = content;
@@ -45,6 +51,9 @@ public class NotificationRequest implements Parcelable {
         this.priority = priority;
         this.status = status;
         this.isSuccess = isSuccess;
+        this.isRecurring = isRecurring;
+        this.recurrenceType = recurrenceType;
+        this.recurrenceValue = recurrenceValue;
     }
 
     protected NotificationRequest(Parcel in) {
@@ -55,6 +64,9 @@ public class NotificationRequest implements Parcelable {
         priority = in.readInt();
         status = in.readInt();
         isSuccess = in.readByte() != 0;
+        isRecurring = in.readByte() != 0;
+        recurrenceType = in.readInt();
+        recurrenceValue = in.readInt();
     }
 
     public static final Creator<NotificationRequest> CREATOR = new Creator<NotificationRequest>() {
@@ -108,6 +120,27 @@ public class NotificationRequest implements Parcelable {
     public void setTime(long time) {
         this.time = time;
     }
+    public boolean isRecurring() {
+        return isRecurring;
+    }
+    public void setRecurring(boolean recurring) {
+        isRecurring = recurring;}
+
+    public int getRecurrenceType() {
+        return recurrenceType;
+    }
+
+    public void setRecurrenceType(int recurrenceType) {
+        this.recurrenceType = recurrenceType;
+    }
+
+    public int getRecurrenceValue() {
+        return recurrenceValue;
+    }
+
+    public void setRecurrenceValue(int recurrenceValue) {
+        this.recurrenceValue = recurrenceValue;
+    }
 
     @Override
     public int describeContents() {
@@ -123,5 +156,8 @@ public class NotificationRequest implements Parcelable {
         dest.writeInt(priority);
         dest.writeInt(status);
         dest.writeByte((byte) (isSuccess ? 1 : 0));
+        dest.writeByte((byte) (isRecurring ? 1 : 0));
+        dest.writeInt(recurrenceType);
+        dest.writeInt(recurrenceValue);
     }
 }

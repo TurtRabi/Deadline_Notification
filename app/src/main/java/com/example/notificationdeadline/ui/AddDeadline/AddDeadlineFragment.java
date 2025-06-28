@@ -21,9 +21,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.CalendarView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TimePicker;
+import android.widget.AdapterView;
 
 import com.example.notificationdeadline.Adapter.PrioritySpinnerAdapter;
 import com.example.notificationdeadline.R;
@@ -41,6 +44,9 @@ public class AddDeadlineFragment extends Fragment {
     private AddDeadlineViewModel mViewModel;
     private FragmentAddDeadlineBinding binding;
     private long selectedDateMillis = 0;
+    private Switch switchIsRecurring;
+    private Spinner spinnerRecurrenceType;
+    private Spinner spinnerRecurrenceValue;
 
     public static AddDeadlineFragment newInstance() {
         return new AddDeadlineFragment();
@@ -59,6 +65,41 @@ public class AddDeadlineFragment extends Fragment {
         String[] priorities = getResources().getStringArray(R.array.priority_list);
         PrioritySpinnerAdapter adapter = new PrioritySpinnerAdapter(requireContext(), priorities);
         spinner.setAdapter(adapter);
+
+        switchIsRecurring = binding.switchIsRecurring;
+        spinnerRecurrenceType = binding.spinnerRecurrenceType;
+        spinnerRecurrenceValue = binding.spinnerRecurrenceValue;
+
+        switchIsRecurring.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                spinnerRecurrenceType.setVisibility(View.VISIBLE);
+                spinnerRecurrenceValue.setVisibility(View.VISIBLE);
+            } else {
+                spinnerRecurrenceType.setVisibility(View.GONE);
+                spinnerRecurrenceValue.setVisibility(View.GONE);
+            }
+        });
+
+        // Populate spinnerRecurrenceType
+        ArrayAdapter<CharSequence> recurrenceTypeAdapter = ArrayAdapter.createFromResource(
+                requireContext(),
+                R.array.recurrence_type_list,
+                android.R.layout.simple_spinner_item
+        );
+        recurrenceTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerRecurrenceType.setAdapter(recurrenceTypeAdapter);
+
+        spinnerRecurrenceType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                populateRecurrenceValueSpinner(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Do nothing
+            }
+        });
 
         return binding.getRoot();
     }
@@ -116,6 +157,31 @@ public class AddDeadlineFragment extends Fragment {
             int priority = binding.spinnerPriority.getSelectedItemPosition();
             boolean isDone = false;
 
+            boolean isRecurring = switchIsRecurring.isChecked();
+            int recurrenceType = 0; // Default to None
+            int recurrenceValue = 0; // Default to 0
+
+            if (isRecurring) {
+                recurrenceType = spinnerRecurrenceType.getSelectedItemPosition();
+                // Get recurrence value based on type
+                if (spinnerRecurrenceValue.getAdapter() != null && spinnerRecurrenceValue.getSelectedItem() != null) {
+                    switch (recurrenceType) {
+                        case 1: // Daily
+                            recurrenceValue = 0; // Not applicable for daily
+                            break;
+                        case 2: // Weekly (Day of week)
+                            recurrenceValue = spinnerRecurrenceValue.getSelectedItemPosition() + 1; // Calendar.SUNDAY is 1
+                            break;
+                        case 3: // Monthly (Day of month)
+                            recurrenceValue = Integer.parseInt(spinnerRecurrenceValue.getSelectedItem().toString());
+                            break;
+                        case 4: // Yearly (Month of year)
+                            recurrenceValue = spinnerRecurrenceValue.getSelectedItemPosition() + 1; // Month is 1-indexed
+                            break;
+                    }
+                }
+            }
+
             // Validate dữ liệu đầu vào
             if (title.isEmpty()) {
                 edtTitle.setError("Tiêu đề không được để trống");
@@ -146,7 +212,7 @@ public class AddDeadlineFragment extends Fragment {
             }
 
             mViewModel.addNotification(new NotificationRequest(
-                    title, description, selectedDateMillis, priority, notificationType, isDone
+                    title, description, selectedDateMillis, priority, notificationType, isDone, isRecurring, recurrenceType, recurrenceValue
             ),id -> {
                 if (isToday()) {
                     int requestCodeDeadline = (int) id;
@@ -203,6 +269,36 @@ public class AddDeadlineFragment extends Fragment {
         calendar.set(Calendar.MILLISECOND, 0);
         selectedDateMillis = calendar.getTimeInMillis();
         Log.d("Calendar", "🗓️ Ngày giờ được chọn: " + new Date(selectedDateMillis));
+    }
+
+    private void populateRecurrenceValueSpinner(int recurrenceType) {
+        ArrayAdapter<String> adapter;
+        switch (recurrenceType) {
+            case 0: // None
+                adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, new String[]{});
+                break;
+            case 1: // Daily
+                adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, new String[]{"Hàng ngày"});
+                break;
+            case 2: // Weekly
+                adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, getResources().getStringArray(R.array.days_of_week));
+                break;
+            case 3: // Monthly
+                String[] daysOfMonth = new String[31];
+                for (int i = 0; i < 31; i++) {
+                    daysOfMonth[i] = String.valueOf(i + 1);
+                }
+                adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, daysOfMonth);
+                break;
+            case 4: // Yearly
+                adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, getResources().getStringArray(R.array.months_of_year));
+                break;
+            default:
+                adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, new String[]{});
+                break;
+        }
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerRecurrenceValue.setAdapter(adapter);
     }
 
     private boolean isToday() {
