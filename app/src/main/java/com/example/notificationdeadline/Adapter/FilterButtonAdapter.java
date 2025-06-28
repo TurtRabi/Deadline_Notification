@@ -42,6 +42,13 @@ public class FilterButtonAdapter extends RecyclerView.Adapter<FilterButtonAdapte
         }
     }
 
+    public String getSelectedFilter() {
+        if (selectedPosition >= 0 && selectedPosition < filterOptions.size()) {
+            return filterOptions.get(selectedPosition);
+        }
+        return null;
+    }
+
     public void setFilters(List<String> filters) {
         this.filterOptions = filters;
         selectedPosition = 0;

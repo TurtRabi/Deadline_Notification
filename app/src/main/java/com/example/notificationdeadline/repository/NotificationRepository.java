@@ -35,8 +35,6 @@ public class NotificationRepository {
     }
 
 
-
-
     public interface OnInsertCallback {
         void onInsert(long id);
     }
@@ -53,6 +51,7 @@ public class NotificationRepository {
     public void updateSuccessDeadline(final int id) {
         executor.execute(() -> db.notificationDao().updateSuccessDeadline(id));
     }
+
     public void updateNotSuccessDeadline(final int id) {
         executor.execute(() -> db.notificationDao().updateNotSuccessDeadline(id));
     }
@@ -65,12 +64,12 @@ public class NotificationRepository {
         return db.notificationDao().getAll();
     }
 
-    public LiveData<List<NotificationEntity>> getAllNotification(long startTime, long endTime,int isSuccess) {
-        return db.notificationDao().getAllByDay2(startTime, endTime,isSuccess);
+    public LiveData<List<NotificationEntity>> getAllNotification(long startTime, long endTime, int isSuccess) {
+        return db.notificationDao().getAllByDay2(startTime, endTime, isSuccess);
     }
 
-    public List<NotificationEntity> getAllNotification1(long startTime, long endTime,int isSuccess) {
-        return db.notificationDao().getAllByDay1(startTime, endTime,isSuccess);
+    public List<NotificationEntity> getAllNotification1(long startTime, long endTime, int isSuccess) {
+        return db.notificationDao().getAllByDay1(startTime, endTime, isSuccess);
     }
 
     public LiveData<List<NotificationEntity>> getAllByStatus(int status) {
@@ -80,7 +79,24 @@ public class NotificationRepository {
     public LiveData<List<NotificationEntity>> getAllByPriority(int priority) {
         return db.notificationDao().getAllByPriority(priority);
     }
+
     public LiveData<List<NotificationEntity>> searchNotifications(String keyword) {
         return db.notificationDao().searchNotifications(keyword);
+    }
+
+    public LiveData<List<NotificationEntity>> getAllRecurringNotifications() {
+        return db.notificationDao().getAllRecurringNotifications();
+    }
+
+    public LiveData<List<NotificationEntity>> getRecurringNotificationsByType(int recurrenceType) {
+        return db.notificationDao().getRecurringNotificationsByType(recurrenceType);
+    }
+
+    public LiveData<List<NotificationEntity>> getAllCompletedNotifications() {
+        return db.notificationDao().getAllCompletedNotifications();
+    }
+
+    public LiveData<List<NotificationEntity>> getAllFixedDeadlines() {
+        return db.notificationDao().getAllFixedDeadlines();
     }
 }

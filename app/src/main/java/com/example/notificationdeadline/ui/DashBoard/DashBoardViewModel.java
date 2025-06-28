@@ -38,33 +38,74 @@ public class DashBoardViewModel extends AndroidViewModel {
         return filteredList;
     }
 
-    public void setFilter(String filter) {
+    private void applyDailyFilter(String filter) {
+        switch (filter) {
+            case "Tất cả":
+                currentSource = notificationService.fetchAllNotifications();
+                break;
+            case "Ngày mai":
+                currentSource = notificationService.fetchTomorrowDeadlines();
+                break;
+            case "Đến hạn":
+                currentSource = notificationService.fetchDueDeadlines();
+                break;
+            case "Quá hạn":
+                currentSource = notificationService.fetchOverdueDeadlines();
+                break;
+            case "Hoàn thành":
+                currentSource = notificationService.fetchCompletedDeadlines();
+                break;
+            case "Tuần":
+                currentSource = notificationService.fetchWeeklyDeadlines();
+                break;
+            case "Tháng":
+                currentSource = notificationService.fetchMonthlyDeadlines();
+                break;
+            case "Năm":
+                currentSource = notificationService.fetchYearlyDeadlines();
+                break;
+            default:
+                currentSource = notificationService.fetchAllNotifications();
+                break;
+        }
+    }
+
+    private void applyRecurringFilter(String filter) {
+        switch (filter) {
+            case "Tất cả":
+                currentSource = notificationService.fetchAllRecurringNotifications();
+                break;
+            case "Hàng ngày":
+                currentSource = notificationService.fetchDailyRecurringDeadlines();
+                break;
+            case "Hàng tuần":
+                currentSource = notificationService.fetchWeeklyRecurringDeadlines();
+                break;
+            case "Hàng tháng":
+                currentSource = notificationService.fetchMonthlyRecurringDeadlines();
+                break;
+            case "Hàng năm":
+                currentSource = notificationService.fetchYearlyRecurringDeadlines();
+                break;
+            default:
+                currentSource = notificationService.fetchAllRecurringNotifications();
+                break;
+        }
+    }
+
+    public void setFilter(String mainFilter, String subFilter) {
         if (currentSource != null) {
             filteredList.removeSource(currentSource);
         }
-        switch (filter) {
-            case "Tất cả":
-                currentSource = getAllList();
-                break;
-            case "Ngày mai":
-                currentSource = getDeadlinesForTomorrow();
-                break;
-            case "Sắp đến hạn":
-                currentSource = getUpcomingDeadlines();
-                break;
-            case "Quá hạn":
-                currentSource = getOverdueDeadlines();
-                break;
-            case "Hoàn thành":
-                currentSource = geFinishDeadlines();
-                break;
-            default:
-                currentSource = getAllList();
-                break;
+
+        if ("Deadline Cố Định".equals(mainFilter)) {
+            applyRecurringFilter(subFilter);
+        } else { // Default to "Deadline Hàng Ngày"
+            applyDailyFilter(subFilter);
         }
         filteredList.addSource(currentSource, filteredList::setValue);
     }
-    public LiveData<List<NotificationEntity>> getAllList() {
+    public LiveData<List<NotificationEntity>> getAllDeadlines() {
         return notificationService.fetchAllNotifications();
     }
 
@@ -77,46 +118,10 @@ public class DashBoardViewModel extends AndroidViewModel {
         return notificationService.fetchAllNotificationsByDay(0);
     }
 
-    public LiveData<List<NotificationEntity>> getDeadlinesForTomorrow() {
-        Calendar calendar = Calendar.getInstance();
-        // Lấy thời gian bắt đầu ngày mai
-        calendar.add(Calendar.DAY_OF_YEAR, 1);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        long startOfTomorrow = calendar.getTimeInMillis();
-
-        // Kết thúc ngày mai
-        calendar.set(Calendar.HOUR_OF_DAY, 23);
-        calendar.set(Calendar.MINUTE, 59);
-        calendar.set(Calendar.SECOND, 59);
-        calendar.set(Calendar.MILLISECOND, 999);
-        long endOfTomorrow = calendar.getTimeInMillis();
-
-        return notificationService.fetchAllNotificationsByDay(startOfTomorrow, endOfTomorrow,0);
-    }
-
-    public LiveData<List<NotificationEntity>> getUpcomingDeadlines() {
-        Calendar calendar = Calendar.getInstance();
-        long now = calendar.getTimeInMillis();
-        calendar.add(Calendar.DAY_OF_YEAR, 3);
-        long threeDaysLater = calendar.getTimeInMillis();
-        return notificationService.fetchAllNotificationsByDay(now, threeDaysLater,0);
-    }
-
-    public LiveData<List<NotificationEntity>> getOverdueDeadlines() {
-        long now = System.currentTimeMillis();
-        return notificationService.fetchAllNotificationsByDay(0, now - 1,0);
-    }
-
     public LiveData<List<TaskEntity>> getTasksForNotification(int notificationId){
         return taskService.getTasksForNotification(notificationId);
     }
 
-    public LiveData<List<NotificationEntity>> geFinishDeadlines(){
-        return notificationService.fetchAllNotificationsByStatus(4);
-    }
     public  void updateNotSuccessDeadline(int id,int status){
         notificationService.updateStatus(status,id);
         notificationService.updateNotSuccessDeadline(id);

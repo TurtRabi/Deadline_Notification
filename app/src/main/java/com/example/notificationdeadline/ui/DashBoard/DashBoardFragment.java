@@ -46,12 +46,16 @@ import java.util.List;
 public class DashBoardFragment extends Fragment {
 
     private DashBoardViewModel mViewModel;
-    private RecyclerView recyclerView,recyclerView1,recyclerFilterButtons;
+    private RecyclerView recyclerView;
+    private RecyclerView recyclerView1;
+    private RecyclerView recyclerFilterButtons;
+    private RecyclerView recyclerSubFilterButtons;
     private FragmentDashBoardBinding binding;
     private DeadlineAdapter adapter,adapter1;
     private long lastClickTime = 0;
     private static final long DOUBLE_CLICK_TIME_DELTA = 300;
     FilterButtonAdapter adapterFilter;
+    FilterButtonAdapter adapterSubFilter;
 
     public static DashBoardFragment newInstance() {
         return new DashBoardFragment();
@@ -193,16 +197,58 @@ public class DashBoardFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         recyclerFilterButtons.setLayoutManager(layoutManager);
 
-        List<String> filters = Arrays.asList("Tất cả", "Ngày mai", "Sắp đến hạn", "Quá hạn", "Hoàn thành");
-        final String defaultFilter = "Tất cả";
+        recyclerSubFilterButtons = binding.recyclerSubFilterButtons;
+        LinearLayoutManager subLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        recyclerSubFilterButtons.setLayoutManager(subLayoutManager);
 
-        adapterFilter = new FilterButtonAdapter(filters, filter -> {
-            // KHÔNG clearData nữa!
-            mViewModel.setFilter(filter);
+        List<String> mainFilters = Arrays.asList("Deadline Hàng Ngày", "Deadline Cố Định");
+        List<String> dailyFilters = Arrays.asList("Tất cả", "Ngày mai", "Đến hạn", "Quá hạn", "Hoàn thành");
+        List<String> fixedRecurrenceFilters = Arrays.asList("Tất cả", "Hàng ngày", "Hàng tuần", "Hàng tháng", "Hàng năm");
+        final String defaultMainFilter = "Deadline Hàng Ngày";
+        final String defaultDailyFilter = "Tất cả";
+        final String defaultFixedRecurrenceFilter = "Tất cả";
+
+        adapterFilter = new FilterButtonAdapter(mainFilters, filter -> {
+            adapterFilter.setSelectedFilter(filter);
+            if ("Deadline Hàng Ngày".equals(filter)) {
+                recyclerSubFilterButtons.setVisibility(View.VISIBLE);
+                adapterSubFilter.setFilters(dailyFilters);
+                adapterSubFilter.setSelectedFilter(defaultDailyFilter);
+                mViewModel.setFilter(filter, defaultDailyFilter);
+            } else if ("Deadline Cố Định".equals(filter)) {
+                recyclerSubFilterButtons.setVisibility(View.VISIBLE);
+                adapterSubFilter.setFilters(fixedRecurrenceFilters);
+                adapterSubFilter.setSelectedFilter(defaultFixedRecurrenceFilter);
+                mViewModel.setFilter(filter, defaultFixedRecurrenceFilter);
+            } else {
+                recyclerSubFilterButtons.setVisibility(View.GONE);
+                mViewModel.setFilter(filter, null);
+            }
         });
         recyclerFilterButtons.setAdapter(adapterFilter);
-        adapterFilter.setSelectedFilter(defaultFilter);
-        mViewModel.setFilter(defaultFilter);
+        adapterFilter.setSelectedFilter(defaultMainFilter);
+
+        adapterSubFilter = new FilterButtonAdapter(dailyFilters, filter -> {
+            adapterSubFilter.setSelectedFilter(filter);
+            mViewModel.setFilter(adapterFilter.getSelectedFilter(), filter);
+        });
+        recyclerSubFilterButtons.setAdapter(adapterSubFilter);
+
+        // Initial state
+        if ("Deadline Hàng Ngày".equals(adapterFilter.getSelectedFilter())) {
+            recyclerSubFilterButtons.setVisibility(View.VISIBLE);
+            adapterSubFilter.setFilters(dailyFilters);
+            adapterSubFilter.setSelectedFilter(defaultDailyFilter);
+            mViewModel.setFilter(adapterFilter.getSelectedFilter(), defaultDailyFilter);
+        } else if ("Deadline Cố Định".equals(adapterFilter.getSelectedFilter())) {
+            recyclerSubFilterButtons.setVisibility(View.VISIBLE);
+            adapterSubFilter.setFilters(fixedRecurrenceFilters);
+            adapterSubFilter.setSelectedFilter(defaultFixedRecurrenceFilter);
+            mViewModel.setFilter("Deadline Cố Định", defaultFixedRecurrenceFilter);
+        } else {
+            recyclerSubFilterButtons.setVisibility(View.GONE);
+            mViewModel.setFilter(adapterFilter.getSelectedFilter(), null);
+        }
 
         if (getActivity() instanceof activity_main) {
             mViewModel.getUnreadCount().observe(getViewLifecycleOwner(), count -> {

@@ -45,4 +45,11 @@
         <item>Tháng 11</item>
         <item>Tháng 12</item>
     </string-array>
+    <string-array name="short_term_filter_options">
+        <item>Tất cả</item>
+        <item>Ngày mai</item>
+        <item>Sắp đến hạn</item>
+        <item>Quá hạn</item>
+        <item>Hoàn thành</item>
+    </string-array>
 </resources>
