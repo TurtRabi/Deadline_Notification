@@ -319,7 +319,7 @@ public class AddDeadlineFragment extends Fragment {
         CustomMessageDialog dialog = CustomMessageDialog.newInstance(
                 "Thành công 🎉",
                 "Deadline đã được thêm thành công!",
-                R.drawable.ic_launcher_foreground,
+                R.drawable.finishdeadline,
                 R.color.successColor
         );
         dialog.show(getParentFragmentManager(), "successDialog");

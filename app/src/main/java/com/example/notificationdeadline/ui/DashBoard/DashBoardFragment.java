@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -144,6 +145,7 @@ public class DashBoardFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mViewModel = new ViewModelProvider(this).get(DashBoardViewModel.class);
+        ProgressBar progressBar = binding.progressBar;
 
         recyclerView = binding.recyclerMoreDeadlines;
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -167,6 +169,7 @@ public class DashBoardFragment extends Fragment {
         recyclerView1.setAdapter(adapter1);
 
         mViewModel.getCurrentFilterType().observe(getViewLifecycleOwner(), filterType -> {
+            progressBar.setVisibility(View.VISIBLE);
             if ("Deadline Hàng Ngày".equals(filterType)) {
                 recyclerView.setAdapter(adapter);
                 mViewModel.getDailyDeadlines().observe(getViewLifecycleOwner(), notificationEntityList -> {
@@ -189,6 +192,7 @@ public class DashBoardFragment extends Fragment {
                             }
                         });
                     }
+                    progressBar.setVisibility(View.GONE);
                 });
             } else if ("Deadline Cố Định".equals(filterType)) {
                 recyclerView.setAdapter(recurringAdapter);
@@ -196,6 +200,7 @@ public class DashBoardFragment extends Fragment {
                     boolean empty = (recurringDeadlineEntityList == null || recurringDeadlineEntityList.isEmpty());
                     binding.emptyView.setVisibility(empty ? View.VISIBLE : View.GONE);
                     recurringAdapter.setData(recurringDeadlineEntityList);
+                    progressBar.setVisibility(View.GONE);
                 });
             }
         });
