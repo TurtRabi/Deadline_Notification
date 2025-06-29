@@ -3,9 +3,9 @@ package com.example.notificationdeadline.dto.Enum;
 import com.example.notificationdeadline.R;  // import R để lấy drawable
 
 public enum PriorityEnum {
-    NORMAL(0, "Bình thường", R.drawable.low_priority_24px),
-    URGENT(1, "Khẩn cấp", R.drawable.priority_high_24px),
-    CRITICAL(2, "Cực kỳ quan trọng", R.drawable.priority_high_very);
+    NORMAL(0, "Bình thường", R.drawable.chill),
+    URGENT(1, "Khẩn cấp", R.drawable.warm),
+    CRITICAL(2, "Cực kỳ quan trọng", R.drawable.super_warm);
 
     private final int value;
     private final String label;

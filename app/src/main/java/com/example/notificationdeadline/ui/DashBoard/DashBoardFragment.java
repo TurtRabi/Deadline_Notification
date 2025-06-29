@@ -23,7 +23,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
 
 
 import com.example.notificationdeadline.Adapter.DeadlineAdapter;
@@ -40,6 +44,7 @@ import com.example.notificationdeadline.mapper.NotificationMapper;
 import com.example.notificationdeadline.ui.AddDeadline.AddDeadlineFragment;
 import com.example.notificationdeadline.ui.SearchDeadline.SearchDeadlineFragment;
 import com.example.notificationdeadline.ui.activity_main;
+import com.example.notificationdeadline.ui.recurringdeadline.RecurringDeadlineListViewModel;
 import com.google.android.material.appbar.AppBarLayout;
 
 import java.util.ArrayList;
@@ -49,6 +54,7 @@ import java.util.List;
 public class DashBoardFragment extends Fragment {
 
     private DashBoardViewModel mViewModel;
+    private RecurringDeadlineAdapter mViewModelRecurring;
     private RecyclerView recyclerView;
     private RecyclerView recyclerView1;
     private RecyclerView recyclerFilterButtons;
@@ -145,8 +151,12 @@ public class DashBoardFragment extends Fragment {
             IntentDescriptionDeadlineTask(entity);
         });
         recurringAdapter = new RecurringDeadlineAdapter((position, entity) -> {
-            // IntentDescriptionRecurringDeadlineTask(entity);
-        });
+
+        },(position, entity) -> {
+
+        },(position, entity) -> {
+            showDeleteRecurringConfirmDialog(entity);
+        },new ArrayList<>());
         recyclerView.setAdapter(adapter);
 
         recyclerView1 = binding.recyclerTodayDeadlines;
@@ -277,6 +287,7 @@ public class DashBoardFragment extends Fragment {
     }
 
 
+
     private void IntentDescriptionDeadlineTask(NotificationEntity entity) {
         NavController navController = Navigation.findNavController(requireView());
         Bundle bundle = new Bundle();
@@ -306,6 +317,32 @@ public class DashBoardFragment extends Fragment {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showDeleteRecurringConfirmDialog(RecurringDeadlineEntity recurringDeadline) {
+        View view = LayoutInflater.from(requireContext()).inflate(R.layout.bg_dialog_delete_task, null);
+
+        TextView dialogTitle = view.findViewById(R.id.dialogTitle);
+        dialogTitle.setText("Bạn có chắc muốn xóa lịch cố định này?");
+
+        Button btnCancel = view.findViewById(R.id.btn_cancel1);
+        Button btnDelete = view.findViewById(R.id.btn_delete);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext())
+                .setView(view)
+                .setCancelable(true);
+
+        AlertDialog dialog = builder.create();
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+
+        btnDelete.setOnClickListener(v -> {
+            mViewModel.deleteRecurringDeadline(recurringDeadline);
+            dialog.dismiss();
+        });
+
+        dialog.show();
     }
 
 

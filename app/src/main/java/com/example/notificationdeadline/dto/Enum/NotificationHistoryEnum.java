@@ -3,10 +3,10 @@ package com.example.notificationdeadline.dto.Enum;
 import com.example.notificationdeadline.R;
 
 public enum NotificationHistoryEnum {
-    NORMAL(0, "Bình thường", R.drawable.low_priority_24px),
-    URGENT(1, "Khẩn cấp", R.drawable.priority_high_24px),
-    CRITICAL(2, "Cực kỳ quan trọng", R.drawable.priority_high_very),
-    HELLODAY(3, "Xin chào buổi sáng", R.drawable.sentiment_excited_24px);
+    NORMAL(0, "Bình thường", R.drawable.chill),
+    URGENT(1, "Khẩn cấp", R.drawable.warm),
+    CRITICAL(2, "Cực kỳ quan trọng", R.drawable.super_warm),
+    HELLODAY(3, "Xin chào buổi sáng", R.drawable.hellomoning_removebg_preview);
 
     private final int id;
     private final String description;

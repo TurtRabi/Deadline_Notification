@@ -47,4 +47,8 @@ public class RecurringDeadlineRepository {
     public LiveData<List<RecurringDeadlineEntity>> getRecurringDeadlinesByType(int type) {
         return db.recurringDeadlineDao().getRecurringDeadlinesByType(type);
     }
+
+    public void deleteRecurringDeadline(RecurringDeadlineEntity recurringDeadline) {
+        executor.execute(() -> db.recurringDeadlineDao().delete(recurringDeadline));
+    }
 }

@@ -34,4 +34,8 @@ public class RecurringDeadlineService {
     public LiveData<List<RecurringDeadlineEntity>> getRecurringDeadlinesByType(int type) {
         return repository.getRecurringDeadlinesByType(type);
     }
+
+    public void deleteRecurringDeadline(RecurringDeadlineEntity recurringDeadline) {
+        repository.deleteRecurringDeadline(recurringDeadline);
+    }
 }

@@ -36,6 +36,7 @@ public class DashBoardViewModel extends AndroidViewModel {
         recurringDeadlineService = new RecurringDeadlineService(application.getApplicationContext());
         taskService = new TaskService(application.getApplicationContext());
 
+
         // Set initial filter type
         currentFilterType.setValue("Deadline Hàng Ngày");
         // Load initial data
@@ -128,6 +129,14 @@ public class DashBoardViewModel extends AndroidViewModel {
     public void updateNotSuccessDeadline(int id, int status) {
         notificationService.updateStatus(status, id);
         notificationService.updateNotSuccessDeadline(id);
+    }
+
+    public void updateRecurringDeadline(RecurringDeadlineEntity recurringDeadline) {
+        recurringDeadlineService.updateRecurringDeadline(recurringDeadline);
+    }
+
+    public void deleteRecurringDeadline(RecurringDeadlineEntity recurringDeadline) {
+        recurringDeadlineService.deleteRecurringDeadline(recurringDeadline);
     }
 
     public void checkUpdateStatus() {

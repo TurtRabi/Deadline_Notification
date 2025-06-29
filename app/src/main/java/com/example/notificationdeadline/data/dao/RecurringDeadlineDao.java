@@ -10,6 +10,8 @@ import com.example.notificationdeadline.data.entity.RecurringDeadlineEntity;
 
 import java.util.List;
 
+import androidx.room.Delete;
+
 @Dao
 public interface RecurringDeadlineDao {
     @Insert
@@ -17,6 +19,9 @@ public interface RecurringDeadlineDao {
 
     @Update
     void update(RecurringDeadlineEntity recurringDeadline);
+
+    @Delete
+    void delete(RecurringDeadlineEntity recurringDeadline);
 
     @Query("SELECT * FROM recurring_deadlines WHERE isActive = 1")
     List<RecurringDeadlineEntity> getAllActiveRecurringDeadlinesSync();

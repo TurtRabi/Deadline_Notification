@@ -27,6 +27,7 @@ public class scheduleDailyEveryMorning {
 
         intent.putExtra("title", title);
         intent.putExtra("message", message);
+        intent.putExtra("priority",0);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
                 context,
                 1000,
