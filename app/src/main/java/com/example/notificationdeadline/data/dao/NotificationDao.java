@@ -62,11 +62,7 @@ public interface NotificationDao {
     @Query("SELECT * FROM notifications WHERE id = :id LIMIT 1")
     NotificationEntity getNotificationById(int id);
 
-    @Query("SELECT * FROM notifications WHERE is_recurring = 1")
-    LiveData<List<NotificationEntity>> getAllRecurringNotifications();
-
-    @Query("SELECT * FROM notifications WHERE is_recurring = 1 AND recurrence_type = :recurrenceType")
-    LiveData<List<NotificationEntity>> getRecurringNotificationsByType(int recurrenceType);
+    
 
     @Query("SELECT * FROM notifications WHERE status = 4")
     LiveData<List<NotificationEntity>> getAllCompletedNotifications();
@@ -82,4 +78,7 @@ public interface NotificationDao {
 
     @Query("SELECT * FROM notifications WHERE time_millis BETWEEN :startTime AND :endTime")
     LiveData<List<NotificationEntity>> getYearlyDeadlines(long startTime, long endTime);
+
+    @Query("SELECT * FROM notifications WHERE title = :title AND time_millis = :timeMillis LIMIT 1")
+    NotificationEntity getNotificationByTitleAndTime(String title, long timeMillis);
 }

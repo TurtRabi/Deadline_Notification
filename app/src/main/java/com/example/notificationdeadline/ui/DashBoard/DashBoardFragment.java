@@ -28,8 +28,10 @@ import android.widget.Toast;
 
 import com.example.notificationdeadline.Adapter.DeadlineAdapter;
 import com.example.notificationdeadline.Adapter.FilterButtonAdapter;
+import com.example.notificationdeadline.Adapter.RecurringDeadlineAdapter;
 import com.example.notificationdeadline.R;
 import com.example.notificationdeadline.data.entity.NotificationEntity;
+import com.example.notificationdeadline.data.entity.RecurringDeadlineEntity;
 import com.example.notificationdeadline.data.entity.TaskEntity;
 import com.example.notificationdeadline.databinding.FragmentDashBoardBinding;
 import com.example.notificationdeadline.dto.Enum.StatusEnum;
@@ -40,6 +42,7 @@ import com.example.notificationdeadline.ui.SearchDeadline.SearchDeadlineFragment
 import com.example.notificationdeadline.ui.activity_main;
 import com.google.android.material.appbar.AppBarLayout;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -52,6 +55,7 @@ public class DashBoardFragment extends Fragment {
     private RecyclerView recyclerSubFilterButtons;
     private FragmentDashBoardBinding binding;
     private DeadlineAdapter adapter,adapter1;
+    private RecurringDeadlineAdapter recurringAdapter;
     private long lastClickTime = 0;
     private static final long DOUBLE_CLICK_TIME_DELTA = 300;
     FilterButtonAdapter adapterFilter;
@@ -140,6 +144,9 @@ public class DashBoardFragment extends Fragment {
         adapter = new DeadlineAdapter((position, entity) -> {
             IntentDescriptionDeadlineTask(entity);
         });
+        recurringAdapter = new RecurringDeadlineAdapter((position, entity) -> {
+            // IntentDescriptionRecurringDeadlineTask(entity);
+        });
         recyclerView.setAdapter(adapter);
 
         recyclerView1 = binding.recyclerTodayDeadlines;
@@ -149,26 +156,38 @@ public class DashBoardFragment extends Fragment {
         });
         recyclerView1.setAdapter(adapter1);
 
-        mViewModel.getFilteredList().observe(getViewLifecycleOwner(), notificationEntityList -> {
-            boolean empty = (notificationEntityList == null || notificationEntityList.isEmpty());
-            binding.emptyView.setVisibility(empty ? View.VISIBLE : View.GONE);
-            for(NotificationEntity entity: notificationEntityList){
-                mViewModel.getTasksForNotification(entity.getId()).observe(getViewLifecycleOwner(), tasks -> {
-                    if(tasks.size()!=0||!tasks.isEmpty()){
-                        int doneCount = 0;
-                        if (tasks != null && !tasks.isEmpty()) {
-                            for (TaskEntity task : tasks) {
-                                if (task.isDone()) doneCount++;
+        mViewModel.getCurrentFilterType().observe(getViewLifecycleOwner(), filterType -> {
+            if ("Deadline Hàng Ngày".equals(filterType)) {
+                recyclerView.setAdapter(adapter);
+                mViewModel.getDailyDeadlines().observe(getViewLifecycleOwner(), notificationEntityList -> {
+                    boolean empty = (notificationEntityList == null || notificationEntityList.isEmpty());
+                    binding.emptyView.setVisibility(empty ? View.VISIBLE : View.GONE);
+                    adapter.setData(notificationEntityList);
+                    for(NotificationEntity entity: notificationEntityList){
+                        mViewModel.getTasksForNotification(entity.getId()).observe(getViewLifecycleOwner(), tasks -> {
+                            if(tasks.size()!=0||!tasks.isEmpty()){
+                                int doneCount = 0;
+                                if (tasks != null && !tasks.isEmpty()) {
+                                    for (TaskEntity task : tasks) {
+                                        if (task.isDone()) doneCount++;
+                                    }
+                                    int progress = (int) (100.0 * doneCount / tasks.size());
+                                    adapter.updateProgress(entity.getId(), progress);
+                                } else {
+                                    adapter.updateProgress(entity.getId(), 0);
+                                }
                             }
-                            int progress = (int) (100.0 * doneCount / tasks.size());
-                            adapter.updateProgress(entity.getId(), progress);
-                        } else {
-                            adapter.updateProgress(entity.getId(), 0);
-                        }
+                        });
                     }
                 });
+            } else if ("Deadline Cố Định".equals(filterType)) {
+                recyclerView.setAdapter(recurringAdapter);
+                mViewModel.getRecurringDeadlines().observe(getViewLifecycleOwner(), recurringDeadlineEntityList -> {
+                    boolean empty = (recurringDeadlineEntityList == null || recurringDeadlineEntityList.isEmpty());
+                    binding.emptyView.setVisibility(empty ? View.VISIBLE : View.GONE);
+                    recurringAdapter.setData(recurringDeadlineEntityList);
+                });
             }
-            adapter.setData(notificationEntityList);
         });
 
         mViewModel.getListNotificationByDay().observe(getViewLifecycleOwner(), todayList -> {

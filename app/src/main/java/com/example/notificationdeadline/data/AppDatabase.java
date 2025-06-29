@@ -10,11 +10,13 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.example.notificationdeadline.data.dao.NotificationDao;
 import com.example.notificationdeadline.data.dao.NotificationHistoryDao;
+import com.example.notificationdeadline.data.dao.RecurringDeadlineDao;
 import com.example.notificationdeadline.data.dao.SettingDao;
 import com.example.notificationdeadline.data.dao.TaskDao;
 import com.example.notificationdeadline.data.dao.UserDao;
 import com.example.notificationdeadline.data.entity.NotificationEntity;
 import com.example.notificationdeadline.data.entity.NotificationHistoryEntity;
+import com.example.notificationdeadline.data.entity.RecurringDeadlineEntity;
 import com.example.notificationdeadline.data.entity.SettingEntity;
 import com.example.notificationdeadline.data.entity.TaskEntity;
 import com.example.notificationdeadline.data.entity.UserEntity;
@@ -25,9 +27,10 @@ import com.example.notificationdeadline.data.entity.UserEntity;
                 SettingEntity.class,
                 UserEntity.class,
                 NotificationHistoryEntity.class,
-                TaskEntity.class
+                TaskEntity.class,
+                RecurringDeadlineEntity.class
         },
-        version = 14,
+        version = 16,
         exportSchema = false
 )
 public abstract class AppDatabase extends RoomDatabase {
@@ -38,6 +41,7 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract UserDao userDao();
     public abstract NotificationHistoryDao notificationHistoryDao();
     public abstract TaskDao taskDao();
+    public abstract RecurringDeadlineDao recurringDeadlineDao();
 
     // Singleton instance
     private static volatile AppDatabase INSTANCE;

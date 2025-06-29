@@ -84,13 +84,7 @@ public class NotificationRepository {
         return db.notificationDao().searchNotifications(keyword);
     }
 
-    public LiveData<List<NotificationEntity>> getAllRecurringNotifications() {
-        return db.notificationDao().getAllRecurringNotifications();
-    }
-
-    public LiveData<List<NotificationEntity>> getRecurringNotificationsByType(int recurrenceType) {
-        return db.notificationDao().getRecurringNotificationsByType(recurrenceType);
-    }
+    
 
     public LiveData<List<NotificationEntity>> getAllCompletedNotifications() {
         return db.notificationDao().getAllCompletedNotifications();

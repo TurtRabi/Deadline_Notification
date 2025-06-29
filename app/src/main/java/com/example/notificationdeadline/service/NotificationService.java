@@ -127,9 +127,7 @@ public class NotificationService {
         return notificationRepository.getNotificationById(id);
     }
 
-    public LiveData<List<NotificationEntity>> fetchAllRecurringNotifications() {
-        return notificationRepository.getAllRecurringNotifications();
-    }
+    
 
     public LiveData<List<NotificationEntity>> fetchTomorrowDeadlines() {
         Calendar calendar = Calendar.getInstance();
@@ -165,21 +163,7 @@ public class NotificationService {
         return notificationRepository.getAllFixedDeadlines();
     }
 
-    public LiveData<List<NotificationEntity>> fetchDailyRecurringDeadlines() {
-        return notificationRepository.getRecurringNotificationsByType(1);
-    }
-
-    public LiveData<List<NotificationEntity>> fetchWeeklyRecurringDeadlines() {
-        return notificationRepository.getRecurringNotificationsByType(2);
-    }
-
-    public LiveData<List<NotificationEntity>> fetchMonthlyRecurringDeadlines() {
-        return notificationRepository.getRecurringNotificationsByType(3);
-    }
-
-    public LiveData<List<NotificationEntity>> fetchYearlyRecurringDeadlines() {
-        return notificationRepository.getRecurringNotificationsByType(4);
-    }
+    
 
 }
 
