@@ -32,6 +32,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
@@ -165,29 +166,7 @@ public class SettingFragment extends Fragment {
                             }
                         }
                     } else if (v.getId() == R.id.btnClearCache) {
-                        AppDatabase db = Room.databaseBuilder(
-                                requireContext(),
-                                AppDatabase.class,
-                                "notification_db"
-                        ).build();
-
-                        new Thread(() -> {
-                            db.clearAllTables();
-                            requireActivity().runOnUiThread(() -> {
-                                Toast.makeText(requireContext(), "Đã xoá toàn bộ dữ liệu", Toast.LENGTH_SHORT).show();
-                                CustomMessageDialog dialog = CustomMessageDialog.newInstance(
-                                        "Thành công",
-                                        "Bạn đã xóa thành công!",
-                                        R.drawable.ic_launcher_foreground,
-                                        R.color.successColor
-                                );
-                                dialog.show(getParentFragmentManager(), "successDialog");
-
-                                new android.os.Handler().postDelayed(() -> {
-                                    requireActivity().finishAffinity();
-                                }, 2000);
-                            });
-                        }).start();
+                        showDeleteTaskConfirmDialog();
                     }
                 };
 
@@ -197,9 +176,60 @@ public class SettingFragment extends Fragment {
                 binding.btnClearCache.setOnClickListener(listener);
             }
         });
+
+
+
     }
 
 
+    private void showDeleteTaskConfirmDialog() {
+        View view = LayoutInflater.from(requireContext()).inflate(R.layout.bg_dialog_delete_task, null);
+
+        TextView dialogTitle = view.findViewById(R.id.dialogTitle);
+        dialogTitle.setText("Bạn chắc chắn muốn xoá toàn bộ bộ nhớ chứ?");
+        Button btnCancel = view.findViewById(R.id.btn_cancel1);
+        Button btnDelete = view.findViewById(R.id.btn_delete);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext())
+                .setView(view)
+                .setCancelable(true);
+
+        AlertDialog dialog = builder.create();
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+
+        btnDelete.setOnClickListener(v -> {
+            AppDatabase db = Room.databaseBuilder(
+                    requireContext(),
+                    AppDatabase.class,
+                    "app_db"
+            ).build();
+
+            new Thread(() -> {
+                db.clearAllTables();
+                requireActivity().runOnUiThread(() -> {
+                    Toast.makeText(requireContext(), "Đã xoá toàn bộ dữ liệu", Toast.LENGTH_SHORT).show();
+                    CustomMessageDialog dialog1 = CustomMessageDialog.newInstance(
+                            "Thành công",
+                            "Bạn đã xóa thành công!",
+                            R.drawable.delete_removebg_preview,
+                            R.color.successColor
+                    );
+                    dialog1.show(getParentFragmentManager(), "successDialog");
+
+                    new android.os.Handler().postDelayed(() -> {
+                        requireActivity().finishAffinity();
+                    }, 2000);
+                });
+            }).start();
+
+            dialog.dismiss();
+        });
+
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        dialog.show();
+    }
 
 
 

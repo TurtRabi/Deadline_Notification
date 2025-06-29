@@ -29,6 +29,7 @@ import com.bumptech.glide.Glide;
 import com.example.notificationdeadline.R;
 import com.example.notificationdeadline.databinding.FragmentEditUserBinding;
 import com.example.notificationdeadline.dto.request.UserRequest;
+import com.example.notificationdeadline.ui.dialog.CustomMessageDialog;
 
 public class EditUserFragment extends Fragment {
 
@@ -143,21 +144,22 @@ public class EditUserFragment extends Fragment {
     }
 
     private void showSuccessDialogWithAutoDismiss() {
-        AlertDialog dialog = new AlertDialog.Builder(requireContext())
-                .setTitle("Thành công 🎉")
-                .setMessage("Thông tin người dùng đã được cập nhật!")
-                .setCancelable(false)
-                .create();
 
-        dialog.show();
+        CustomMessageDialog dialog = CustomMessageDialog.newInstance(
+                "Thành công 🎉",
+                "Thông tin người dùng đã được cập nhật!",
+                R.drawable.delete_removebg_preview,
+                R.color.successColor
+        );
+        dialog.show(getParentFragmentManager(), "successDialog");
 
-        new Handler().postDelayed(() -> {
-            if (dialog.isShowing()) {
-                dialog.dismiss();
-                NavController nav = Navigation.findNavController(requireView());
-                nav.navigateUp();
-            }
+        new android.os.Handler().postDelayed(() -> {
+            requireActivity().finishAffinity();
         }, 2000);
+
+        dialog.dismiss();
+        NavController nav = Navigation.findNavController(requireView());
+        nav.navigateUp();
     }
 
     @Override

@@ -16,7 +16,6 @@
         android:layout_height="72dp"
         android:layout_marginBottom="20dp"
         android:src="@drawable/info_24px"
-        android:tint="@color/purple_500"
         tools:ignore="UseAppTint" />
 
     <TextView

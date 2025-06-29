@@ -392,7 +392,7 @@ public class DeadlineNotificationDetail extends Fragment {
         CustomMessageDialog dialog = CustomMessageDialog.newInstance(
                 "Task đã được tạo thành công!",
                 "Task ",
-                R.drawable.ic_launcher_foreground,
+                R.drawable.finishdeadline,
                 R.color.successColor
         );
 

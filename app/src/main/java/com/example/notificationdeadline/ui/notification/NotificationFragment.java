@@ -18,12 +18,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.notificationdeadline.Adapter.NotificationHistoryAdapter;
 import com.example.notificationdeadline.R;
+import com.example.notificationdeadline.data.entity.TaskEntity;
 import com.example.notificationdeadline.databinding.FragmentNotificationBinding;
 import com.example.notificationdeadline.ui.activity_main;
 
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.TextView;
+
 import androidx.appcompat.app.AlertDialog;
 
 public class NotificationFragment extends Fragment {
@@ -63,23 +67,39 @@ public class NotificationFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.action_delete_all) {
-            showDeleteConfirmationDialog();
+            showDeleteTaskConfirmDialog();
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void showDeleteConfirmationDialog() {
-        new AlertDialog.Builder(requireContext())
-                .setTitle("Xác nhận xóa")
-                .setMessage("Bạn có chắc chắn muốn xóa tất cả lịch sử thông báo không? Hành động này không thể hoàn tác.")
-                .setPositiveButton("Xóa", (dialog, which) -> {
-                    mViewModel.clearAllHistory();
-                })
-                .setNegativeButton("Hủy", null)
-                .setIcon(R.drawable.delete_24px)
-                .show();
+    private void showDeleteTaskConfirmDialog() {
+        View view = LayoutInflater.from(requireContext()).inflate(R.layout.bg_dialog_delete_task, null);
+
+        TextView dialogTitle = view.findViewById(R.id.dialogTitle);
+        dialogTitle.setText("Bạn có chắc chắn muốn xóa tất cả lịch sử thông báo không? Hành động này không thể hoàn tác.");
+
+        Button btnCancel = view.findViewById(R.id.btn_cancel1);
+        Button btnDelete = view.findViewById(R.id.btn_delete);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext())
+                .setView(view)
+                .setCancelable(true);
+
+        AlertDialog dialog = builder.create();
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+
+        btnDelete.setOnClickListener(v -> {
+            mViewModel.clearAllHistory();
+            dialog.dismiss();
+        });
+
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        dialog.show();
     }
+
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {

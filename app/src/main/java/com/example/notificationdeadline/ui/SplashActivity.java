@@ -36,7 +36,7 @@ public class SplashActivity extends AppCompatActivity {
 
         settingService.getSetting("notification").observe(this,notification ->{
             if(notification==null){
-                settingService.saveSetting(new SettingRequest("notification", "0"));
+                settingService.saveSetting(new SettingRequest("notification", "1"));
             }
         } );
         permisstion();
