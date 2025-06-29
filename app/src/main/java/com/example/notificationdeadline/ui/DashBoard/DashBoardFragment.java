@@ -23,13 +23,20 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
 
 
 import com.example.notificationdeadline.Adapter.DeadlineAdapter;
 import com.example.notificationdeadline.Adapter.FilterButtonAdapter;
+import com.example.notificationdeadline.Adapter.RecurringDeadlineAdapter;
 import com.example.notificationdeadline.R;
 import com.example.notificationdeadline.data.entity.NotificationEntity;
+import com.example.notificationdeadline.data.entity.RecurringDeadlineEntity;
 import com.example.notificationdeadline.data.entity.TaskEntity;
 import com.example.notificationdeadline.databinding.FragmentDashBoardBinding;
 import com.example.notificationdeadline.dto.Enum.StatusEnum;
@@ -38,20 +45,28 @@ import com.example.notificationdeadline.mapper.NotificationMapper;
 import com.example.notificationdeadline.ui.AddDeadline.AddDeadlineFragment;
 import com.example.notificationdeadline.ui.SearchDeadline.SearchDeadlineFragment;
 import com.example.notificationdeadline.ui.activity_main;
+import com.example.notificationdeadline.ui.recurringdeadline.RecurringDeadlineListViewModel;
 import com.google.android.material.appbar.AppBarLayout;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class DashBoardFragment extends Fragment {
 
     private DashBoardViewModel mViewModel;
-    private RecyclerView recyclerView,recyclerView1,recyclerFilterButtons;
+    private RecurringDeadlineAdapter mViewModelRecurring;
+    private RecyclerView recyclerView;
+    private RecyclerView recyclerView1;
+    private RecyclerView recyclerFilterButtons;
+    private RecyclerView recyclerSubFilterButtons;
     private FragmentDashBoardBinding binding;
     private DeadlineAdapter adapter,adapter1;
+    private RecurringDeadlineAdapter recurringAdapter;
     private long lastClickTime = 0;
     private static final long DOUBLE_CLICK_TIME_DELTA = 300;
     FilterButtonAdapter adapterFilter;
+    FilterButtonAdapter adapterSubFilter;
 
     public static DashBoardFragment newInstance() {
         return new DashBoardFragment();
@@ -130,12 +145,20 @@ public class DashBoardFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mViewModel = new ViewModelProvider(this).get(DashBoardViewModel.class);
+        ProgressBar progressBar = binding.progressBar;
 
         recyclerView = binding.recyclerMoreDeadlines;
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new DeadlineAdapter((position, entity) -> {
             IntentDescriptionDeadlineTask(entity);
         });
+        recurringAdapter = new RecurringDeadlineAdapter((position, entity) -> {
+
+        },(position, entity) -> {
+
+        },(position, entity) -> {
+            showDeleteRecurringConfirmDialog(entity);
+        },new ArrayList<>());
         recyclerView.setAdapter(adapter);
 
         recyclerView1 = binding.recyclerTodayDeadlines;
@@ -145,26 +168,41 @@ public class DashBoardFragment extends Fragment {
         });
         recyclerView1.setAdapter(adapter1);
 
-        mViewModel.getFilteredList().observe(getViewLifecycleOwner(), notificationEntityList -> {
-            boolean empty = (notificationEntityList == null || notificationEntityList.isEmpty());
-            binding.emptyView.setVisibility(empty ? View.VISIBLE : View.GONE);
-            for(NotificationEntity entity: notificationEntityList){
-                mViewModel.getTasksForNotification(entity.getId()).observe(getViewLifecycleOwner(), tasks -> {
-                    if(tasks.size()!=0||!tasks.isEmpty()){
-                        int doneCount = 0;
-                        if (tasks != null && !tasks.isEmpty()) {
-                            for (TaskEntity task : tasks) {
-                                if (task.isDone()) doneCount++;
+        mViewModel.getCurrentFilterType().observe(getViewLifecycleOwner(), filterType -> {
+            progressBar.setVisibility(View.VISIBLE);
+            if ("Deadline Hàng Ngày".equals(filterType)) {
+                recyclerView.setAdapter(adapter);
+                mViewModel.getDailyDeadlines().observe(getViewLifecycleOwner(), notificationEntityList -> {
+                    boolean empty = (notificationEntityList == null || notificationEntityList.isEmpty());
+                    binding.emptyView.setVisibility(empty ? View.VISIBLE : View.GONE);
+                    adapter.setData(notificationEntityList);
+                    for(NotificationEntity entity: notificationEntityList){
+                        mViewModel.getTasksForNotification(entity.getId()).observe(getViewLifecycleOwner(), tasks -> {
+                            if(tasks.size()!=0||!tasks.isEmpty()){
+                                int doneCount = 0;
+                                if (tasks != null && !tasks.isEmpty()) {
+                                    for (TaskEntity task : tasks) {
+                                        if (task.isDone()) doneCount++;
+                                    }
+                                    int progress = (int) (100.0 * doneCount / tasks.size());
+                                    adapter.updateProgress(entity.getId(), progress);
+                                } else {
+                                    adapter.updateProgress(entity.getId(), 0);
+                                }
                             }
-                            int progress = (int) (100.0 * doneCount / tasks.size());
-                            adapter.updateProgress(entity.getId(), progress);
-                        } else {
-                            adapter.updateProgress(entity.getId(), 0);
-                        }
+                        });
                     }
+                    progressBar.setVisibility(View.GONE);
+                });
+            } else if ("Deadline Cố Định".equals(filterType)) {
+                recyclerView.setAdapter(recurringAdapter);
+                mViewModel.getRecurringDeadlines().observe(getViewLifecycleOwner(), recurringDeadlineEntityList -> {
+                    boolean empty = (recurringDeadlineEntityList == null || recurringDeadlineEntityList.isEmpty());
+                    binding.emptyView.setVisibility(empty ? View.VISIBLE : View.GONE);
+                    recurringAdapter.setData(recurringDeadlineEntityList);
+                    progressBar.setVisibility(View.GONE);
                 });
             }
-            adapter.setData(notificationEntityList);
         });
 
         mViewModel.getListNotificationByDay().observe(getViewLifecycleOwner(), todayList -> {
@@ -193,16 +231,58 @@ public class DashBoardFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         recyclerFilterButtons.setLayoutManager(layoutManager);
 
-        List<String> filters = Arrays.asList("Tất cả", "Ngày mai", "Sắp đến hạn", "Quá hạn", "Hoàn thành");
-        final String defaultFilter = "Tất cả";
+        recyclerSubFilterButtons = binding.recyclerSubFilterButtons;
+        LinearLayoutManager subLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        recyclerSubFilterButtons.setLayoutManager(subLayoutManager);
 
-        adapterFilter = new FilterButtonAdapter(filters, filter -> {
-            // KHÔNG clearData nữa!
-            mViewModel.setFilter(filter);
+        List<String> mainFilters = Arrays.asList("Deadline Hàng Ngày", "Deadline Cố Định");
+        List<String> dailyFilters = Arrays.asList("Tất cả", "Ngày mai", "Đến hạn", "Quá hạn", "Hoàn thành");
+        List<String> fixedRecurrenceFilters = Arrays.asList("Tất cả", "Hàng ngày", "Hàng tuần", "Hàng tháng", "Hàng năm");
+        final String defaultMainFilter = "Deadline Hàng Ngày";
+        final String defaultDailyFilter = "Tất cả";
+        final String defaultFixedRecurrenceFilter = "Tất cả";
+
+        adapterFilter = new FilterButtonAdapter(mainFilters, filter -> {
+            adapterFilter.setSelectedFilter(filter);
+            if ("Deadline Hàng Ngày".equals(filter)) {
+                recyclerSubFilterButtons.setVisibility(View.VISIBLE);
+                adapterSubFilter.setFilters(dailyFilters);
+                adapterSubFilter.setSelectedFilter(defaultDailyFilter);
+                mViewModel.setFilter(filter, defaultDailyFilter);
+            } else if ("Deadline Cố Định".equals(filter)) {
+                recyclerSubFilterButtons.setVisibility(View.VISIBLE);
+                adapterSubFilter.setFilters(fixedRecurrenceFilters);
+                adapterSubFilter.setSelectedFilter(defaultFixedRecurrenceFilter);
+                mViewModel.setFilter(filter, defaultFixedRecurrenceFilter);
+            } else {
+                recyclerSubFilterButtons.setVisibility(View.GONE);
+                mViewModel.setFilter(filter, null);
+            }
         });
         recyclerFilterButtons.setAdapter(adapterFilter);
-        adapterFilter.setSelectedFilter(defaultFilter);
-        mViewModel.setFilter(defaultFilter);
+        adapterFilter.setSelectedFilter(defaultMainFilter);
+
+        adapterSubFilter = new FilterButtonAdapter(dailyFilters, filter -> {
+            adapterSubFilter.setSelectedFilter(filter);
+            mViewModel.setFilter(adapterFilter.getSelectedFilter(), filter);
+        });
+        recyclerSubFilterButtons.setAdapter(adapterSubFilter);
+
+        // Initial state
+        if ("Deadline Hàng Ngày".equals(adapterFilter.getSelectedFilter())) {
+            recyclerSubFilterButtons.setVisibility(View.VISIBLE);
+            adapterSubFilter.setFilters(dailyFilters);
+            adapterSubFilter.setSelectedFilter(defaultDailyFilter);
+            mViewModel.setFilter(adapterFilter.getSelectedFilter(), defaultDailyFilter);
+        } else if ("Deadline Cố Định".equals(adapterFilter.getSelectedFilter())) {
+            recyclerSubFilterButtons.setVisibility(View.VISIBLE);
+            adapterSubFilter.setFilters(fixedRecurrenceFilters);
+            adapterSubFilter.setSelectedFilter(defaultFixedRecurrenceFilter);
+            mViewModel.setFilter("Deadline Cố Định", defaultFixedRecurrenceFilter);
+        } else {
+            recyclerSubFilterButtons.setVisibility(View.GONE);
+            mViewModel.setFilter(adapterFilter.getSelectedFilter(), null);
+        }
 
         if (getActivity() instanceof activity_main) {
             mViewModel.getUnreadCount().observe(getViewLifecycleOwner(), count -> {
@@ -210,6 +290,7 @@ public class DashBoardFragment extends Fragment {
             });
         }
     }
+
 
 
     private void IntentDescriptionDeadlineTask(NotificationEntity entity) {
@@ -241,6 +322,32 @@ public class DashBoardFragment extends Fragment {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showDeleteRecurringConfirmDialog(RecurringDeadlineEntity recurringDeadline) {
+        View view = LayoutInflater.from(requireContext()).inflate(R.layout.bg_dialog_delete_task, null);
+
+        TextView dialogTitle = view.findViewById(R.id.dialogTitle);
+        dialogTitle.setText("Bạn có chắc muốn xóa lịch cố định này?");
+
+        Button btnCancel = view.findViewById(R.id.btn_cancel1);
+        Button btnDelete = view.findViewById(R.id.btn_delete);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext())
+                .setView(view)
+                .setCancelable(true);
+
+        AlertDialog dialog = builder.create();
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+
+        btnDelete.setOnClickListener(v -> {
+            mViewModel.deleteRecurringDeadline(recurringDeadline);
+            dialog.dismiss();
+        });
+
+        dialog.show();
     }
 
 

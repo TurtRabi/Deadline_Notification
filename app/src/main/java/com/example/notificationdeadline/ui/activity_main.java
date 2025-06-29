@@ -29,6 +29,7 @@ import com.example.notificationdeadline.service.NotificationService;
 import com.example.notificationdeadline.service.SettingService;
 import com.example.notificationdeadline.service.UserService;
 import com.google.android.material.badge.BadgeDrawable;
+import android.os.Handler;
 
 public class activity_main extends AppCompatActivity {
 
@@ -89,27 +90,38 @@ public class activity_main extends AppCompatActivity {
                 binding.navView.setOnItemSelectedListener(item -> {
                     int desId = item.getItemId();
 
-                    for (int i = 0; i < binding.navView.getMenu().size(); i++) {
-                        binding.navView.findViewById(binding.navView.getMenu().getItem(i).getItemId()).setScaleX(1f);
-                        binding.navView.findViewById(binding.navView.getMenu().getItem(i).getItemId()).setScaleY(1f);
-                    }
+                    // Show loading overlay
+                    binding.loadingOverlay.setVisibility(View.VISIBLE);
+
+                    // Delay navigation by 1 second
+                    new Handler().postDelayed(() -> {
+                        for (int i = 0; i < binding.navView.getMenu().size(); i++) {
+                            binding.navView.findViewById(binding.navView.getMenu().getItem(i).getItemId()).setScaleX(1f);
+                            binding.navView.findViewById(binding.navView.getMenu().getItem(i).getItemId()).setScaleY(1f);
+                        }
 
 
-                    View iconView = binding.navView.findViewById(item.getItemId());
-                    if (iconView != null) {
-                        iconView.animate().scaleX(1.2f).scaleY(1.2f).setDuration(200).start();
-                    }
+                        View iconView = binding.navView.findViewById(item.getItemId());
+                        if (iconView != null) {
+                            iconView.animate().scaleX(1.2f).scaleY(1.2f).setDuration(200).start();
+                        }
 
-                    if(navController.getCurrentDestination()!=null && navController.getCurrentDestination().getId() ==desId){
-                        return true;
-                    }
-                    NavOptions navOptions = new NavOptions.Builder()
-                            .setEnterAnim(R.anim.slide_in_right)
-                            .setExitAnim(R.anim.slide_out_left)
-                            .setPopEnterAnim(R.anim.slide_in_left)
-                            .setPopExitAnim(R.anim.slide_out_right)
-                            .build();
-                    navController.navigate(desId,null,navOptions);
+                        if(navController.getCurrentDestination()!=null && navController.getCurrentDestination().getId() ==desId){
+                            binding.loadingOverlay.setVisibility(View.GONE);
+                            return;
+                        }
+                        NavOptions navOptions = new NavOptions.Builder()
+                                .setEnterAnim(R.anim.slide_in_right)
+                                .setExitAnim(R.anim.slide_out_left)
+                                .setPopEnterAnim(R.anim.slide_in_left)
+                                .setPopExitAnim(R.anim.slide_out_right)
+                                .build();
+                        navController.navigate(desId,null,navOptions);
+
+                        // Hide loading overlay after navigation
+                        binding.loadingOverlay.setVisibility(View.GONE);
+                    }, 1000); // 1 second delay
+
                     return true;
                 });
             }

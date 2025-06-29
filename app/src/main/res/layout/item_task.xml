@@ -40,7 +40,7 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/delete_24px"
             android:contentDescription="Xóa công việc"
-            android:tint="#F44336" />
+            app:tint="#F44336" />
 
     </LinearLayout>
 

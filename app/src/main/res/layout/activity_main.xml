@@ -1,38 +1,59 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context=".ui.activity_main">
 
-    <FrameLayout
-        android:id="@+id/nav_host_fragment_activity_main"
+    <LinearLayout
+        android:id="@+id/main"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:id="@+id/nav_host_fragment_activity_main"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
 
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/nav_view"
-        android:layout_width="263dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/bottom_nav_shadow"
-        android:layout_gravity="center"
-        app:itemIconSize="18dp"
-        android:layout_height="55dp"
-        app:itemIconTint="@null"
-        app:itemTextAppearanceActive="@style/BottomNavActive"
-        app:itemTextAppearanceInactive="@style/BottomNavInactive"
-        app:menu="@menu/bottom_nav_menu"
-        app:itemBackground="@android:color/transparent"
-        app:itemRippleColor="@android:color/transparent"
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/nav_view"
+            android:layout_width="263dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bottom_nav_shadow"
+            android:layout_gravity="center"
+            app:itemIconSize="18dp"
+            android:layout_height="55dp"
+            app:itemIconTint="@null"
+            app:itemTextAppearanceActive="@style/BottomNavActive"
+            app:itemTextAppearanceInactive="@style/BottomNavInactive"
+            app:menu="@menu/bottom_nav_menu"
+            app:itemBackground="@android:color/transparent"
+            app:itemRippleColor="@android:color/transparent"
 
-        android:layout_marginBottom="20dp"
-        android:paddingTop="0dp"
-        android:paddingBottom="0dp"
-        />
+            android:layout_marginBottom="20dp"
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp"
+            />
 
+    </LinearLayout>
 
-</LinearLayout>
+    <FrameLayout
+        android:id="@+id/loadingOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80000000"
+        android:visibility="gone"
+        android:clickable="true"
+        android:focusable="true">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+
+    </FrameLayout>
+
+</FrameLayout>

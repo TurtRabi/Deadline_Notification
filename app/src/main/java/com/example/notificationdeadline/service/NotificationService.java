@@ -8,20 +8,34 @@ import com.example.notificationdeadline.data.entity.NotificationEntity;
 import com.example.notificationdeadline.dto.request.NotificationRequest;
 import com.example.notificationdeadline.mapper.NotificationMapper;
 import com.example.notificationdeadline.repository.NotificationRepository;
+import com.example.notificationdeadline.notification.NotificationScheduler;
 
 import java.util.Calendar;
 import java.util.List;
 
 public class NotificationService {
     private final NotificationRepository notificationRepository;
+    private final Context context;
 
     public NotificationService(Context context) {
+        this.context = context;
         this.notificationRepository = new NotificationRepository(context);
     }
 
     public void addNotification(NotificationRequest request, NotificationRepository.OnInsertCallback callback) {
         NotificationEntity entity = NotificationMapper.toEntity(request);
-        notificationRepository.insertNotification(entity, callback);
+        notificationRepository.insertNotification(entity, new NotificationRepository.OnInsertCallback() {
+            @Override
+            public void onInsert(long id) {
+                if (callback != null) {
+                    callback.onInsert(id);
+                }
+                entity.setId((int) id);
+                if (entity.isRecurring()) {
+                    NotificationScheduler.scheduleRecurringNotification(context, entity);
+                }
+            }
+        });
     }
 
 
@@ -50,10 +64,11 @@ public class NotificationService {
         calendar.set(Calendar.MILLISECOND, 999);
         long endTime = calendar.getTimeInMillis();
 
-        return notificationRepository.getAllNotification(startTime, endTime,isSuccess);
+        return notificationRepository.getAllNotification(startTime, endTime, isSuccess);
     }
-    public LiveData<List<NotificationEntity>> fetchAllNotificationsByDay(long startTime, long endTime,int isSuccess) {
-        return notificationRepository.getAllNotification(startTime, endTime,isSuccess);
+
+    public LiveData<List<NotificationEntity>> fetchAllNotificationsByDay(long startTime, long endTime, int isSuccess) {
+        return notificationRepository.getAllNotification(startTime, endTime, isSuccess);
     }
 
 
@@ -68,12 +83,20 @@ public class NotificationService {
     public void updateSuccessDeadline(int id) {
         notificationRepository.updateSuccessDeadline(id);
     }
+
     public void updateNotSuccessDeadline(int id) {
         notificationRepository.updateNotSuccessDeadline(id);
     }
 
     public void updateStatus(int status, int id) {
         notificationRepository.updateStatus(status, id);
+    }
+
+    public void updateNotification(NotificationEntity entity) {
+        notificationRepository.updateNotification(entity);
+        if (entity.isRecurring()) {
+            NotificationScheduler.scheduleRecurringNotification(context, entity);
+        }
     }
 
     public List<NotificationEntity> fetchAllNotificationsByDay1() {
@@ -93,14 +116,54 @@ public class NotificationService {
         calendar.set(Calendar.MILLISECOND, 999);
         long endTime = calendar.getTimeInMillis();
 
-        return notificationRepository.getAllNotification1(startTime, endTime,0);
+        return notificationRepository.getAllNotification1(startTime, endTime, 0);
     }
 
     public LiveData<List<NotificationEntity>> searchNotifications(String keyword) {
         return notificationRepository.searchNotifications(keyword);
     }
 
-    public  NotificationEntity getNotificationById(int id) {
+    public NotificationEntity getNotificationById(int id) {
         return notificationRepository.getNotificationById(id);
     }
+
+    
+
+    public LiveData<List<NotificationEntity>> fetchTomorrowDeadlines() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, 1);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        long startTime = calendar.getTimeInMillis();
+
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 59);
+        calendar.set(Calendar.SECOND, 59);
+        calendar.set(Calendar.MILLISECOND, 999);
+        long endTime = calendar.getTimeInMillis();
+
+        return notificationRepository.getAllNotification(startTime, endTime, 0);
+    }
+
+    public LiveData<List<NotificationEntity>> fetchDueDeadlines() {
+        return notificationRepository.getAllByStatus(2); // StatusEnum.DEADLINE
+    }
+
+    public LiveData<List<NotificationEntity>> fetchOverdueDeadlines() {
+        return notificationRepository.getAllByStatus(3); // StatusEnum.OVERDEADLINE
+    }
+
+    public LiveData<List<NotificationEntity>> fetchCompletedDeadlines() {
+        return notificationRepository.getAllCompletedNotifications();
+    }
+
+    public LiveData<List<NotificationEntity>> fetchFixedDeadlines() {
+        return notificationRepository.getAllFixedDeadlines();
+    }
+
+    
+
 }
+

@@ -16,7 +16,7 @@ import java.util.List;
 @Dao
 public interface NotificationDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    long  insert(NotificationEntity notification);
+    long insert(NotificationEntity notification);
 
     @Delete
     void delete(NotificationEntity notification);
@@ -28,13 +28,14 @@ public interface NotificationDao {
     @Query("SELECT * FROM notifications")
     LiveData<List<NotificationEntity>> getAll();
 
-    @Query("SELECT * FROM notifications WHERE time_millis BETWEEN :startTime AND :endTime" )
+    @Query("SELECT * FROM notifications WHERE time_millis BETWEEN :startTime AND :endTime")
     LiveData<List<NotificationEntity>> getAllByDay(long startTime, long endTime);
 
     @Query("SELECT * FROM notifications WHERE time_millis BETWEEN :startTime AND :endTime AND isSuccess =:isSuccess")
-    List<NotificationEntity> getAllByDay1(long startTime, long endTime,int isSuccess);
+    List<NotificationEntity> getAllByDay1(long startTime, long endTime, int isSuccess);
+
     @Query("SELECT * FROM notifications WHERE time_millis BETWEEN :startTime AND :endTime AND isSuccess =:isSuccess")
-    LiveData<List<NotificationEntity>> getAllByDay2(long startTime, long endTime,int isSuccess);
+    LiveData<List<NotificationEntity>> getAllByDay2(long startTime, long endTime, int isSuccess);
 
     @Query("SELECT * FROM notifications WHERE status = :status")
     LiveData<List<NotificationEntity>> getAllByStatus(int status);
@@ -45,9 +46,11 @@ public interface NotificationDao {
     @Transaction
     @Query("UPDATE notifications SET isSuccess = 1 WHERE id = :id")
     void updateSuccessDeadline(int id);
+
     @Transaction
     @Query("UPDATE notifications SET isSuccess = 0 WHERE id = :id")
     void updateNotSuccessDeadline(int id);
+
     @Transaction
     @Query("UPDATE notifications SET status = :status WHERE id = :id ")
     void updateStatus(int status, int id);
@@ -59,4 +62,23 @@ public interface NotificationDao {
     @Query("SELECT * FROM notifications WHERE id = :id LIMIT 1")
     NotificationEntity getNotificationById(int id);
 
+    
+
+    @Query("SELECT * FROM notifications WHERE status = 4")
+    LiveData<List<NotificationEntity>> getAllCompletedNotifications();
+
+    @Query("SELECT * FROM notifications WHERE is_recurring = 1")
+    LiveData<List<NotificationEntity>> getAllFixedDeadlines();
+
+    @Query("SELECT * FROM notifications WHERE time_millis BETWEEN :startTime AND :endTime")
+    LiveData<List<NotificationEntity>> getWeeklyDeadlines(long startTime, long endTime);
+
+    @Query("SELECT * FROM notifications WHERE time_millis BETWEEN :startTime AND :endTime")
+    LiveData<List<NotificationEntity>> getMonthlyDeadlines(long startTime, long endTime);
+
+    @Query("SELECT * FROM notifications WHERE time_millis BETWEEN :startTime AND :endTime")
+    LiveData<List<NotificationEntity>> getYearlyDeadlines(long startTime, long endTime);
+
+    @Query("SELECT * FROM notifications WHERE title = :title AND time_millis = :timeMillis LIMIT 1")
+    NotificationEntity getNotificationByTitleAndTime(String title, long timeMillis);
 }

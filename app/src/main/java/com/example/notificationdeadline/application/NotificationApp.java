@@ -7,6 +7,7 @@ import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 import java.util.concurrent.TimeUnit;
 
+import com.example.notificationdeadline.notification.DeadlineGeneratorWorker;
 import com.example.notificationdeadline.notification.DeadlineWorker;
 import com.example.notificationdeadline.notification.scheduleDailyGetAllData;
 import com.example.notificationdeadline.notification.scheduleDailyEveryMorning;
@@ -35,6 +36,21 @@ public class NotificationApp extends Application {
                         "DeadlineCheck",
                         ExistingPeriodicWorkPolicy.KEEP,
                         workRequest
+                );
+
+        // Schedule DeadlineGeneratorWorker to run daily
+        PeriodicWorkRequest dailyDeadlineGenerationRequest = new PeriodicWorkRequest.Builder(
+                DeadlineGeneratorWorker.class,
+                24, TimeUnit.HOURS // Run every 24 hours
+        )
+                .setConstraints(constraints)
+                .build();
+
+        WorkManager.getInstance(this)
+                .enqueueUniquePeriodicWork(
+                        "DailyDeadlineGeneration",
+                        ExistingPeriodicWorkPolicy.REPLACE, // Use UPDATE to ensure it's always scheduled
+                        dailyDeadlineGenerationRequest
                 );
 
         // Gọi đúng tên phương thức scheduler

@@ -79,6 +79,9 @@ public class DeadlineWorker extends Worker {
                 notifier.show(entity, "⛔ Quá hạn! " + entity.getTitle(), DeadlineNotifier.OVER_IMPORTANCE);
                 notificationHistoryService.insertNotificationHistory(
                         new NotificationHistoryEntity("⛔ Quá hạn! " + entity.getTitle(), entity.getMessage(), System.currentTimeMillis(), true, false, "3"));
+                if (entity.isRecurring()) {
+                    NotificationScheduler.scheduleRecurringNotification(getApplicationContext(), entity);
+                }
             }
         }
 

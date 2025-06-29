@@ -5,13 +5,15 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.example.notificationdeadline.data.entity.NotificationEntity;
+import com.example.notificationdeadline.data.entity.RecurringDeadlineEntity;
 import com.example.notificationdeadline.data.entity.TaskEntity;
 import com.example.notificationdeadline.dto.Enum.StatusEnum;
 import com.example.notificationdeadline.service.NotificationHistoryService;
 import com.example.notificationdeadline.service.NotificationService;
+import com.example.notificationdeadline.service.RecurringDeadlineService;
 import com.example.notificationdeadline.service.TaskService;
 
 import java.util.Calendar;
@@ -20,51 +22,95 @@ import java.util.List;
 public class DashBoardViewModel extends AndroidViewModel {
     private final NotificationHistoryService notificationHistoryService;
     private final NotificationService notificationService;
+    private final RecurringDeadlineService recurringDeadlineService;
     private final TaskService taskService;
-    private final MediatorLiveData<List<NotificationEntity>> filteredList = new MediatorLiveData<>();
-    private LiveData<List<NotificationEntity>> currentSource = null;
 
-
-
+    private final MutableLiveData<List<NotificationEntity>> dailyDeadlines = new MutableLiveData<>();
+    private final MutableLiveData<List<RecurringDeadlineEntity>> recurringDeadlines = new MutableLiveData<>();
+    private final MutableLiveData<String> currentFilterType = new MutableLiveData<>();
 
     public DashBoardViewModel(@NonNull Application application) {
         super(application);
         notificationHistoryService = new NotificationHistoryService(application.getApplicationContext());
         notificationService = new NotificationService(application.getApplicationContext());
+        recurringDeadlineService = new RecurringDeadlineService(application.getApplicationContext());
         taskService = new TaskService(application.getApplicationContext());
+
+
+        // Set initial filter type
+        currentFilterType.setValue("Deadline Hàng Ngày");
+        // Load initial data
+        applyDailyFilter("Tất cả");
     }
 
-    public LiveData<List<NotificationEntity>> getFilteredList() {
-        return filteredList;
+    public LiveData<List<NotificationEntity>> getDailyDeadlines() {
+        return dailyDeadlines;
     }
 
-    public void setFilter(String filter) {
-        if (currentSource != null) {
-            filteredList.removeSource(currentSource);
-        }
+    public LiveData<List<RecurringDeadlineEntity>> getRecurringDeadlines() {
+        return recurringDeadlines;
+    }
+
+    public LiveData<String> getCurrentFilterType() {
+        return currentFilterType;
+    }
+
+    private void applyDailyFilter(String filter) {
         switch (filter) {
             case "Tất cả":
-                currentSource = getAllList();
+                notificationService.fetchAllNotifications().observeForever(dailyDeadlines::setValue);
                 break;
             case "Ngày mai":
-                currentSource = getDeadlinesForTomorrow();
+                notificationService.fetchTomorrowDeadlines().observeForever(dailyDeadlines::setValue);
                 break;
-            case "Sắp đến hạn":
-                currentSource = getUpcomingDeadlines();
+            case "Đến hạn":
+                notificationService.fetchDueDeadlines().observeForever(dailyDeadlines::setValue);
                 break;
             case "Quá hạn":
-                currentSource = getOverdueDeadlines();
+                notificationService.fetchOverdueDeadlines().observeForever(dailyDeadlines::setValue);
                 break;
             case "Hoàn thành":
-                currentSource = geFinishDeadlines();
+                notificationService.fetchCompletedDeadlines().observeForever(dailyDeadlines::setValue);
                 break;
             default:
-                currentSource = getAllList();
+                notificationService.fetchAllNotifications().observeForever(dailyDeadlines::setValue);
                 break;
         }
-        filteredList.addSource(currentSource, filteredList::setValue);
     }
-    public LiveData<List<NotificationEntity>> getAllList() {
+
+    private void applyRecurringFilter(String filter) {
+        switch (filter) {
+            case "Tất cả":
+                recurringDeadlineService.getAllRecurringDeadlines().observeForever(recurringDeadlines::setValue);
+                break;
+            case "Hàng ngày":
+                recurringDeadlineService.getRecurringDeadlinesByType(1).observeForever(recurringDeadlines::setValue);
+                break;
+            case "Hàng tuần":
+                recurringDeadlineService.getRecurringDeadlinesByType(2).observeForever(recurringDeadlines::setValue);
+                break;
+            case "Hàng tháng":
+                recurringDeadlineService.getRecurringDeadlinesByType(3).observeForever(recurringDeadlines::setValue);
+                break;
+            case "Hàng năm":
+                recurringDeadlineService.getRecurringDeadlinesByType(4).observeForever(recurringDeadlines::setValue);
+                break;
+            default:
+                recurringDeadlineService.getAllRecurringDeadlines().observeForever(recurringDeadlines::setValue);
+                break;
+        }
+    }
+
+    public void setFilter(String mainFilter, String subFilter) {
+        currentFilterType.setValue(mainFilter);
+        if ("Deadline Cố Định".equals(mainFilter)) {
+            applyRecurringFilter(subFilter);
+        } else { // Default to "Deadline Hàng Ngày"
+            applyDailyFilter(subFilter);
+        }
+    }
+
+    public LiveData<List<NotificationEntity>> getAllDeadlines() {
         return notificationService.fetchAllNotifications();
     }
 
@@ -73,53 +119,24 @@ public class DashBoardViewModel extends AndroidViewModel {
     }
 
     public LiveData<List<NotificationEntity>> getListNotificationByDay() {
-
         return notificationService.fetchAllNotificationsByDay(0);
     }
 
-    public LiveData<List<NotificationEntity>> getDeadlinesForTomorrow() {
-        Calendar calendar = Calendar.getInstance();
-        // Lấy thời gian bắt đầu ngày mai
-        calendar.add(Calendar.DAY_OF_YEAR, 1);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        long startOfTomorrow = calendar.getTimeInMillis();
-
-        // Kết thúc ngày mai
-        calendar.set(Calendar.HOUR_OF_DAY, 23);
-        calendar.set(Calendar.MINUTE, 59);
-        calendar.set(Calendar.SECOND, 59);
-        calendar.set(Calendar.MILLISECOND, 999);
-        long endOfTomorrow = calendar.getTimeInMillis();
-
-        return notificationService.fetchAllNotificationsByDay(startOfTomorrow, endOfTomorrow,0);
-    }
-
-    public LiveData<List<NotificationEntity>> getUpcomingDeadlines() {
-        Calendar calendar = Calendar.getInstance();
-        long now = calendar.getTimeInMillis();
-        calendar.add(Calendar.DAY_OF_YEAR, 3);
-        long threeDaysLater = calendar.getTimeInMillis();
-        return notificationService.fetchAllNotificationsByDay(now, threeDaysLater,0);
-    }
-
-    public LiveData<List<NotificationEntity>> getOverdueDeadlines() {
-        long now = System.currentTimeMillis();
-        return notificationService.fetchAllNotificationsByDay(0, now - 1,0);
-    }
-
-    public LiveData<List<TaskEntity>> getTasksForNotification(int notificationId){
+    public LiveData<List<TaskEntity>> getTasksForNotification(int notificationId) {
         return taskService.getTasksForNotification(notificationId);
     }
 
-    public LiveData<List<NotificationEntity>> geFinishDeadlines(){
-        return notificationService.fetchAllNotificationsByStatus(4);
-    }
-    public  void updateNotSuccessDeadline(int id,int status){
-        notificationService.updateStatus(status,id);
+    public void updateNotSuccessDeadline(int id, int status) {
+        notificationService.updateStatus(status, id);
         notificationService.updateNotSuccessDeadline(id);
+    }
+
+    public void updateRecurringDeadline(RecurringDeadlineEntity recurringDeadline) {
+        recurringDeadlineService.updateRecurringDeadline(recurringDeadline);
+    }
+
+    public void deleteRecurringDeadline(RecurringDeadlineEntity recurringDeadline) {
+        recurringDeadlineService.deleteRecurringDeadline(recurringDeadline);
     }
 
     public void checkUpdateStatus() {
@@ -156,5 +173,4 @@ public class DashBoardViewModel extends AndroidViewModel {
             }
         });
     }
-
 }

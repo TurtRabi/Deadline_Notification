@@ -14,6 +14,7 @@ import com.example.notificationdeadline.notification.NotificationScheduler;
 import com.example.notificationdeadline.repository.TaskRepository;
 import com.example.notificationdeadline.service.NotificationService;
 import com.example.notificationdeadline.service.TaskService;
+import com.example.notificationdeadline.dto.Enum.StatusEnum;
 
 import java.util.List;
 
@@ -41,7 +42,7 @@ public class DeadlineNotificationDetailViewModel extends AndroidViewModel {
         taskService.insertTask(task,callback);
     }
     public  void updateSuccessDeadline(int id){
-        notificationService.updateStatus(4,id);
+        notificationService.updateStatus(StatusEnum.SUCCESS.getValue(),id);
         notificationService.updateSuccessDeadline(id);
     }
     public  void updateNotSuccessDeadline(int id,int status){

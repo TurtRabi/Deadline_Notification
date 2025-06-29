@@ -15,9 +15,9 @@ public class PrioritySpinnerAdapter extends ArrayAdapter<String> {
     private final Context context;
     private final String[] priorities;
     private final int[] icons = {
-            R.drawable.low_priority_24px,      // Bình thường
-            R.drawable.priority_high_24px,     // Khẩn cấp
-            R.drawable.priority_high_very      // Rất khẩn cấp
+            R.drawable.chill,      // Bình thường
+            R.drawable.warm,     // Khẩn cấp
+            R.drawable.super_warm      // Rất khẩn cấp
     };
 
     public PrioritySpinnerAdapter(Context context, String[] priorities) {

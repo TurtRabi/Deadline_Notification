@@ -12,4 +12,44 @@
         <item>Khẩn cấp</item>
         <item>Rất khẩn cấp</item>
     </string-array>
+
+    <string-array name="recurrence_type_list">
+        <item>Không lặp lại</item>
+        <item>Hàng ngày</item>
+        <item>Hàng tuần</item>
+        <item>Hàng tháng</item>
+        <item>Hàng năm</item>
+    </string-array>
+
+    <string-array name="days_of_week">
+        <item>Chủ Nhật</item>
+        <item>Thứ Hai</item>
+        <item>Thứ Ba</item>
+        <item>Thứ Tư</item>
+        <item>Thứ Năm</item>
+        <item>Thứ Sáu</item>
+        <item>Thứ Bảy</item>
+    </string-array>
+
+    <string-array name="months_of_year">
+        <item>Tháng 1</item>
+        <item>Tháng 2</item>
+        <item>Tháng 3</item>
+        <item>Tháng 4</item>
+        <item>Tháng 5</item>
+        <item>Tháng 6</item>
+        <item>Tháng 7</item>
+        <item>Tháng 8</item>
+        <item>Tháng 9</item>
+        <item>Tháng 10</item>
+        <item>Tháng 11</item>
+        <item>Tháng 12</item>
+    </string-array>
+    <string-array name="short_term_filter_options">
+        <item>Tất cả</item>
+        <item>Ngày mai</item>
+        <item>Sắp đến hạn</item>
+        <item>Quá hạn</item>
+        <item>Hoàn thành</item>
+    </string-array>
 </resources>
