@@ -64,7 +64,7 @@ public interface NotificationDao {
 
     
 
-    @Query("SELECT * FROM notifications WHERE status = 4")
+    @Query("SELECT * FROM notifications WHERE status = 5")
     LiveData<List<NotificationEntity>> getAllCompletedNotifications();
 
     @Query("SELECT * FROM notifications WHERE is_recurring = 1")
@@ -81,4 +81,19 @@ public interface NotificationDao {
 
     @Query("SELECT * FROM notifications WHERE title = :title AND time_millis = :timeMillis LIMIT 1")
     NotificationEntity getNotificationByTitleAndTime(String title, long timeMillis);
+
+    @Query("SELECT * FROM notifications WHERE category = :category")
+    LiveData<List<NotificationEntity>> getNotificationsByCategory(String category);
+
+    @Query("SELECT * FROM notifications WHERE tags LIKE '%' || :tag || '%'")
+    LiveData<List<NotificationEntity>> getNotificationsByTag(String tag);
+
+    @Query("SELECT * FROM notifications WHERE category = :category AND tags LIKE '%' || :tag || '%'")
+    LiveData<List<NotificationEntity>> getNotificationsByCategoryAndTag(String category, String tag);
+
+    @Query("SELECT * FROM notifications")
+    List<NotificationEntity> getAllList();
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertAll(List<NotificationEntity> notifications);
 }

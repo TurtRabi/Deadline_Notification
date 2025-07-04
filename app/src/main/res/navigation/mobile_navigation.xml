@@ -38,7 +38,15 @@
     <fragment
         android:id="@+id/dashBoardFragment"
         android:name="com.example.notificationdeadline.ui.DashBoard.DashBoardFragment"
-        android:label="DashBoardFragment" />
+        android:label="DashBoardFragment" >
+        <action
+            android:id="@+id/action_dashBoardFragment_to_calendarViewFragment"
+            app:destination="@id/calendarViewFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
     <fragment
         android:id="@+id/notificationFragment"
         android:name="com.example.notificationdeadline.ui.notification.NotificationFragment"
@@ -69,4 +77,17 @@
         android:name="com.example.notificationdeadline.ui.NotificationDeadlineInfor.DeadlineNotificationDetail"
         android:label="fragment_deadline_notification_detail"
         tools:layout="@layout/fragment_deadline_notification_detail" />
+    <fragment
+        android:id="@+id/calendarViewFragment"
+        android:name="com.example.notificationdeadline.ui.calendar.CalendarViewFragment"
+        android:label="fragment_calendar_view"
+        tools:layout="@layout/fragment_calendar_view" >
+        <action
+            android:id="@+id/action_calendarViewFragment_to_deadlineNotificationDetail"
+            app:destination="@id/deadlineNotificationDetail"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
 </navigation>

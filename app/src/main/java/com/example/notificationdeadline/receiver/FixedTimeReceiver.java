@@ -24,16 +24,18 @@ public class FixedTimeReceiver extends BroadcastReceiver {
         entity.setId(originalId != -1 ? originalId : id);
         entity.setPriority(priority);
 
-        NotificationHistoryService notificationHistoryService = new NotificationHistoryService(context);
-        notificationHistoryService.insertNotificationHistory(
-                new NotificationHistoryEntity(
-                        title,
-                        message,
-                        System.currentTimeMillis(),
-                        true,
-                        false,
-                        String.valueOf(priority) // Lưu lại icon đúng mapping Enum nếu cần
-                ));
+        new Thread(() -> {
+            NotificationHistoryService notificationHistoryService = new NotificationHistoryService(context);
+            notificationHistoryService.insertNotificationHistory(
+                    new NotificationHistoryEntity(
+                            title,
+                            message,
+                            System.currentTimeMillis(),
+                            true,
+                            false,
+                            String.valueOf(priority) // Lưu lại icon đúng mapping Enum nếu cần
+                    ));
+        }).start();
 
         DeadlineNotifier notifier = new DeadlineNotifier(context);
         notifier.show(entity, entity.getTitle(), DeadlineNotifier.HIGH_IMPORTANCE);

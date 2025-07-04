@@ -21,7 +21,19 @@
             app:title="Deadline Today"
             app:titleTextColor="@color/black"
             android:padding="16dp"
-            app:layout_scrollFlags="scroll|enterAlways" />
+            app:layout_scrollFlags="scroll|enterAlways" >
+
+            <ImageButton
+                android:id="@+id/btn_view_calendar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginEnd="16dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Xem lịch"
+                android:src="@drawable/calendar_month_24px" />
+
+        </androidx.appcompat.widget.Toolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
 

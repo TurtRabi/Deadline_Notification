@@ -16,10 +16,17 @@ public class NotificationResponse {
     private boolean isRecurring;
     private int recurrenceType;
     private int recurrenceValue;
+    private String category;
+    private String tags;
+    private String customSoundUri;
+    private int dayOfWeek;
+    private int dayOfMonth;
+    private int month;
+    private int year;
 
     public NotificationResponse() {}
 
-    public NotificationResponse(int id, @NonNull String title, @NonNull String content, long time, int priority, int status, boolean isSuccess, boolean isRecurring, int recurrenceType, int recurrenceValue) {
+    public NotificationResponse(int id, @NonNull String title, @NonNull String content, long time, int priority, int status, boolean isSuccess, boolean isRecurring, int recurrenceType, int recurrenceValue, String category, String tags, String customSoundUri, int dayOfWeek, int dayOfMonth, int month, int year) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -30,6 +37,13 @@ public class NotificationResponse {
         this.isRecurring = isRecurring;
         this.recurrenceType = recurrenceType;
         this.recurrenceValue = recurrenceValue;
+        this.category = category;
+        this.tags = tags;
+        this.customSoundUri = customSoundUri;
+        this.dayOfWeek = dayOfWeek;
+        this.dayOfMonth = dayOfMonth;
+        this.month = month;
+        this.year = year;
     }
 
     public boolean isSuccess() { return isSuccess; }
@@ -64,6 +78,27 @@ public class NotificationResponse {
     public int getRecurrenceValue() { return recurrenceValue; }
     public void setRecurrenceValue(int recurrenceValue) { this.recurrenceValue = recurrenceValue; }
 
+    public String getCategory() { return category; }
+    public void setCategory(String category) { this.category = category; }
+
+    public String getTags() { return tags; }
+    public void setTags(String tags) { this.tags = tags; }
+
+    public String getCustomSoundUri() { return customSoundUri; }
+    public void setCustomSoundUri(String customSoundUri) { this.customSoundUri = customSoundUri; }
+
+    public int getDayOfWeek() { return dayOfWeek; }
+    public void setDayOfWeek(int dayOfWeek) { this.dayOfWeek = dayOfWeek; }
+
+    public int getDayOfMonth() { return dayOfMonth; }
+    public void setDayOfMonth(int dayOfMonth) { this.dayOfMonth = dayOfMonth; }
+
+    public int getMonth() { return month; }
+    public void setMonth(int month) { this.month = month; }
+
+    public int getYear() { return year; }
+    public void setYear(int year) { this.year = year; }
+
     // Optional: dễ debug log
     @Override
     public String toString() {
@@ -78,6 +113,13 @@ public class NotificationResponse {
                 ", isRecurring=" + isRecurring +
                 ", recurrenceType=" + recurrenceType +
                 ", recurrenceValue=" + recurrenceValue +
+                ", category='" + category + "'" +
+                ", tags='" + tags + "'" +
+                ", customSoundUri='" + customSoundUri + "'" +
+                ", dayOfWeek=" + dayOfWeek +
+                ", dayOfMonth=" + dayOfMonth +
+                ", month=" + month +
+                ", year=" + year +
                 '}';
     }
 }

@@ -79,17 +79,29 @@ public class NotificationScheduler {
                 }
             }
 
-            if (time15MinBefore > System.currentTimeMillis())
+            long now = System.currentTimeMillis();
+
+            if (time15MinBefore > now) {
                 alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, time15MinBefore, pi15);
+            }
 
-            if (time5MinBefore > System.currentTimeMillis())
+            if (time5MinBefore > now) {
                 alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, time5MinBefore, pi5);
+            }
 
-            if (timeMillis > System.currentTimeMillis())
+            if (timeMillis > now) {
                 alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, timeMillis, piDeadline);
+            } else {
+                // If the deadline is in the past, but the overdue time is in the future,
+                // schedule an immediate notification.
+                if (timeOverdue > now) {
+                    alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, now, piDeadline);
+                }
+            }
 
-            if (timeOverdue > System.currentTimeMillis())
+            if (timeOverdue > now) {
                 alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, timeOverdue, piOverdue);
+            }
         }
     }
 

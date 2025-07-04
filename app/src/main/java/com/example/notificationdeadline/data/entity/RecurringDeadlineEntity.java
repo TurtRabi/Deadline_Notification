@@ -15,6 +15,7 @@ public class RecurringDeadlineEntity {
     private int dayOfWeek; // 1-7 for weekly (Calendar.SUNDAY = 1)
     private int dayOfMonth; // 1-31 for monthly
     private int month; // 0-11 for yearly (Calendar.JANUARY = 0)
+    private int year;
     private boolean isActive = true;
 
     // Getters and Setters
@@ -88,6 +89,14 @@ public class RecurringDeadlineEntity {
 
     public void setMonth(int month) {
         this.month = month;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
     }
 
     public boolean isActive() {

@@ -12,6 +12,8 @@ import com.example.notificationdeadline.data.entity.UserEntity;
 
 import java.util.List;
 
+import java.util.List;
+
 @Dao
 public interface UserDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -31,4 +33,10 @@ public interface UserDao {
 
     @Query("SELECT * FROM users WHERE email = :email LIMIT 1")
     LiveData<UserEntity> getUserByEmail(String email);
+
+    @Query("SELECT * FROM users")
+    List<UserEntity> getAllList();
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertAll(List<UserEntity> users);
 }

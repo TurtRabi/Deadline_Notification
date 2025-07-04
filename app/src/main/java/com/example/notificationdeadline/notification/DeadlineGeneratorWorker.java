@@ -39,6 +39,7 @@ public class DeadlineGeneratorWorker extends Worker {
             Calendar today = Calendar.getInstance();
             int currentDayOfWeek = today.get(Calendar.DAY_OF_WEEK); // Sunday = 1, Monday = 2, ..., Saturday = 7
             int currentDayOfMonth = today.get(Calendar.DAY_OF_MONTH);
+            long now = System.currentTimeMillis();
 
             for (RecurringDeadlineEntity recurringDeadline : recurringDeadlines) {
                 boolean shouldGenerate = false;
@@ -76,15 +77,50 @@ public class DeadlineGeneratorWorker extends Worker {
                     deadlineTime.set(Calendar.SECOND, 0);
                     deadlineTime.set(Calendar.MILLISECOND, 0);
 
+                    // Set the date based on recurrence type
+                    switch (recurringDeadline.getRecurrenceType()) {
+                        case 2: // Weekly
+                            deadlineTime.set(Calendar.DAY_OF_WEEK, recurringDeadline.getDayOfWeek());
+                            break;
+                        case 3: // Monthly
+                            deadlineTime.set(Calendar.DAY_OF_MONTH, recurringDeadline.getDayOfMonth());
+                            break;
+                        case 4: // Yearly
+                            deadlineTime.set(Calendar.MONTH, recurringDeadline.getMonth());
+                            deadlineTime.set(Calendar.DAY_OF_MONTH, recurringDeadline.getDayOfMonth());
+                            break;
+                    }
+
+                    // If the calculated deadline is in the past, advance it to the next occurrence
+                    if (deadlineTime.getTimeInMillis() < now) {
+                        switch (recurringDeadline.getRecurrenceType()) {
+                            case 1: // Daily
+                                deadlineTime.add(Calendar.DAY_OF_YEAR, 1);
+                                break;
+                            case 2: // Weekly
+                                deadlineTime.add(Calendar.WEEK_OF_YEAR, 1);
+                                break;
+                            case 3: // Monthly
+                                deadlineTime.add(Calendar.MONTH, 1);
+                                break;
+                            case 4: // Yearly
+                                deadlineTime.add(Calendar.YEAR, 1);
+                                break;
+                        }
+                    }
+
                     NotificationEntity newNotification = new NotificationEntity();
                     newNotification.setTitle(recurringDeadline.getTitle());
                     newNotification.setMessage(recurringDeadline.getDescription());
                     newNotification.setPriority(recurringDeadline.getPriority());
                     newNotification.setTimeMillis(deadlineTime.getTimeInMillis());
                     newNotification.setRecurring(false); // Generated notifications are not recurring themselves
-                    newNotification.setRecurring(false); // Not a recurring template
                     newNotification.setSuccess(false);
                     newNotification.setStatus(0);
+                    newNotification.setDayOfWeek(deadlineTime.get(Calendar.DAY_OF_WEEK));
+                    newNotification.setDayOfMonth(deadlineTime.get(Calendar.DAY_OF_MONTH));
+                    newNotification.setMonth(deadlineTime.get(Calendar.MONTH));
+                    newNotification.setYear(deadlineTime.get(Calendar.YEAR));
 
                     NotificationEntity existingNotification = db.notificationDao().getNotificationByTitleAndTime(newNotification.getTitle(), newNotification.getTimeMillis());
                     if (existingNotification == null) {

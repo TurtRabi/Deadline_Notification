@@ -32,4 +32,10 @@ public interface TaskDao {
 
     @Query("SELECT * FROM tasks WHERE isDone = :isDone")
     LiveData<List<TaskEntity>> getTasksByStatus(boolean isDone);
+
+    @Query("SELECT * FROM tasks")
+    List<TaskEntity> getAllList();
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertAll(List<TaskEntity> tasks);
 }

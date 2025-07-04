@@ -47,6 +47,30 @@ public class NotificationEntity {
     @ColumnInfo(name = "recurrence_value", defaultValue = "0")
     private int recurrenceValue; // Day of week for weekly, day of month for monthly, etc.
 
+    @NonNull
+    @ColumnInfo(defaultValue = "")
+    private String category = "";
+
+    @NonNull
+    @ColumnInfo(defaultValue = "")
+    private String tags = "";
+
+    @Nullable
+    @ColumnInfo(name = "custom_sound_uri")
+    private String customSoundUri;
+
+    @ColumnInfo(name = "day_of_week", defaultValue = "0")
+    private int dayOfWeek;
+
+    @ColumnInfo(name = "day_of_month", defaultValue = "0")
+    private int dayOfMonth;
+
+    @ColumnInfo(name = "month", defaultValue = "0")
+    private int month;
+
+    @ColumnInfo(name = "year", defaultValue = "0")
+    private int year;
+
     public NotificationEntity() {}
 
     @Ignore
@@ -56,7 +80,8 @@ public class NotificationEntity {
         this.timeMillis = timeMillis;
     }
 
-    public NotificationEntity(@NonNull String title, @NonNull String message, long timeMillis, int status, int priority, boolean isSuccess, boolean isRecurring, int recurrenceType, int recurrenceValue) {
+    @Ignore
+    public NotificationEntity(@NonNull String title, @NonNull String message, long timeMillis, int status, int priority, boolean isSuccess, boolean isRecurring, int recurrenceType, int recurrenceValue, @NonNull String category, @NonNull String tags, @Nullable String customSoundUri, int dayOfWeek, int dayOfMonth, int month, int year) {
         this.title = title;
         this.message = message;
         this.timeMillis = timeMillis;
@@ -66,9 +91,17 @@ public class NotificationEntity {
         this.isRecurring = isRecurring;
         this.recurrenceType = recurrenceType;
         this.recurrenceValue = recurrenceValue;
+        this.category = category;
+        this.tags = tags;
+        this.customSoundUri = customSoundUri;
+        this.dayOfWeek = dayOfWeek;
+        this.dayOfMonth = dayOfMonth;
+        this.month = month;
+        this.year = year;
     }
 
-    public NotificationEntity(int id, @NonNull String title, @NonNull String message, long timeMillis, int status, int priority, boolean isSuccess, boolean isRecurring, int recurrenceType, int recurrenceValue) {
+    @Ignore
+    public NotificationEntity(int id, @NonNull String title, @NonNull String message, long timeMillis, int status, int priority, boolean isSuccess, boolean isRecurring, int recurrenceType, int recurrenceValue, @NonNull String category, @NonNull String tags, @Nullable String customSoundUri, int dayOfWeek, int dayOfMonth, int month, int year) {
         this.id = id;
         this.title = title;
         this.message = message;
@@ -79,6 +112,13 @@ public class NotificationEntity {
         this.isRecurring = isRecurring;
         this.recurrenceType = recurrenceType;
         this.recurrenceValue = recurrenceValue;
+        this.category = category;
+        this.tags = tags;
+        this.customSoundUri = customSoundUri;
+        this.dayOfWeek = dayOfWeek;
+        this.dayOfMonth = dayOfMonth;
+        this.month = month;
+        this.year = year;
     }
 
     // Getter & Setter
@@ -113,4 +153,28 @@ public class NotificationEntity {
 
     public int getRecurrenceValue() { return recurrenceValue; }
     public void setRecurrenceValue(int recurrenceValue) { this.recurrenceValue = recurrenceValue; }
+
+    @NonNull
+    public String getCategory() { return category; }
+    public void setCategory(@NonNull String category) { this.category = category; }
+
+    @NonNull
+    public String getTags() { return tags; }
+    public void setTags(@NonNull String tags) { this.tags = tags; }
+
+    @Nullable
+    public String getCustomSoundUri() { return customSoundUri; }
+    public void setCustomSoundUri(@Nullable String customSoundUri) { this.customSoundUri = customSoundUri; }
+
+    public int getDayOfWeek() { return dayOfWeek; }
+    public void setDayOfWeek(int dayOfWeek) { this.dayOfWeek = dayOfWeek; }
+
+    public int getDayOfMonth() { return dayOfMonth; }
+    public void setDayOfMonth(int dayOfMonth) { this.dayOfMonth = dayOfMonth; }
+
+    public int getMonth() { return month; }
+    public void setMonth(int month) { this.month = month; }
+
+    public int getYear() { return year; }
+    public void setYear(int year) { this.year = year; }
 }

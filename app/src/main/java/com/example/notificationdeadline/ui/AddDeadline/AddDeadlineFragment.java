@@ -49,6 +49,7 @@ public class AddDeadlineFragment extends Fragment {
     private Switch switchIsRecurring;
     private Spinner spinnerRecurrenceType;
     private Spinner spinnerRecurrenceValue;
+    private NotificationRequest notificationToEdit; // New field to hold the notification being edited
 
     public static AddDeadlineFragment newInstance() {
         return new AddDeadlineFragment();
@@ -111,6 +112,11 @@ public class AddDeadlineFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requireActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+
+        // Check if a NotificationRequest is passed for editing
+        if (getArguments() != null && getArguments().containsKey("notificationEntity")) {
+            notificationToEdit = getArguments().getParcelable("notificationEntity");
+        }
     }
 
     @Override
@@ -132,6 +138,52 @@ public class AddDeadlineFragment extends Fragment {
         final int[] hour = {timePicker.getHour()};
         final int[] minute = {timePicker.getMinute()};
 
+        // If editing, pre-fill the fields
+        if (notificationToEdit != null) {
+            binding.txtTitle.setText(notificationToEdit.getTitle());
+            binding.txtDescription.setText(notificationToEdit.getContent());
+            binding.txtCategory.setText(notificationToEdit.getCategory());
+            binding.txtTags.setText(notificationToEdit.getTags());
+
+            // Set priority spinner
+            binding.spinnerPriority.setSelection(notificationToEdit.getPriority());
+
+            // Set date and time
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(notificationToEdit.getTime());
+            selectedYear[0] = cal.get(Calendar.YEAR);
+            selectedMonth[0] = cal.get(Calendar.MONTH);
+            selectedDay[0] = cal.get(Calendar.DAY_OF_MONTH);
+            hour[0] = cal.get(Calendar.HOUR_OF_DAY);
+            minute[0] = cal.get(Calendar.MINUTE);
+
+            calendarView.setDate(notificationToEdit.getTime(), true, true);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                timePicker.setHour(hour[0]);
+                timePicker.setMinute(minute[0]);
+            } else {
+                timePicker.setCurrentHour(hour[0]);
+                timePicker.setCurrentMinute(minute[0]);
+            }
+
+            // Set recurrence
+            switchIsRecurring.setChecked(notificationToEdit.isRecurring());
+            if (notificationToEdit.isRecurring()) {
+                spinnerRecurrenceType.setVisibility(View.VISIBLE);
+                spinnerRecurrenceValue.setVisibility(View.VISIBLE);
+                spinnerRecurrenceType.setSelection(notificationToEdit.getRecurrenceType());
+                populateRecurrenceValueSpinner(notificationToEdit.getRecurrenceType());
+                // This part might need more specific logic depending on how recurrenceValue maps to spinner items
+                // For now, assuming direct mapping or simple string comparison for selection
+                // For example, if recurrenceValue is day of week, you'd find its index in R.array.days_of_week
+                // For simplicity, I'm skipping direct setting of recurrenceValue spinner for now, as it's complex without knowing exact mapping
+            }
+
+            // Update toolbar title for editing
+            Toolbar toolbar = binding.addToolbard;
+            toolbar.setTitle("Chỉnh sửa Deadline");
+        }
+
         timePicker.setOnTimeChangedListener((view1, hourOfDay, minute1) -> {
             hour[0] = hourOfDay;
             minute[0] = minute1;
@@ -150,9 +202,13 @@ public class AddDeadlineFragment extends Fragment {
         binding.btnSave.setOnClickListener(v -> {
             EditText edtTitle = binding.txtTitle;
             EditText edtDescription = binding.txtDescription;
+            EditText edtCategory = binding.txtCategory;
+            EditText edtTags = binding.txtTags;
 
             String title = edtTitle.getText().toString().trim();
             String description = edtDescription.getText().toString().trim();
+            String category = edtCategory.getText().toString().trim();
+            String tags = edtTags.getText().toString().trim();
 
             if (title.isEmpty()) {
                 edtTitle.setError("Tiêu đề không được để trống");
@@ -214,9 +270,15 @@ public class AddDeadlineFragment extends Fragment {
                 mViewModel.addRecurringDeadline(request,id -> {});
                 if(isToday()){
                     int status = calculateStatus(selectedDateMillis);
+                    Calendar selectedCal = Calendar.getInstance();
+                    selectedCal.setTimeInMillis(selectedDateMillis);
                     NotificationRequest request1 = new NotificationRequest(
                             title, description, selectedDateMillis,
-                            priority, status, false, true, recurrenceTypeString, 0
+                            priority, status, false, true, recurrenceTypeString, 0, category, tags, null,
+                            selectedCal.get(Calendar.DAY_OF_WEEK),
+                            selectedCal.get(Calendar.DAY_OF_MONTH),
+                            selectedCal.get(Calendar.MONTH),
+                            selectedCal.get(Calendar.YEAR)
                     );
                     mViewModel.addNotification(request1,id->{
 
@@ -225,13 +287,42 @@ public class AddDeadlineFragment extends Fragment {
 
             } else {
                 int status = calculateStatus(selectedDateMillis);
-                NotificationRequest request = new NotificationRequest(
-                        title, description, selectedDateMillis,
-                        priority, status, false, false, 0, 0
-                );
-                mViewModel.addNotification(request, id -> {
-                    // Schedule logic here
-                });
+                if (notificationToEdit != null) {
+                    // Update existing notification
+                    Calendar selectedCal = Calendar.getInstance();
+                    selectedCal.setTimeInMillis(selectedDateMillis);
+                    NotificationRequest updatedRequest = new NotificationRequest(
+                            notificationToEdit.getId(), title, description, selectedDateMillis,
+                            priority, status, notificationToEdit.isSuccess(), false, 0, 0, category, tags, null,
+                            selectedCal.get(Calendar.DAY_OF_WEEK),
+                            selectedCal.get(Calendar.DAY_OF_MONTH),
+                            selectedCal.get(Calendar.MONTH),
+                            selectedCal.get(Calendar.YEAR)
+                    );
+                    mViewModel.updateNotification(updatedRequest);
+                } else {
+                    // Add new notification
+                    Calendar selectedCal = Calendar.getInstance();
+                    selectedCal.setTimeInMillis(selectedDateMillis);
+                    NotificationRequest request = new NotificationRequest(
+                            title, description, selectedDateMillis,
+                            priority, status, false, false, 0, 0, category, tags, null,
+                            selectedCal.get(Calendar.DAY_OF_WEEK),
+                            selectedCal.get(Calendar.DAY_OF_MONTH),
+                            selectedCal.get(Calendar.MONTH),
+                            selectedCal.get(Calendar.YEAR)
+                    );
+                    mViewModel.addNotification(request, id -> {
+                        NotificationScheduler.scheduleFixedTimeNotification(
+                                requireContext(),
+                                selectedDateMillis,
+                                (int) id,
+                                title,
+                                description,
+                                priority
+                        );
+                    });
+                }
             }
             showSuccessDialogWithAutoDismiss();
         });
@@ -302,7 +393,7 @@ public class AddDeadlineFragment extends Fragment {
         long timeLeftMillis = deadlineMillis - currentTimeMillis;
         long timeLeftHours = timeLeftMillis / (60 * 60 * 1000);
 
-        if (timeLeftMillis <= 0) {
+        if (timeLeftMillis < 0) {
             return StatusEnum.OVERDEADLINE.getValue();
         } else if (timeLeftHours < 1) {
             return StatusEnum.DEADLINE.getValue();

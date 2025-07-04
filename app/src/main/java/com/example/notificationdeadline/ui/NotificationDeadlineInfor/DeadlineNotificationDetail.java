@@ -91,6 +91,8 @@ public class DeadlineNotificationDetail extends Fragment {
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
             String formattedDate = sdf.format(new Date(notification.getTimeMillis()));
             binding.tvNotificationDeadline.setText("Đến hạn: " + formattedDate);
+            binding.tvNotificationCategory.setText("Danh mục: " + notificationRequest.getCategory());
+            binding.tvNotificationTags.setText("Thẻ: " + notificationRequest.getTags());
 
             StatusEnum status = StatusEnum.fromValue(notification.getStatus());
             Animation blinkAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.blink);
@@ -211,6 +213,13 @@ public class DeadlineNotificationDetail extends Fragment {
             binding.btnAddTask.setOnClickListener(listener);
             binding.btnCompleteDeadline.setOnClickListener(listener);
             binding.btnDeleteDeadline.setOnClickListener(listener);
+
+            binding.notificationDetailToolbar.findViewById(R.id.btn_edit_deadline).setOnClickListener(v -> {
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("notificationEntity", notificationRequest);
+                NavController navController = Navigation.findNavController(requireView());
+                navController.navigate(R.id.addDeadlineFragment2, bundle);
+            });
 
         }
 

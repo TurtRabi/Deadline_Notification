@@ -68,6 +68,10 @@ public class NotificationRepository {
         return db.notificationDao().getAllByDay2(startTime, endTime, isSuccess);
     }
 
+    public LiveData<List<NotificationEntity>> getAllNotification(long startTime, long endTime) {
+        return db.notificationDao().getAllByDay(startTime, endTime);
+    }
+
     public List<NotificationEntity> getAllNotification1(long startTime, long endTime, int isSuccess) {
         return db.notificationDao().getAllByDay1(startTime, endTime, isSuccess);
     }
@@ -92,5 +96,17 @@ public class NotificationRepository {
 
     public LiveData<List<NotificationEntity>> getAllFixedDeadlines() {
         return db.notificationDao().getAllFixedDeadlines();
+    }
+
+    public LiveData<List<NotificationEntity>> getNotificationsByCategory(String category) {
+        return db.notificationDao().getNotificationsByCategory(category);
+    }
+
+    public LiveData<List<NotificationEntity>> getNotificationsByTag(String tag) {
+        return db.notificationDao().getNotificationsByTag(tag);
+    }
+
+    public LiveData<List<NotificationEntity>> getNotificationsByCategoryAndTag(String category, String tag) {
+        return db.notificationDao().getNotificationsByCategoryAndTag(category, tag);
     }
 }

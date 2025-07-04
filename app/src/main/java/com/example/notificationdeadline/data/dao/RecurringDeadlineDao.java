@@ -10,6 +10,7 @@ import com.example.notificationdeadline.data.entity.RecurringDeadlineEntity;
 
 import java.util.List;
 
+import androidx.room.OnConflictStrategy;
 import androidx.room.Delete;
 
 @Dao
@@ -34,4 +35,10 @@ public interface RecurringDeadlineDao {
 
     @Query("SELECT * FROM recurring_deadlines WHERE recurrenceType = :type")
     LiveData<List<RecurringDeadlineEntity>> getRecurringDeadlinesByType(int type);
+
+    @Query("SELECT * FROM recurring_deadlines")
+    List<RecurringDeadlineEntity> getAllList();
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertAll(List<RecurringDeadlineEntity> recurringDeadlines);
 }

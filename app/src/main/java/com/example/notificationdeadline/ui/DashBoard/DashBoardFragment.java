@@ -137,6 +137,11 @@ public class DashBoardFragment extends Fragment {
 
         setHasOptionsMenu(true);
 
+        binding.homeToolbar.findViewById(R.id.btn_view_calendar).setOnClickListener(v -> {
+            NavController navController = Navigation.findNavController(requireView());
+            navController.navigate(R.id.action_dashBoardFragment_to_calendarViewFragment);
+        });
+
         return binding.getRoot();
     }
 

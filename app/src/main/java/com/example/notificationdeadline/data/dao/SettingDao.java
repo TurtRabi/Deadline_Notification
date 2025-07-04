@@ -8,6 +8,8 @@ import androidx.room.Query;
 
 import com.example.notificationdeadline.data.entity.SettingEntity;
 
+import java.util.List;
+
 @Dao
 public interface SettingDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -26,4 +28,10 @@ public interface SettingDao {
 
     @Query("SELECT * FROM settings")
     LiveData<java.util.List<SettingEntity>> getAllSettings();
+
+    @Query("SELECT * FROM settings")
+    List<SettingEntity> getAllList();
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertAll(List<SettingEntity> settings);
 }

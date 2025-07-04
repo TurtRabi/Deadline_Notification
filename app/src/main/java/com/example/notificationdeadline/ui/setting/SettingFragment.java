@@ -53,6 +53,7 @@ import com.example.notificationdeadline.dto.request.UserRequest;
 import com.example.notificationdeadline.ui.DashBoard.DashBoardFragment;
 import com.example.notificationdeadline.ui.EditUser.EditUserFragment;
 import com.example.notificationdeadline.ui.dialog.CustomMessageDialog;
+import com.example.notificationdeadline.util.BackupRestoreManager;
 
 import java.io.File;
 import java.util.List;
@@ -61,6 +62,10 @@ public class SettingFragment extends Fragment {
 
     private SettingViewModel mViewModel;
     private FragmentSettingBinding binding;
+    private BackupRestoreManager backupRestoreManager;
+
+    private static final int REQUEST_CODE_STORAGE_PERMISSION = 100;
+
     public static SettingFragment newInstance() {
         return new SettingFragment();
     }
@@ -84,6 +89,7 @@ public class SettingFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mViewModel = new ViewModelProvider(this).get(SettingViewModel.class);
+        backupRestoreManager = new BackupRestoreManager(requireContext());
 
         // Observe user list
         mViewModel.getAllListUser().observe(getViewLifecycleOwner(), userEntityList -> {
@@ -167,6 +173,10 @@ public class SettingFragment extends Fragment {
                         }
                     } else if (v.getId() == R.id.btnClearCache) {
                         showDeleteTaskConfirmDialog();
+                    } else if (v.getId() == R.id.btnBackupData) {
+                        checkStoragePermissionAndBackup();
+                    } else if (v.getId() == R.id.btnRestoreData) {
+                        checkStoragePermissionAndRestore();
                     }
                 };
 
@@ -174,6 +184,8 @@ public class SettingFragment extends Fragment {
                 binding.switchNotification.setOnClickListener(listener);
                 binding.switchDarkMode.setOnClickListener(listener);
                 binding.btnClearCache.setOnClickListener(listener);
+                binding.btnBackupData.setOnClickListener(listener);
+                binding.btnRestoreData.setOnClickListener(listener);
             }
         });
 
@@ -181,6 +193,86 @@ public class SettingFragment extends Fragment {
 
     }
 
+    private void checkStoragePermissionAndBackup() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                performBackup();
+            } else {
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_STORAGE_PERMISSION);
+            }
+        } else {
+            performBackup();
+        }
+    }
+
+    private void checkStoragePermissionAndRestore() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                performRestore();
+            } else {
+                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CODE_STORAGE_PERMISSION);
+            }
+        } else {
+            performRestore();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_CODE_STORAGE_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted, retry the operation
+                if (permissions[0].equals(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    performBackup();
+                } else if (permissions[0].equals(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                    performRestore();
+                }
+            } else {
+                Toast.makeText(requireContext(), "Quyền truy cập bộ nhớ bị từ chối.", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void performBackup() {
+        backupRestoreManager.backupData(new BackupRestoreManager.BackupRestoreCallback() {
+            @Override
+            public void onSuccess() {
+                requireActivity().runOnUiThread(() -> {
+                    CustomMessageDialog.newInstance("Thành công", "Sao lưu dữ liệu thành công!", R.drawable.finishdeadline, R.color.successColor).show(getParentFragmentManager(), "successDialog");
+                });
+            }
+
+            @Override
+            public void onFailure(String message) {
+                requireActivity().runOnUiThread(() -> {
+                    CustomMessageDialog.newInstance("Lỗi", "Sao lưu dữ liệu thất bại: " + message, R.drawable.delete_24px, R.color.errorColor).show(getParentFragmentManager(), "errorDialog");
+                });
+            }
+        });
+    }
+
+    private void performRestore() {
+        backupRestoreManager.restoreData(new BackupRestoreManager.BackupRestoreCallback() {
+            @Override
+            public void onSuccess() {
+                requireActivity().runOnUiThread(() -> {
+                    CustomMessageDialog.newInstance("Thành công", "Khôi phục dữ liệu thành công!", R.drawable.finishdeadline, R.color.successColor).show(getParentFragmentManager(), "successDialog");
+                    // Optionally, restart the app to reflect changes
+                    new android.os.Handler().postDelayed(() -> {
+                        requireActivity().recreate();
+                    }, 1000);
+                });
+            }
+
+            @Override
+            public void onFailure(String message) {
+                requireActivity().runOnUiThread(() -> {
+                    CustomMessageDialog.newInstance("Lỗi", "Khôi phục dữ liệu thất bại: " + message, R.drawable.delete_24px, R.color.errorColor).show(getParentFragmentManager(), "errorDialog");
+                });
+            }
+        });
+    }
 
     private void showDeleteTaskConfirmDialog() {
         View view = LayoutInflater.from(requireContext()).inflate(R.layout.bg_dialog_delete_task, null);
@@ -234,6 +326,7 @@ public class SettingFragment extends Fragment {
 
 
 
+
     private void enableNotifications() {
         Toast.makeText(getContext(), "Thông báo đã được bật", Toast.LENGTH_SHORT).show();
     }
@@ -261,6 +354,7 @@ public class SettingFragment extends Fragment {
         }
         return super.onOptionsItemSelected(item);
     }
+
 
 
 

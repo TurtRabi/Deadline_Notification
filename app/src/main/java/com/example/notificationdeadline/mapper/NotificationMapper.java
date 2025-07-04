@@ -17,7 +17,14 @@ public class NotificationMapper {
                 request.isSuccess(),
                 request.isRecurring(),
                 request.getRecurrenceType(),
-                request.getRecurrenceValue()
+                request.getRecurrenceValue(),
+                request.getCategory(),
+                request.getTags(),
+                request.getCustomSoundUri(),
+                request.getDayOfWeek(),
+                request.getDayOfMonth(),
+                request.getMonth(),
+                request.getYear()
         );
     }
 
@@ -32,7 +39,14 @@ public class NotificationMapper {
                 entity.isSuccess(),
                 entity.isRecurring(),
                 entity.getRecurrenceType(),
-                entity.getRecurrenceValue()
+                entity.getRecurrenceValue(),
+                entity.getCategory(),
+                entity.getTags(),
+                entity.getCustomSoundUri(),
+                entity.getDayOfWeek(),
+                entity.getDayOfMonth(),
+                entity.getMonth(),
+                entity.getYear()
         );
     }
 
@@ -48,7 +62,14 @@ public class NotificationMapper {
                 entity.isSuccess(),
                 entity.isRecurring(),
                 entity.getRecurrenceType(),
-                entity.getRecurrenceValue()
+                entity.getRecurrenceValue(),
+                entity.getCategory(),
+                entity.getTags(),
+                entity.getCustomSoundUri(),
+                entity.getDayOfWeek(),
+                entity.getDayOfMonth(),
+                entity.getMonth(),
+                entity.getYear()
         );
     }
 }

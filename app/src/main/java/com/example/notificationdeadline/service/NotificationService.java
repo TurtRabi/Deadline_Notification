@@ -27,17 +27,27 @@ public class NotificationService {
         notificationRepository.insertNotification(entity, new NotificationRepository.OnInsertCallback() {
             @Override
             public void onInsert(long id) {
-                if (callback != null) {
-                    callback.onInsert(id);
-                }
                 entity.setId((int) id);
                 if (entity.isRecurring()) {
                     NotificationScheduler.scheduleRecurringNotification(context, entity);
+                } else {
+                    NotificationScheduler.scheduleFixedTimeNotification(context, entity.getTimeMillis(), entity.getId(), entity.getTitle(), entity.getMessage(), entity.getPriority());
+                }
+                if (callback != null) {
+                    callback.onInsert(id);
                 }
             }
         });
     }
 
+
+    public void updateNotification(NotificationRequest request) {
+        NotificationEntity entity = NotificationMapper.toEntity(request);
+        notificationRepository.updateNotification(entity);
+        if (entity.isRecurring()) {
+            NotificationScheduler.scheduleRecurringNotification(context, entity);
+        }
+    }
 
     public void removeNotification(NotificationEntity notification) {
         notificationRepository.deleteNotification(notification);
@@ -144,15 +154,15 @@ public class NotificationService {
         calendar.set(Calendar.MILLISECOND, 999);
         long endTime = calendar.getTimeInMillis();
 
-        return notificationRepository.getAllNotification(startTime, endTime, 0);
+        return notificationRepository.getAllNotification(startTime, endTime);
     }
 
     public LiveData<List<NotificationEntity>> fetchDueDeadlines() {
-        return notificationRepository.getAllByStatus(2); // StatusEnum.DEADLINE
+        return notificationRepository.getAllByStatus(3); // StatusEnum.DEADLINE
     }
 
     public LiveData<List<NotificationEntity>> fetchOverdueDeadlines() {
-        return notificationRepository.getAllByStatus(3); // StatusEnum.OVERDEADLINE
+        return notificationRepository.getAllByStatus(4); // StatusEnum.OVERDEADLINE
     }
 
     public LiveData<List<NotificationEntity>> fetchCompletedDeadlines() {
@@ -163,7 +173,17 @@ public class NotificationService {
         return notificationRepository.getAllFixedDeadlines();
     }
 
-    
+    public LiveData<List<NotificationEntity>> fetchNotificationsByCategory(String category) {
+        return notificationRepository.getNotificationsByCategory(category);
+    }
+
+    public LiveData<List<NotificationEntity>> fetchNotificationsByTag(String tag) {
+        return notificationRepository.getNotificationsByTag(tag);
+    }
+
+    public LiveData<List<NotificationEntity>> fetchNotificationsByCategoryAndTag(String category, String tag) {
+        return notificationRepository.getNotificationsByCategoryAndTag(category, tag);
+    }
 
 }
 

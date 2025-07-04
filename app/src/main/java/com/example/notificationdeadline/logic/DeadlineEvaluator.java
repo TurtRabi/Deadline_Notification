@@ -38,7 +38,7 @@ public class DeadlineEvaluator {
         for (NotificationEntity entity : all) {
             long diff = entity.getTimeMillis() - now;
 
-            if (diff < 0) {
+            if (diff < -5 * 60 * 1000) { // Only consider overdue if more than 5 minutes past deadline
                 result.get(OVER_ALERT).add(entity);
             } else if (diff <= highThreshold) {
                 result.get(HIGH_ALERT).add(entity);

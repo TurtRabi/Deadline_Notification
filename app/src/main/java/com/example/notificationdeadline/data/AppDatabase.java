@@ -30,7 +30,7 @@ import com.example.notificationdeadline.data.entity.UserEntity;
                 TaskEntity.class,
                 RecurringDeadlineEntity.class
         },
-        version = 16,
+        version = 19,
         exportSchema = false
 )
 public abstract class AppDatabase extends RoomDatabase {

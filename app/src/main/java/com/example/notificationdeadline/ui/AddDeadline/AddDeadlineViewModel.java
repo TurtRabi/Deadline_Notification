@@ -26,6 +26,10 @@ public class AddDeadlineViewModel extends AndroidViewModel {
         notificationService.addNotification(request,callback);
     }
 
+    public void updateNotification(NotificationRequest request) {
+        notificationService.updateNotification(request);
+    }
+
     public interface OnInsertRecurringDeadlineCallback {
         void onRecurringDeadlineInserted(long id);
     }

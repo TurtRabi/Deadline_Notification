@@ -34,4 +34,10 @@ public interface NotificationHistoryDao {
 
     @Query("DELETE FROM notification_history")
     void deleteAll();
+
+    @Query("SELECT * FROM notification_history")
+    List<NotificationHistoryEntity> getAllList();
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertAll(List<NotificationHistoryEntity> historyEntities);
 }

@@ -70,26 +70,28 @@ public class DeadlineNotifier {
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
 
-        notificationService = new NotificationService(context);
-        NotificationEntity current = notificationService.getNotificationById(entity.getId()); // Sử dụng phương thức đồng bộ
-        if (current != null) {
-            int status = current.getStatus();
-            boolean isSuccess = current.isSuccess();
+        new Thread(() -> {
+            notificationService = new NotificationService(context);
+            NotificationEntity current = notificationService.getNotificationById(entity.getId()); // Sử dụng phương thức đồng bộ
+            if (current != null) {
+                int status = current.getStatus();
+                boolean isSuccess = current.isSuccess();
 
-            if (status != StatusEnum.SUCCESS.getValue() && status!= StatusEnum.OVERDEADLINE.getValue()) {
-                // Nếu chưa hoàn thành, thì tăng cấp trạng thái
-                status = Math.min(status + 1, StatusEnum.OVERDEADLINE.getValue());
-            } else {
-                // Nếu đã hoàn thành, kiểm tra isSuccess
-                if (isSuccess ==false) {
-                    status = StatusEnum.OVERDEADLINE.getValue();
-                }else{
-                    status = StatusEnum.SUCCESS.getValue();
+                if (status != StatusEnum.SUCCESS.getValue() && status!= StatusEnum.OVERDEADLINE.getValue()) {
+                    // Nếu chưa hoàn thành, thì tăng cấp trạng thái
+                    status = Math.min(status + 1, StatusEnum.OVERDEADLINE.getValue());
+                } else {
+                    // Nếu đã hoàn thành, kiểm tra isSuccess
+                    if (isSuccess ==false) {
+                        status = StatusEnum.OVERDEADLINE.getValue();
+                    }else{
+                        status = StatusEnum.SUCCESS.getValue();
+                    }
                 }
-            }
 
-            notificationService.updateStatus(status, current.getId());
-        }
+                notificationService.updateStatus(status, current.getId());
+            }
+        }).start();
 
 
 
