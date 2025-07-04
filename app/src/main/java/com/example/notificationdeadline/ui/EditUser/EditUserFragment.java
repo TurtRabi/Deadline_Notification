@@ -55,9 +55,11 @@ public class EditUserFragment extends Fragment {
         setHasOptionsMenu(true);
         View rootView = binding.getRoot();
         rootView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
-            View currentFocus = requireActivity().getCurrentFocus();
-            if (currentFocus != null) {
-                currentFocus.requestRectangleOnScreen(new Rect(), true);
+            if (isAdded() && getActivity() != null) {
+                View currentFocus = getActivity().getCurrentFocus();
+                if (currentFocus != null) {
+                    currentFocus.requestRectangleOnScreen(new Rect(), true);
+                }
             }
         });
 
@@ -144,23 +146,29 @@ public class EditUserFragment extends Fragment {
     }
 
     private void showSuccessDialogWithAutoDismiss() {
-
         CustomMessageDialog dialog = CustomMessageDialog.newInstance(
                 "Thành công 🎉",
                 "Thông tin người dùng đã được cập nhật!",
                 R.drawable.delete_removebg_preview,
                 R.color.successColor
         );
+
         dialog.show(getParentFragmentManager(), "successDialog");
 
-        new android.os.Handler().postDelayed(() -> {
-            requireActivity().finishAffinity();
-        }, 2000);
+        // Delay điều hướng sau 2 giây
+        new Handler().postDelayed(() -> {
+            if (!isAdded()) return;
 
-        dialog.dismiss();
-        NavController nav = Navigation.findNavController(requireView());
-        nav.navigateUp();
+            NavController nav = Navigation.findNavController(requireView());
+            nav.navigateUp();
+            Fragment foundDialog = getParentFragmentManager().findFragmentByTag("successDialog");
+            if (foundDialog instanceof CustomMessageDialog) {
+                ((CustomMessageDialog) foundDialog).dismiss();
+            }
+
+        }, 2000);
     }
+
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {

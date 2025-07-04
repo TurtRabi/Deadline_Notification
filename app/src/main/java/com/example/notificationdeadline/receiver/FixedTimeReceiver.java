@@ -15,12 +15,13 @@ public class FixedTimeReceiver extends BroadcastReceiver {
         String title = intent.getStringExtra("title");
         String message = intent.getStringExtra("message");
         int id = intent.getIntExtra("id", (int) System.currentTimeMillis());
+        int originalId = intent.getIntExtra("original_id", -1);
         int priority = intent.getIntExtra("priority", 0); // default là NORMAL
 
         NotificationEntity entity = new NotificationEntity();
         entity.setTitle(title);
         entity.setMessage(message);
-        entity.setId(id);
+        entity.setId(originalId != -1 ? originalId : id);
         entity.setPriority(priority);
 
         NotificationHistoryService notificationHistoryService = new NotificationHistoryService(context);

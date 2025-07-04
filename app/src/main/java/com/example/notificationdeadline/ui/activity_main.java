@@ -44,6 +44,11 @@ public class activity_main extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, 1002);
+            }
+        }
 
         binding.navView.setItemIconTintList(null);
         binding.navView.setItemBackgroundResource(android.R.color.transparent); // ✅ tắt nền chọn
@@ -166,6 +171,12 @@ public class activity_main extends AppCompatActivity {
                 Toast.makeText(this, "Bạn đã cấp quyền cho ứng dụng", Toast.LENGTH_LONG).show();
             } else {
                 Toast.makeText(this, "Bạn cần cấp quyền cho ứng dụng", Toast.LENGTH_LONG).show();
+            }
+        } else if (requestCode == 1002) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Bạn đã cấp quyền gửi thông báo.", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Bạn cần cấp quyền gửi thông báo để ứng dụng hoạt động.", Toast.LENGTH_LONG).show();
             }
         }
     }

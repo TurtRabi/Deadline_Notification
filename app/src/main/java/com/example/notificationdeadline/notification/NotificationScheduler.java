@@ -36,6 +36,7 @@ public class NotificationScheduler {
         intentDeadline.putExtra("title", "⏰ Đến hạn rồi: " + title);
         intentDeadline.putExtra("message", message);
         intentDeadline.putExtra("id", requestCodeDeadline);
+        intentDeadline.putExtra("original_id", requestCode);
         intentDeadline.putExtra("priority", priority);
         PendingIntent piDeadline = PendingIntent.getBroadcast(context, requestCodeDeadline, intentDeadline, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
@@ -44,6 +45,7 @@ public class NotificationScheduler {
         intent15.putExtra("title", "Sắp đến hạn: " + title);
         intent15.putExtra("message", "Còn 15 phút nữa đến hạn: " + message);
         intent15.putExtra("id", requestCode15Min);
+        intent15.putExtra("original_id", requestCode);
         intent15.putExtra("priority", priority);
         PendingIntent pi15 = PendingIntent.getBroadcast(context, requestCode15Min, intent15, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
@@ -52,6 +54,7 @@ public class NotificationScheduler {
         intent5.putExtra("title", "Sắp đến hạn: " + title);
         intent5.putExtra("message", "Còn 5 phút nữa đến hạn: " + message);
         intent5.putExtra("id", requestCode5Min);
+        intent5.putExtra("original_id", requestCode);
         intent5.putExtra("priority", priority);
         PendingIntent pi5 = PendingIntent.getBroadcast(context, requestCode5Min, intent5, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
@@ -60,6 +63,7 @@ public class NotificationScheduler {
         intentOverdue.putExtra("title", "❗ Quá hạn: " + title);
         intentOverdue.putExtra("message", "Bạn đã quá hạn: " + message);
         intentOverdue.putExtra("id", requestCodeOverdue);
+        intentOverdue.putExtra("original_id", requestCode);
         intentOverdue.putExtra("priority", priority);
         PendingIntent piOverdue = PendingIntent.getBroadcast(context, requestCodeOverdue, intentOverdue, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 

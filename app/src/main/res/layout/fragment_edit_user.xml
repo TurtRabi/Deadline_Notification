@@ -1,32 +1,38 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.EditUser.EditUserFragment"
-    android:background="#F8FEEC"
-    android:fitsSystemWindows="true">
+    android:background="#F8FEEC">
 
-
-    <LinearLayout
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:theme="@style/ThemeOverlay.AppCompat.Light"
+        app:elevation="4dp">
 
-        <!-- Toolbar -->
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/update_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:theme="@style/ThemeOverlay.AppCompat.Light"
             android:background="#8DD06C"
-            android:gravity="center"
-            android:elevation="4dp"
-            android:paddingTop="25dp"
-            android:paddingBottom="23dp"
-            app:title="Chỉnh sửa thông tin" />
+            app:title="Chỉnh sửa thông tin"
+            app:titleTextColor="@color/black"
+            android:padding="16dp"
+            app:layout_scrollFlags="scroll|enterAlways" />
 
-        <!-- Nội dung chính -->
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -148,5 +154,5 @@
                 android:backgroundTint="#8DD06C"
                 android:textColor="@android:color/white" />
         </LinearLayout>
-    </LinearLayout>
-</ScrollView>
+    </androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
