@@ -1,0 +1,118 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="300dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="@drawable/bg_dialog_rounded"
+    android:gravity="center_horizontal"
+    android:elevation="8dp"
+    android:clipToPadding="false">
+
+    <ImageView
+        android:id="@+id/dialogIcon"
+        android:layout_width="118dp"
+        android:layout_height="117dp"
+        android:layout_marginBottom="20dp"
+        android:src="@drawable/thongbaodeadline" />
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tóm tắt Deadline hôm nay"
+        android:textColor="#212121"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:fontFamily="sans-serif-medium"
+        android:layout_marginBottom="16dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="8dp">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@android:drawable/ic_menu_agenda"
+            android:layout_marginEnd="8dp"
+            app:tint="@color/successColor" />
+
+        <TextView
+            android:id="@+id/tv_completed_deadlines"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Đã hoàn thành: 0"
+            android:textSize="16sp"
+            android:textColor="#757575" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="8dp">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@android:drawable/ic_menu_recent_history"
+            android:layout_marginEnd="8dp"
+            app:tint="@color/warningColor" />
+
+        <TextView
+            android:id="@+id/tv_pending_deadlines"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Chưa hoàn thành: 0"
+            android:textSize="16sp"
+            android:textColor="#757575" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="16dp">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:layout_marginEnd="8dp"
+            app:tint="@color/errorColor" />
+
+        <TextView
+            android:id="@+id/tv_overdue_deadlines"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Quá hạn: 0"
+            android:textSize="16sp"
+            android:textColor="#757575" />
+    </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_dismiss_today"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Tắt cho hôm nay"
+        android:layout_marginBottom="8dp"
+        app:cornerRadius="8dp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_dismiss_session"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Tắt cho phiên này"
+        app:cornerRadius="8dp"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        app:strokeColor="@color/colorPrimary"
+        android:textColor="@color/colorPrimary" />
+
+</LinearLayout>

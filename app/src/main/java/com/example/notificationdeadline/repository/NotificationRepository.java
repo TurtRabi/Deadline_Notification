@@ -44,8 +44,30 @@ public class NotificationRepository {
         executor.execute(() -> db.notificationDao().delete(notification));
     }
 
-    public void updateNotification(final NotificationEntity notification) {
-        executor.execute(() -> db.notificationDao().update(notification));
+    public void updateNotification(final NotificationEntity newNotification) {
+        executor.execute(() -> {
+            NotificationEntity existingNotification = db.notificationDao().getNotificationById(newNotification.getId());
+            if (existingNotification != null) {
+                // Update all fields except timeMillis
+                existingNotification.setTitle(newNotification.getTitle());
+                existingNotification.setMessage(newNotification.getMessage());
+                existingNotification.setStatus(newNotification.getStatus());
+                existingNotification.setPriority(newNotification.getPriority());
+                existingNotification.setSuccess(newNotification.isSuccess());
+                existingNotification.setRecurring(newNotification.isRecurring());
+                existingNotification.setRecurrenceType(newNotification.getRecurrenceType());
+                existingNotification.setRecurrenceValue(newNotification.getRecurrenceValue());
+                existingNotification.setCategory(newNotification.getCategory());
+                existingNotification.setTags(newNotification.getTags());
+                existingNotification.setCustomSoundUri(newNotification.getCustomSoundUri());
+                existingNotification.setDayOfWeek(newNotification.getDayOfWeek());
+                existingNotification.setDayOfMonth(newNotification.getDayOfMonth());
+                existingNotification.setMonth(newNotification.getMonth());
+                existingNotification.setYear(newNotification.getYear());
+
+                db.notificationDao().update(existingNotification);
+            }
+        });
     }
 
     public void updateSuccessDeadline(final int id) {
@@ -90,6 +112,10 @@ public class NotificationRepository {
 
     public LiveData<List<NotificationEntity>> searchNotifications(String keyword) {
         return db.notificationDao().searchNotifications(keyword);
+    }
+
+    public LiveData<List<NotificationEntity>> searchNotificationsByKeywordAndTag(String keyword, String tag) {
+        return db.notificationDao().searchNotificationsByKeywordAndTag(keyword, tag);
     }
 
     

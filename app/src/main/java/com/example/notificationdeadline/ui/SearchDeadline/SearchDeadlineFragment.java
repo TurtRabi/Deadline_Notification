@@ -23,6 +23,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.material.chip.Chip;
+
 import com.example.notificationdeadline.Adapter.DeadlineAdapter;
 import com.example.notificationdeadline.R;
 import com.example.notificationdeadline.databinding.FragmentSearchDeadlineBinding;
@@ -63,8 +65,21 @@ public class SearchDeadlineFragment extends Fragment {
         adapter = new DeadlineAdapter((position, entity) -> openDetail(entity));
         recyclerView.setAdapter(adapter);
 
+        // Populate ChipGroup with tags
+        String[] tags = getResources().getStringArray(R.array.tag_list);
+        for (String tag : tags) {
+            Chip chip = new Chip(requireContext());
+            chip.setText(tag);
+            chip.setCheckable(true);
+            chip.setOnClickListener(v -> {
+                // Perform search when a chip is clicked
+                performSearch(binding.etSearch.getText().toString(), chip.isChecked() ? tag : null);
+            });
+            binding.chipGroupTags.addView(chip);
+        }
+
         // Initially show the empty state
-        performSearch("");
+        performSearch("", null);
 
         binding.etSearch.addTextChangedListener(new TextWatcher() {
             @Override
@@ -72,7 +87,7 @@ public class SearchDeadlineFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                performSearch(s.toString());
+                performSearch(s.toString(), getSelectedTag());
             }
 
             @Override
@@ -80,15 +95,24 @@ public class SearchDeadlineFragment extends Fragment {
         });
     }
 
-    private void performSearch(String keyword) {
-        if (keyword == null || keyword.trim().isEmpty()) {
-            // If keyword is empty, show the empty view and clear the adapter
+    private String getSelectedTag() {
+        int checkedChipId = binding.chipGroupTags.getCheckedChipId();
+        if (checkedChipId != View.NO_ID) {
+            Chip chip = binding.chipGroupTags.findViewById(checkedChipId);
+            return chip.getText().toString();
+        }
+        return null;
+    }
+
+    private void performSearch(String keyword, String tag) {
+        if ((keyword == null || keyword.trim().isEmpty()) && (tag == null || tag.trim().isEmpty())) {
+            // If both keyword and tag are empty, show the empty view and clear the adapter
             adapter.setData(null); // Clear previous results
             binding.emptySearchView.setVisibility(View.VISIBLE);
             return;
         }
 
-        mViewModel.searchDeadlines(keyword).observe(getViewLifecycleOwner(), list -> {
+        mViewModel.searchDeadlines(keyword, tag).observe(getViewLifecycleOwner(), list -> {
             adapter.setData(list);
             boolean empty = list == null || list.isEmpty();
             binding.emptySearchView.setVisibility(empty ? View.VISIBLE : View.GONE);

@@ -137,6 +137,10 @@ public class NotificationService {
         return notificationRepository.searchNotifications(keyword);
     }
 
+    public LiveData<List<NotificationEntity>> searchNotificationsByKeywordAndTag(String keyword, String tag) {
+        return notificationRepository.searchNotificationsByKeywordAndTag(keyword, tag);
+    }
+
     public NotificationEntity getNotificationById(int id) {
         return notificationRepository.getNotificationById(id);
     }

@@ -24,4 +24,12 @@ public class SearchDeadlineViewModel extends AndroidViewModel {
     public LiveData<List<NotificationEntity>> searchDeadlines(String keyword) {
         return notificationService.searchNotifications(keyword);
     }
+
+    public LiveData<List<NotificationEntity>> searchDeadlines(String keyword, String tag) {
+        if (tag != null && !tag.isEmpty()) {
+            return notificationService.searchNotificationsByKeywordAndTag(keyword, tag);
+        } else {
+            return notificationService.searchNotifications(keyword);
+        }
+    }
 }

@@ -59,6 +59,9 @@ public interface NotificationDao {
     @Query("SELECT * FROM notifications WHERE title LIKE '%' || :keyword || '%' OR message LIKE '%' || :keyword || '%' ORDER BY time_millis DESC")
     LiveData<List<NotificationEntity>> searchNotifications(String keyword);
 
+    @Query("SELECT * FROM notifications WHERE (title LIKE '%' || :keyword || '%' OR message LIKE '%' || :keyword || '%') AND tags LIKE '%' || :tag || '%' ORDER BY time_millis DESC")
+    LiveData<List<NotificationEntity>> searchNotificationsByKeywordAndTag(String keyword, String tag);
+
     @Query("SELECT * FROM notifications WHERE id = :id LIMIT 1")
     NotificationEntity getNotificationById(int id);
 

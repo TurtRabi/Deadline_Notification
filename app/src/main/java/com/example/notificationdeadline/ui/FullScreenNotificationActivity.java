@@ -16,6 +16,9 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+
 import com.example.notificationdeadline.R;
 
 public class FullScreenNotificationActivity extends AppCompatActivity {
@@ -46,7 +49,16 @@ public class FullScreenNotificationActivity extends AppCompatActivity {
         tvMessage.setText(message);
 
         // Play sound
-        Uri notificationUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+        Uri notificationUri;
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String customSoundUriString = preferences.getString("custom_notification_sound", null);
+
+        if (customSoundUriString != null) {
+            notificationUri = Uri.parse(customSoundUriString);
+        } else {
+            notificationUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        }
+
         ringtone = RingtoneManager.getRingtone(getApplicationContext(), notificationUri);
         if (ringtone != null) {
             ringtone.play();

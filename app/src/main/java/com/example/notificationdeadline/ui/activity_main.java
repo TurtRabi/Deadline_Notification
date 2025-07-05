@@ -35,7 +35,9 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
 
-public class activity_main extends AppCompatActivity {
+import com.example.notificationdeadline.ui.dialog.TodayDeadlineDialog;
+
+public class activity_main extends AppCompatActivity implements TodayDeadlineDialog.TodayDeadlineDialogListener {
 
     private ActivityMainBinding binding;
     private UserService service;
@@ -84,6 +86,11 @@ public class activity_main extends AppCompatActivity {
         service = new UserService(this);
         service.initDefaultUser();
 
+        // Show TodayDeadlineDialog if needed
+        if (TodayDeadlineDialog.shouldShowDialog(this)) {
+            TodayDeadlineDialog dialog = TodayDeadlineDialog.newInstance();
+            dialog.show(getSupportFragmentManager(), "TodayDeadlineDialog");
+        }
 
         Fragment existingFragment = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_activity_main);
         if (existingFragment == null) {
@@ -166,6 +173,11 @@ public class activity_main extends AppCompatActivity {
             badge.clearNumber();
             badge.setVisible(false);
         }
+    }
+
+    @Override
+    public void onDialogDismissed() {
+        // Dialog dismissed, do nothing or perform additional actions if needed
     }
 
 

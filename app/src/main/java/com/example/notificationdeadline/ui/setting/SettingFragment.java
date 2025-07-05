@@ -69,11 +69,71 @@ public class SettingFragment extends Fragment {
 
     private static final int REQUEST_CODE_STORAGE_PERMISSION = 100;
     private ActivityResultLauncher<Intent> soundPickerLauncher;
-    private Button btnSelectSoundSetting;
+    private ActivityResultLauncher<Intent> systemSoundPickerLauncher;
+    private LinearLayout btnSelectSoundSetting;
     private TextView tvSelectedSoundUriSetting;
+    private ActivityResultLauncher<String> notificationPermissionLauncher;
+    private LinearLayout btnClearCache;
+    private LinearLayout btnBackupData;
+    private LinearLayout btnRestoreData;
 
     public static SettingFragment newInstance() {
         return new SettingFragment();
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // Initialize sound picker launcher for custom files
+        soundPickerLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (result.getResultCode() == AppCompatActivity.RESULT_OK && result.getData() != null) {
+                Uri uri = result.getData().getData(); // Get data URI directly
+                if (uri != null) {
+                    saveCustomSoundUri(uri.toString());
+                    tvSelectedSoundUriSetting.setText("Âm thanh đã chọn: " + uri.getLastPathSegment());
+                    tvSelectedSoundUriSetting.setVisibility(View.VISIBLE);
+                } else {
+                    saveCustomSoundUri(null); // Clear custom sound
+                    tvSelectedSoundUriSetting.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        // Initialize system sound picker launcher
+        systemSoundPickerLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (result.getResultCode() == AppCompatActivity.RESULT_OK && result.getData() != null) {
+                Uri uri = result.getData().getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
+                if (uri != null) {
+                    saveCustomSoundUri(uri.toString());
+                    tvSelectedSoundUriSetting.setText("Âm thanh đã chọn: " + uri.getLastPathSegment());
+                    tvSelectedSoundUriSetting.setVisibility(View.VISIBLE);
+                } else {
+                    saveCustomSoundUri(null); // Clear custom sound
+                    tvSelectedSoundUriSetting.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        // Initialize notification permission launcher
+        notificationPermissionLauncher =
+                registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                    if (isGranted) {
+                        mViewModel.updateSetting("notification", "1");
+                        enableNotifications();
+                    } else {
+                        if (isNotificationPermissionPermanentlyDenied()) {
+                            Toast.makeText(requireContext(), "Bạn đã từ chối vĩnh viễn quyền thông báo.\nHãy bật lại trong phần Cài đặt ứng dụng.", Toast.LENGTH_LONG).show();
+
+                            // Mở màn hình Cài đặt ứng dụng
+                            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                            Uri uri = Uri.fromParts("package", requireContext().getPackageName(), null);
+                            intent.setData(uri);
+                            startActivity(intent);
+                        } else {
+                            Toast.makeText(requireContext(), "Từ chối quyền thông báo", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 
     @Override
@@ -99,21 +159,9 @@ public class SettingFragment extends Fragment {
 
         btnSelectSoundSetting = binding.btnSelectSoundSetting;
         tvSelectedSoundUriSetting = binding.tvSelectedSoundUriSetting;
-
-        // Initialize sound picker launcher
-        soundPickerLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-            if (result.getResultCode() == AppCompatActivity.RESULT_OK && result.getData() != null) {
-                Uri uri = result.getData().getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
-                if (uri != null) {
-                    saveCustomSoundUri(uri.toString());
-                    tvSelectedSoundUriSetting.setText("Âm thanh đã chọn: " + uri.getLastPathSegment());
-                    tvSelectedSoundUriSetting.setVisibility(View.VISIBLE);
-                } else {
-                    saveCustomSoundUri(null); // Clear custom sound
-                    tvSelectedSoundUriSetting.setVisibility(View.GONE);
-                }
-            }
-        });
+        btnClearCache = binding.btnClearCache;
+        btnBackupData = binding.btnBackupData;
+        btnRestoreData = binding.btnRestoreData;
 
         // Load and display custom sound URI
         loadCustomSoundUri();
@@ -214,11 +262,26 @@ public class SettingFragment extends Fragment {
                 binding.btnBackupData.setOnClickListener(listener);
                 binding.btnRestoreData.setOnClickListener(listener);
                 binding.btnSelectSoundSetting.setOnClickListener(v -> {
-                    Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
-                    intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_NOTIFICATION);
-                    intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Chọn âm thanh thông báo");
-                    intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, getCustomSoundUri());
-                    soundPickerLauncher.launch(intent);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+                    builder.setTitle("Chọn loại âm thanh");
+                    builder.setItems(new CharSequence[]{"Âm thanh hệ thống", "Âm thanh tùy chỉnh"}, (dialog, which) -> {
+                        switch (which) {
+                            case 0: // System Sound
+                                Intent intentSystem = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
+                                intentSystem.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_NOTIFICATION);
+                                intentSystem.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Chọn âm thanh thông báo hệ thống");
+                                intentSystem.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, getCustomSoundUri());
+                                systemSoundPickerLauncher.launch(intentSystem);
+                                break;
+                            case 1: // Custom Sound
+                                Intent intentCustom = new Intent(Intent.ACTION_GET_CONTENT);
+                                intentCustom.setType("audio/*");
+                                intentCustom.addCategory(Intent.CATEGORY_OPENABLE);
+                                soundPickerLauncher.launch(intentCustom);
+                                break;
+                        }
+                    });
+                    builder.show();
                 });
             }
         });
@@ -420,25 +483,7 @@ public class SettingFragment extends Fragment {
 
 
 
-    private final ActivityResultLauncher<String> notificationPermissionLauncher =
-            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-                if (isGranted) {
-                    mViewModel.updateSetting("notification", "1");
-                    enableNotifications();
-                } else {
-                    if (isNotificationPermissionPermanentlyDenied()) {
-                        Toast.makeText(requireContext(), "Bạn đã từ chối vĩnh viễn quyền thông báo.\nHãy bật lại trong phần Cài đặt ứng dụng.", Toast.LENGTH_LONG).show();
-
-                        // Mở màn hình Cài đặt ứng dụng
-                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                        Uri uri = Uri.fromParts("package", requireContext().getPackageName(), null);
-                        intent.setData(uri);
-                        startActivity(intent);
-                    } else {
-                        Toast.makeText(requireContext(), "Từ chối quyền thông báo", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
+    
 
 
 

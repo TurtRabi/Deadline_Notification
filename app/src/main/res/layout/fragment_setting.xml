@@ -237,65 +237,124 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/btn_select_sound_setting"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingVertical="8dp">
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="12dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground">
 
-                    <Button
-                        android:id="@+id/btn_select_sound_setting"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Chọn âm thanh thông báo"
-                        android:backgroundTint="#EEEEEE"
-                        android:textColor="#000000"
-                        android:layout_marginBottom="8dp" />
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@android:drawable/ic_lock_silent_mode_off"
+                        android:layout_marginEnd="16dp"
+                        android:contentDescription="Chọn âm thanh thông báo" />
 
                     <TextView
-                        android:id="@+id/tv_selected_sound_uri_setting"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="Chưa chọn âm thanh"
-                        android:padding="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:visibility="gone" />
+                        android:layout_weight="1"
+                        android:text="Chọn âm thanh thông báo"
+                        android:textSize="16sp" />
+
                 </LinearLayout>
 
-
-                <Button
-                    android:id="@+id/btnLanguage"
+                <TextView
+                    android:id="@+id/tv_selected_sound_uri_setting"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="🌐 Ngôn ngữ"
-                    android:backgroundTint="#EEEEEE"
-                    android:textColor="#000000"
-                    android:layout_marginBottom="8dp" />
-                <Button
+                    android:text="Chưa chọn âm thanh"
+                    android:paddingStart="40dp"
+                    android:paddingEnd="10dp"
+                    android:paddingBottom="10dp"
+                    android:visibility="gone" />
+
+
+                
+                <LinearLayout
                     android:id="@+id/btnClearCache"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="🗑️ Xóa bộ nhớ"
-                    android:backgroundTint="#EEEEEE"
-                    android:textColor="#000000"
-                    android:layout_marginBottom="8dp" />
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="12dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground">
 
-                <Button
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@android:drawable/ic_menu_delete"
+                        android:layout_marginEnd="16dp"
+                        android:contentDescription="Xóa bộ nhớ" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Xóa bộ nhớ"
+                        android:textSize="16sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
                     android:id="@+id/btnBackupData"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="💾 Sao lưu dữ liệu"
-                    android:backgroundTint="#EEEEEE"
-                    android:textColor="#000000"
-                    android:layout_marginBottom="8dp" />
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="12dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground">
 
-                <Button
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@android:drawable/ic_menu_save"
+                        android:layout_marginEnd="16dp"
+                        android:contentDescription="Sao lưu dữ liệu" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Sao lưu dữ liệu"
+                        android:textSize="16sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
                     android:id="@+id/btnRestoreData"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="↩️ Khôi phục dữ liệu"
-                    android:backgroundTint="#EEEEEE"
-                    android:textColor="#000000"
-                    android:layout_marginBottom="8dp" />
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="12dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@android:drawable/ic_menu_upload"
+                        android:layout_marginEnd="16dp"
+                        android:contentDescription="Khôi phục dữ liệu" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Khôi phục dữ liệu"
+                        android:textSize="16sp" />
+
+                </LinearLayout>
 
             </LinearLayout>
 
