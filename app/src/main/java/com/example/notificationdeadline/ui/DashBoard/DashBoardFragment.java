@@ -135,6 +135,11 @@ public class DashBoardFragment extends Fragment {
             lastClickTime = clickTime;
         });
 
+        binding.fabAddDeadline.setOnClickListener(v -> {
+            NavController navController = Navigation.findNavController(requireView());
+            navController.navigate(R.id.action_to_add_deadline);
+        });
+
         setHasOptionsMenu(true);
 
         binding.homeToolbar.findViewById(R.id.btn_view_calendar).setOnClickListener(v -> {
@@ -319,11 +324,6 @@ public class DashBoardFragment extends Fragment {
         if(id ==R.id.action_search){
             NavController navController = Navigation.findNavController(requireView());
             navController.navigate(R.id.action_to_find_deadline);
-            return true;
-        }else if( id == R.id.action_add){
-            NavController navController = Navigation.findNavController(requireView());
-            navController.navigate(R.id.action_to_add_deadline);
-
             return true;
         }
         return super.onOptionsItemSelected(item);

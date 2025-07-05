@@ -6,10 +6,5 @@
         android:icon="@drawable/search_24px"
         android:title="Search"
         app:showAsAction="ifRoom"/>
-    <item
-        android:id="@+id/action_add"
-        android:icon="@drawable/add_circle_24px"
-        android:title="add"
-        app:showAsAction="ifRoom"/>
 
 </menu>
