@@ -12,6 +12,9 @@ import com.example.notificationdeadline.service.NotificationHistoryService;
 import com.example.notificationdeadline.service.NotificationService;
 import com.example.notificationdeadline.dto.Enum.StatusEnum;
 
+import android.os.Handler;
+import android.os.Looper;
+
 public class FixedTimeReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -43,15 +46,15 @@ public class FixedTimeReceiver extends BroadcastReceiver {
 
             // Update status only for the main deadline notification or overdue notification
             if (id == originalId) {
-                NotificationService notificationService = new NotificationService(context);
-                notificationService.updateStatus(StatusEnum.DEADLINE.getValue(), originalId);
 
-                // Launch FullScreenNotificationActivity
-                Intent fullScreenIntent = new Intent(context, com.example.notificationdeadline.ui.FullScreenNotificationActivity.class);
-                fullScreenIntent.putExtra("title", title);
-                fullScreenIntent.putExtra("message", message);
-                fullScreenIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                context.startActivity(fullScreenIntent);
+                // Launch FullScreenNotificationActivity on the main thread
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    Intent fullScreenIntent = new Intent(context, com.example.notificationdeadline.ui.FullScreenNotificationActivity.class);
+                    fullScreenIntent.putExtra("title", title);
+                    fullScreenIntent.putExtra("message", message);
+                    fullScreenIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    context.startActivity(fullScreenIntent);
+                });
 
             } else if (id == originalId * 1000 + 999) { // Check if it's the overdue notification
                 NotificationService notificationService = new NotificationService(context);

@@ -8,36 +8,37 @@
     tools:context=".ui.NotificationDeadlineInfor.DeadlineNotificationDetail">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
-
-        <com.google.android.material.appbar.CollapsingToolbarLayout
+        android:theme="@style/ThemeOverlay.AppCompat.Light"
+        app:elevation="4dp"
+        >
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/notification_detail_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            app:contentScrim="?attr/colorPrimary"
-            app:title="Chi tiết Deadline">
+            android:background="#8DD06C"
+            app:title="Chi tiết Deadline"
+            app:titleTextColor="@color/black"
+            android:padding="16dp"
+            app:layout_scrollFlags="scroll|enterAlways"
+            >
 
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/notification_detail_toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-                app:layout_collapseMode="pin">
+            <ImageButton
+                android:id="@+id/btn_edit_deadline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginEnd="16dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="Chỉnh sửa deadline"
+                android:src="@drawable/edit_24px"
+                />
+        </androidx.appcompat.widget.Toolbar>
 
-                <ImageButton
-                    android:id="@+id/btn_edit_deadline"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:layout_marginEnd="16dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="Chỉnh sửa deadline"
-                    android:src="@drawable/edit_24px" />
-            </androidx.appcompat.widget.Toolbar>
-        </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
+
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"

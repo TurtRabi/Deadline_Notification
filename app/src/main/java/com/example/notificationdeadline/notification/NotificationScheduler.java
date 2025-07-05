@@ -74,6 +74,15 @@ public class NotificationScheduler {
                     Toast.makeText(context, "Bạn cần cấp quyền Lịch chính xác (Exact Alarm) để nhận thông báo đúng giờ.", Toast.LENGTH_LONG).show();
                     Intent settingsIntent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
                     settingsIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                    Intent broadcastIntent = new Intent(context, com.example.notificationdeadline.receiver.ExactAlarmPermissionReceiver.class);
+                    broadcastIntent.putExtra("timeMillis", timeMillis);
+                    broadcastIntent.putExtra("requestCode", requestCode);
+                    broadcastIntent.putExtra("title", title);
+                    broadcastIntent.putExtra("message", message);
+                    broadcastIntent.putExtra("priority", priority);
+                    context.sendBroadcast(broadcastIntent);
+
                     context.startActivity(settingsIntent);
                     return;
                 }

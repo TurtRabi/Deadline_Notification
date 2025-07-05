@@ -37,6 +37,8 @@ import java.util.concurrent.ExecutorService;
 
 import com.example.notificationdeadline.ui.dialog.TodayDeadlineDialog;
 
+import com.example.notificationdeadline.ui.dialog.PermissionDialog;
+
 public class activity_main extends AppCompatActivity implements TodayDeadlineDialog.TodayDeadlineDialogListener {
 
     private ActivityMainBinding binding;
@@ -196,7 +198,7 @@ public class activity_main extends AppCompatActivity implements TodayDeadlineDia
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Bạn đã cấp quyền gửi thông báo.", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(this, "Bạn cần cấp quyền gửi thông báo để ứng dụng hoạt động.", Toast.LENGTH_LONG).show();
+                PermissionDialog.newInstance("Bạn cần cấp quyền gửi thông báo để ứng dụng hoạt động.").show(getSupportFragmentManager(), "PermissionDialog");
             }
         }
     }

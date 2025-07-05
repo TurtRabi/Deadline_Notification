@@ -72,6 +72,7 @@ public class DeadlineNotificationDetail extends Fragment {
         Toolbar toolbar = binding.notificationDetailToolbar;
         ((AppCompatActivity)requireActivity()).setSupportActionBar(toolbar);
         ((AppCompatActivity) requireActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((AppCompatActivity) requireActivity()).getSupportActionBar().setTitle("Chi tiết Deadline");
         setHasOptionsMenu(true);
 
 
@@ -383,6 +384,8 @@ public class DeadlineNotificationDetail extends Fragment {
         dialog.show();
     }
 
+
+    
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
