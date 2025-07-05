@@ -8,6 +8,8 @@ import com.example.notificationdeadline.data.entity.NotificationEntity;
 import com.example.notificationdeadline.data.entity.NotificationHistoryEntity;
 import com.example.notificationdeadline.notification.DeadlineNotifier;
 import com.example.notificationdeadline.service.NotificationHistoryService;
+import com.example.notificationdeadline.service.NotificationService;
+import com.example.notificationdeadline.dto.Enum.StatusEnum;
 
 public class FixedTimeReceiver extends BroadcastReceiver {
     @Override
@@ -35,6 +37,15 @@ public class FixedTimeReceiver extends BroadcastReceiver {
                             false,
                             String.valueOf(priority) // Lưu lại icon đúng mapping Enum nếu cần
                     ));
+
+            // Update status only for the main deadline notification or overdue notification
+            if (id == originalId) {
+                NotificationService notificationService = new NotificationService(context);
+                notificationService.updateStatus(StatusEnum.DEADLINE.getValue(), originalId);
+            } else if (id == originalId * 1000 + 999) { // Check if it's the overdue notification
+                NotificationService notificationService = new NotificationService(context);
+                notificationService.updateStatus(StatusEnum.OVERDEADLINE.getValue(), originalId);
+            }
         }).start();
 
         DeadlineNotifier notifier = new DeadlineNotifier(context);

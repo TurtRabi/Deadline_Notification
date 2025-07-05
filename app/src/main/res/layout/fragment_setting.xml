@@ -236,6 +236,31 @@
                         android:layout_height="wrap_content" />
                 </LinearLayout>
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingVertical="8dp">
+
+                    <Button
+                        android:id="@+id/btn_select_sound_setting"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Chọn âm thanh thông báo"
+                        android:backgroundTint="#EEEEEE"
+                        android:textColor="#000000"
+                        android:layout_marginBottom="8dp" />
+
+                    <TextView
+                        android:id="@+id/tv_selected_sound_uri_setting"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Chưa chọn âm thanh"
+                        android:padding="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:visibility="gone" />
+                </LinearLayout>
+
 
                 <Button
                     android:id="@+id/btnLanguage"

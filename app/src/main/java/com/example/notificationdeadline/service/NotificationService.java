@@ -57,6 +57,10 @@ public class NotificationService {
         return notificationRepository.getAllNotifications();
     }
 
+    public List<NotificationEntity> getAllNotificationsSync() {
+        return notificationRepository.getAllNotificationsSync();
+    }
+
     public LiveData<List<NotificationEntity>> fetchAllNotificationsByDay(int isSuccess) {
         Calendar calendar = Calendar.getInstance();
 

@@ -136,6 +136,8 @@ public class NotificationEntity {
     public long getTimeMillis() { return timeMillis; }
     public void setTimeMillis(long timeMillis) { this.timeMillis = timeMillis; }
 
+    public long getTime() { return timeMillis; }
+
     public int getStatus() { return status; }
     public void setStatus(int status) { this.status = status; }
 

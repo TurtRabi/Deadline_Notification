@@ -49,6 +49,8 @@ public class AddDeadlineFragment extends Fragment {
     private Switch switchIsRecurring;
     private Spinner spinnerRecurrenceType;
     private Spinner spinnerRecurrenceValue;
+    private Spinner spinnerCategory;
+    private Spinner spinnerTags;
     private NotificationRequest notificationToEdit; // New field to hold the notification being edited
 
     public static AddDeadlineFragment newInstance() {
@@ -68,6 +70,24 @@ public class AddDeadlineFragment extends Fragment {
         String[] priorities = getResources().getStringArray(R.array.priority_list);
         PrioritySpinnerAdapter adapter = new PrioritySpinnerAdapter(requireContext(), priorities);
         spinner.setAdapter(adapter);
+
+        spinnerCategory = binding.spinnerCategory;
+        ArrayAdapter<CharSequence> categoryAdapter = ArrayAdapter.createFromResource(
+                requireContext(),
+                R.array.category_list, // You need to define this array in strings.xml
+                android.R.layout.simple_spinner_item
+        );
+        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerCategory.setAdapter(categoryAdapter);
+
+        spinnerTags = binding.spinnerTags;
+        ArrayAdapter<CharSequence> tagsAdapter = ArrayAdapter.createFromResource(
+                requireContext(),
+                R.array.tag_list, // You need to define this array in strings.xml
+                android.R.layout.simple_spinner_item
+        );
+        tagsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerTags.setAdapter(tagsAdapter);
 
         switchIsRecurring = binding.switchIsRecurring;
         spinnerRecurrenceType = binding.spinnerRecurrenceType;
@@ -142,8 +162,26 @@ public class AddDeadlineFragment extends Fragment {
         if (notificationToEdit != null) {
             binding.txtTitle.setText(notificationToEdit.getTitle());
             binding.txtDescription.setText(notificationToEdit.getContent());
-            binding.txtCategory.setText(notificationToEdit.getCategory());
-            binding.txtTags.setText(notificationToEdit.getTags());
+
+            // Set category spinner
+            String categoryToSelect = notificationToEdit.getCategory();
+            ArrayAdapter<CharSequence> categoryAdapter = (ArrayAdapter<CharSequence>) binding.spinnerCategory.getAdapter();
+            if (categoryAdapter != null) {
+                int categoryPosition = categoryAdapter.getPosition(categoryToSelect);
+                if (categoryPosition >= 0) {
+                    binding.spinnerCategory.setSelection(categoryPosition);
+                }
+            }
+
+            // Set tags spinner
+            String tagsToSelect = notificationToEdit.getTags();
+            ArrayAdapter<CharSequence> tagsAdapter = (ArrayAdapter<CharSequence>) binding.spinnerTags.getAdapter();
+            if (tagsAdapter != null) {
+                int tagsPosition = tagsAdapter.getPosition(tagsToSelect);
+                if (tagsPosition >= 0) {
+                    binding.spinnerTags.setSelection(tagsPosition);
+                }
+            }
 
             // Set priority spinner
             binding.spinnerPriority.setSelection(notificationToEdit.getPriority());
@@ -202,13 +240,11 @@ public class AddDeadlineFragment extends Fragment {
         binding.btnSave.setOnClickListener(v -> {
             EditText edtTitle = binding.txtTitle;
             EditText edtDescription = binding.txtDescription;
-            EditText edtCategory = binding.txtCategory;
-            EditText edtTags = binding.txtTags;
 
             String title = edtTitle.getText().toString().trim();
             String description = edtDescription.getText().toString().trim();
-            String category = edtCategory.getText().toString().trim();
-            String tags = edtTags.getText().toString().trim();
+            String category = binding.spinnerCategory.getSelectedItem().toString();
+            String tags = binding.spinnerTags.getSelectedItem().toString();
 
             if (title.isEmpty()) {
                 edtTitle.setError("Tiêu đề không được để trống");

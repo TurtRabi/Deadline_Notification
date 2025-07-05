@@ -30,12 +30,17 @@ import com.example.notificationdeadline.service.SettingService;
 import com.example.notificationdeadline.service.UserService;
 import com.google.android.material.badge.BadgeDrawable;
 import android.os.Handler;
+import java.util.Calendar;
+import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ExecutorService;
 
 public class activity_main extends AppCompatActivity {
 
     private ActivityMainBinding binding;
     private UserService service;
     private SettingService settingService;
+    private NotificationService notificationService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +48,9 @@ public class activity_main extends AppCompatActivity {
         EdgeToEdge.enable(this);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        notificationService = new NotificationService(this);
+        updateAllDeadlineStatuses();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
@@ -181,5 +189,38 @@ public class activity_main extends AppCompatActivity {
         }
     }
 
+    private void updateAllDeadlineStatuses() {
+        Executors.newSingleThreadExecutor().execute(() -> {
+            List<NotificationEntity> allNotifications = notificationService.getAllNotificationsSync();
+            long currentTimeMillis = System.currentTimeMillis();
 
+            for (NotificationEntity notification : allNotifications) {
+                if (notification.isSuccess()) {
+                    continue; // Skip if already marked as success
+                }
+
+                int newStatus;
+                if (notification.getTime() < currentTimeMillis) {
+                    newStatus = StatusEnum.OVERDEADLINE.getValue();
+                } else {
+                    long timeLeftMillis = notification.getTime() - currentTimeMillis;
+                    long timeLeftHours = timeLeftMillis / (60 * 60 * 1000);
+
+                    if (timeLeftHours < 1) {
+                        newStatus = StatusEnum.DEADLINE.getValue();
+                    } else if (timeLeftHours < 6) {
+                        newStatus = StatusEnum.NEAR_DEADLINE.getValue();
+                    } else if (timeLeftHours < 24) {
+                        newStatus = StatusEnum.SOON.getValue();
+                    } else {
+                        newStatus = StatusEnum.UPCOMING.getValue();
+                    }
+                }
+                // Only update if status has changed
+                if (notification.getStatus() != newStatus) {
+                    notificationService.updateStatus(newStatus, notification.getId());
+                }
+            }
+        });
+    }
 }

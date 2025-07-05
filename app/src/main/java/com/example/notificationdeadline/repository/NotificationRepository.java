@@ -64,6 +64,10 @@ public class NotificationRepository {
         return db.notificationDao().getAll();
     }
 
+    public List<NotificationEntity> getAllNotificationsSync() {
+        return db.notificationDao().getAllList();
+    }
+
     public LiveData<List<NotificationEntity>> getAllNotification(long startTime, long endTime, int isSuccess) {
         return db.notificationDao().getAllByDay2(startTime, endTime, isSuccess);
     }

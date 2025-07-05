@@ -10,6 +10,9 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+
 import androidx.core.app.NotificationCompat;
 
 import com.example.notificationdeadline.R;
@@ -47,8 +50,16 @@ public class DeadlineNotifier {
                         HIGH_IMPORTANCE
                 );
                 channel.setDescription("Thông báo các deadline khẩn cấp hoặc gần tới");
-                //Uri soundUri = Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.my_custom_sound);
-                Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+                String customSoundUriString = preferences.getString("custom_notification_sound", null);
+                Uri soundUri;
+                if (customSoundUriString != null) {
+                    soundUri = Uri.parse(customSoundUriString);
+                } else {
+                    soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                }
+
                 AudioAttributes audioAttributes = new AudioAttributes.Builder()
                         .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                         .setUsage(AudioAttributes.USAGE_NOTIFICATION)
@@ -70,28 +81,7 @@ public class DeadlineNotifier {
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
 
-        new Thread(() -> {
-            notificationService = new NotificationService(context);
-            NotificationEntity current = notificationService.getNotificationById(entity.getId()); // Sử dụng phương thức đồng bộ
-            if (current != null) {
-                int status = current.getStatus();
-                boolean isSuccess = current.isSuccess();
-
-                if (status != StatusEnum.SUCCESS.getValue() && status!= StatusEnum.OVERDEADLINE.getValue()) {
-                    // Nếu chưa hoàn thành, thì tăng cấp trạng thái
-                    status = Math.min(status + 1, StatusEnum.OVERDEADLINE.getValue());
-                } else {
-                    // Nếu đã hoàn thành, kiểm tra isSuccess
-                    if (isSuccess ==false) {
-                        status = StatusEnum.OVERDEADLINE.getValue();
-                    }else{
-                        status = StatusEnum.SUCCESS.getValue();
-                    }
-                }
-
-                notificationService.updateStatus(status, current.getId());
-            }
-        }).start();
+        
 
 
 

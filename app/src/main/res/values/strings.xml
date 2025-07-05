@@ -52,4 +52,20 @@
         <item>Quá hạn</item>
         <item>Hoàn thành</item>
     </string-array>
+
+    <string-array name="category_list">
+        <item>Công việc</item>
+        <item>Học tập</item>
+        <item>Cá nhân</item>
+        <item>Dự án</item>
+        <item>Khác</item>
+    </string-array>
+
+    <string-array name="tag_list">
+        <item>Quan trọng</item>
+        <item>Gấp</item>
+        <item>Đang chờ</item>
+        <item>Hoàn thành</item>
+        <item>Đã hủy</item>
+    </string-array>
 </resources>

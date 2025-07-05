@@ -34,6 +34,9 @@ import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.media.RingtoneManager;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.navigation.NavController;
@@ -65,6 +68,9 @@ public class SettingFragment extends Fragment {
     private BackupRestoreManager backupRestoreManager;
 
     private static final int REQUEST_CODE_STORAGE_PERMISSION = 100;
+    private ActivityResultLauncher<Intent> soundPickerLauncher;
+    private Button btnSelectSoundSetting;
+    private TextView tvSelectedSoundUriSetting;
 
     public static SettingFragment newInstance() {
         return new SettingFragment();
@@ -90,6 +96,27 @@ public class SettingFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         mViewModel = new ViewModelProvider(this).get(SettingViewModel.class);
         backupRestoreManager = new BackupRestoreManager(requireContext());
+
+        btnSelectSoundSetting = binding.btnSelectSoundSetting;
+        tvSelectedSoundUriSetting = binding.tvSelectedSoundUriSetting;
+
+        // Initialize sound picker launcher
+        soundPickerLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (result.getResultCode() == AppCompatActivity.RESULT_OK && result.getData() != null) {
+                Uri uri = result.getData().getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
+                if (uri != null) {
+                    saveCustomSoundUri(uri.toString());
+                    tvSelectedSoundUriSetting.setText("Âm thanh đã chọn: " + uri.getLastPathSegment());
+                    tvSelectedSoundUriSetting.setVisibility(View.VISIBLE);
+                } else {
+                    saveCustomSoundUri(null); // Clear custom sound
+                    tvSelectedSoundUriSetting.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        // Load and display custom sound URI
+        loadCustomSoundUri();
 
         // Observe user list
         mViewModel.getAllListUser().observe(getViewLifecycleOwner(), userEntityList -> {
@@ -186,11 +213,45 @@ public class SettingFragment extends Fragment {
                 binding.btnClearCache.setOnClickListener(listener);
                 binding.btnBackupData.setOnClickListener(listener);
                 binding.btnRestoreData.setOnClickListener(listener);
+                binding.btnSelectSoundSetting.setOnClickListener(v -> {
+                    Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
+                    intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_NOTIFICATION);
+                    intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Chọn âm thanh thông báo");
+                    intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, getCustomSoundUri());
+                    soundPickerLauncher.launch(intent);
+                });
             }
         });
 
 
 
+    }
+
+    private void saveCustomSoundUri(String uri) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("custom_notification_sound", uri);
+        editor.apply();
+    }
+
+    private Uri getCustomSoundUri() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
+        String uriString = preferences.getString("custom_notification_sound", null);
+        if (uriString != null) {
+            return Uri.parse(uriString);
+        } else {
+            return RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        }
+    }
+
+    private void loadCustomSoundUri() {
+        Uri uri = getCustomSoundUri();
+        if (uri != null && !uri.equals(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))) {
+            tvSelectedSoundUriSetting.setText("Âm thanh đã chọn: " + uri.getLastPathSegment());
+            tvSelectedSoundUriSetting.setVisibility(View.VISIBLE);
+        } else {
+            tvSelectedSoundUriSetting.setVisibility(View.GONE);
+        }
     }
 
     private void checkStoragePermissionAndBackup() {
