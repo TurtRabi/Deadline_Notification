@@ -209,13 +209,13 @@ public class activity_main extends AppCompatActivity implements TodayDeadlineDia
             long currentTimeMillis = System.currentTimeMillis();
 
             for (NotificationEntity notification : allNotifications) {
-                if (notification.isSuccess()) {
-                    continue; // Skip if already marked as success
+                if (notification.isSuccess() || notification.getStatus() == StatusEnum.OVERDEADLINE.getValue()) {
+                    continue; // Skip if already success or overdue
                 }
 
                 int newStatus;
                 if (notification.getTime() < currentTimeMillis) {
-                    newStatus = StatusEnum.OVERDEADLINE.getValue();
+                    newStatus = StatusEnum.DEADLINE.getValue(); // Set to DEADLINE if time has passed, but not yet overdue
                 } else {
                     long timeLeftMillis = notification.getTime() - currentTimeMillis;
                     long timeLeftHours = timeLeftMillis / (60 * 60 * 1000);
