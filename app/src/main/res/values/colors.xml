@@ -35,4 +35,5 @@
     <color name="color_deadline">#FFD6D6</color>
     <color name="color_overdeadline">#F44336</color>
     <color name="color_success">#81C784</color>
+    <color name="full_screen_background">#2C3E50</color>
 </resources>

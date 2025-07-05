@@ -3,6 +3,7 @@ package com.example.notificationdeadline.receiver;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.widget.Toast;
 
 import com.example.notificationdeadline.data.entity.NotificationEntity;
 import com.example.notificationdeadline.data.entity.NotificationHistoryEntity;
@@ -19,6 +20,8 @@ public class FixedTimeReceiver extends BroadcastReceiver {
         int id = intent.getIntExtra("id", (int) System.currentTimeMillis());
         int originalId = intent.getIntExtra("original_id", -1);
         int priority = intent.getIntExtra("priority", 0); // default là NORMAL
+
+        //Toast.makeText(context, "FixedTimeReceiver triggered for: " + title, Toast.LENGTH_LONG).show();
 
         NotificationEntity entity = new NotificationEntity();
         entity.setTitle(title);
@@ -42,6 +45,14 @@ public class FixedTimeReceiver extends BroadcastReceiver {
             if (id == originalId) {
                 NotificationService notificationService = new NotificationService(context);
                 notificationService.updateStatus(StatusEnum.DEADLINE.getValue(), originalId);
+
+                // Launch FullScreenNotificationActivity
+                Intent fullScreenIntent = new Intent(context, com.example.notificationdeadline.ui.FullScreenNotificationActivity.class);
+                fullScreenIntent.putExtra("title", title);
+                fullScreenIntent.putExtra("message", message);
+                fullScreenIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                context.startActivity(fullScreenIntent);
+
             } else if (id == originalId * 1000 + 999) { // Check if it's the overdue notification
                 NotificationService notificationService = new NotificationService(context);
                 notificationService.updateStatus(StatusEnum.OVERDEADLINE.getValue(), originalId);
